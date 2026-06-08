@@ -75,7 +75,7 @@
                             <div style="font-weight:600;color:#1D3557;font-size:0.95rem">{{ donor.name }}</div>
                             <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ donor.city }}</small>
                         </div>
-                        <small class="text-muted">{{ donor.created_at.strftime('%d %b') }}</small>
+                        <small class="text-muted">{{ donor.created_at|dateformat('%d %b') }}</small>
                     </div>
                     {% endfor %}
                 </div>

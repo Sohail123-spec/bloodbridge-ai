@@ -40,7 +40,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top:1px solid rgba(0,0,0,0.06)">
-                        <small class="text-muted"><i class="fas fa-clock me-1"></i>{{ req.created_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+                        <small class="text-muted"><i class="fas fa-clock me-1"></i>{{ req.created_at|dateformat }}</small>
                         <a href="tel:{{ req.contact }}" class="btn btn-primary btn-sm">
                             <i class="fas fa-phone me-1"></i> {{ req.contact }}
                         </a>

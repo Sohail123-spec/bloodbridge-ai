@@ -224,7 +224,7 @@
                         <div class="col-6">
                             <small class="text-muted d-block"><i class="fas fa-calendar me-1"></i> Last Donated</small>
                             <span style="font-weight:600;color:#1D3557;font-size:0.9rem">
-                                {{ donor.last_donation.strftime('%d %b %Y') if donor.last_donation else 'First Donor' }}
+                                {{ donor.last_donation|dateformat('%d %b %Y') if donor.last_donation else 'First Donor' }}
                             </span>
                         </div>
                         <div class="col-6">

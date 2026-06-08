@@ -36,7 +36,7 @@
                             ('City', donor.city, 'map-marker-alt'),
                             ('Phone', donor.phone, 'phone'),
                             ('Email', donor.email, 'envelope'),
-                            ('Last Donation', donor.last_donation.strftime('%d %b %Y') if donor.last_donation else 'First Donor', 'calendar'),
+                            ('Last Donation', donor.last_donation_fmt if donor.last_donation else 'First Donor', 'calendar'),
                             ('Registered Hospital', donor.hospital or 'Self Registered', 'hospital'),
                             ('Total Donations', donation_count|string, 'hand-holding-heart')
                         ] %}

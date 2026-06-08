@@ -10,6 +10,15 @@ app.config['DATABASE'] = os.getenv('DATABASE_PATH', 'bloodbridge.db')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+# Jinja2 date filter (SQLite returns strings not datetime objects)
+@app.template_filter('dateformat')
+def dateformat(value, fmt='%d %b %Y, %I:%M %p'):
+    if not value: return '-'
+    for f in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M:%S.%f', '%Y-%m-%d'):
+        try: return datetime.strptime(str(value)[:19], f).strftime(fmt)
+        except: continue
+    return str(value)[:16]
+
 # ==================== DB HELPERS ====================
 def get_db():
     db = sqlite3.connect(app.config['DATABASE'])
@@ -540,6 +549,8 @@ def not_found(e): return render_template('404.html'), 404
 @app.errorhandler(500)
 def server_error(e): return render_template('500.html'), 500
 
+# Run on startup regardless of how app is launched (python or gunicorn)
+init_db()
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=False, host='0.0.0.0', port=5000)

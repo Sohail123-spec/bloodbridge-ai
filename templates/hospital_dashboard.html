@@ -83,7 +83,7 @@
                             <td>{{ req.city }}</td>
                             <td><span style="padding:3px 12px;border-radius:50px;font-size:0.8rem;font-weight:700;background:{{ 'rgba(230,57,70,0.1)' if req.urgency=='Critical' else 'rgba(255,183,3,0.1)' if req.urgency=='Urgent' else 'rgba(42,157,143,0.1)' }};color:{{ '#E63946' if req.urgency=='Critical' else '#b38200' if req.urgency=='Urgent' else '#2A9D8F' }}">{{ req.urgency }}</span></td>
                             <td><span style="padding:3px 12px;border-radius:50px;font-size:0.8rem;font-weight:700;background:{{ 'rgba(42,157,143,0.1)' if req.status=='Active' else 'rgba(0,0,0,0.05)' }};color:{{ '#2A9D8F' if req.status=='Active' else '#666' }}">{{ req.status }}</span></td>
-                            <td style="font-size:0.85rem;color:#666">{{ req.created_at.strftime('%d %b %Y') }}</td>
+                            <td style="font-size:0.85rem;color:#666">{{ req.created_at|dateformat('%d %b %Y') }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

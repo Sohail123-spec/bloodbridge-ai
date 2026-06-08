@@ -545,7 +545,7 @@
                         </div>
                     </div>
                     <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <small class="text-muted"><i class="fas fa-clock me-1"></i>{{ req.created_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+                        <small class="text-muted"><i class="fas fa-clock me-1"></i>{{ req.created_at|dateformat }}</small>
                         <a href="tel:{{ req.contact }}" class="btn btn-sm btn-primary">
                             <i class="fas fa-phone me-1"></i> {{ req.contact }}
                         </a>
