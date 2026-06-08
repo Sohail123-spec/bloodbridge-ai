@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Admin Login - BloodBridge AI{% endblock %}
+{% block content %}
+<section style="min-height:80vh;display:flex;align-items:center;background:linear-gradient(135deg,#1D3557,#0a0a1a);padding:60px 0">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div style="background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:3rem">
+                    <div class="text-center mb-4">
+                        <div style="width:70px;height:70px;background:linear-gradient(135deg,#E63946,#d62828);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:0 10px 30px rgba(230,57,70,0.4)">
+                            <i class="fas fa-shield-alt" style="font-size:1.8rem;color:white"></i>
+                        </div>
+                        <h3 style="color:white;font-weight:800">Admin Panel</h3>
+                        <p style="color:rgba(255,255,255,0.6)">Restricted access — authorized only</p>
+                    </div>
+                    <div id="alert-box"></div>
+                    <form id="adminLoginForm">
+                        <div class="mb-3">
+                            <label class="form-label" style="color:rgba(255,255,255,0.8)">Admin Email</label>
+                            <input type="email" class="form-control" id="email" required placeholder="admin@bloodbridge.ai" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" style="color:rgba(255,255,255,0.8)">Password</label>
+                            <input type="password" class="form-control" id="password" required placeholder="Admin password" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 btn-lg" id="submitBtn">
+                            <i class="fas fa-lock me-2"></i> Access Admin Panel
+                        </button>
+                    </form>
+                    <div class="text-center mt-4" style="color:rgba(255,255,255,0.4);font-size:0.85rem">
+                        Default: admin@bloodbridge.ai / admin123
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+    document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Authenticating...';
+        const res = await fetch('/admin-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value })
+        });
+        const data = await res.json();
+        if (data.success) {
+            window.location.href = '/admin-dashboard';
+        } else {
+            document.getElementById('alert-box').innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-lock me-2"></i> Access Admin Panel';
+        }
+    });
+</script>
+{% endblock %}

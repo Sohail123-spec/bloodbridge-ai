@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Manage Requests - Admin{% endblock %}
+{% block content %}
+<section style="background:linear-gradient(135deg,#1D3557,#0a0a1a);padding:40px 0 80px;position:relative">
+    <div class="container text-white">
+        <a href="/admin-dashboard" style="color:rgba(255,255,255,0.6);text-decoration:none;font-weight:600"><i class="fas fa-arrow-left me-2"></i>Admin Dashboard</a>
+        <h2 style="font-size:2.2rem;font-weight:900;margin-top:1rem">Manage Emergency Requests</h2>
+    </div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);clip-path:ellipse(60% 100% at 50% 100%)"></div>
+</section>
+<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:40px 0 60px">
+    <div class="container">
+        <div style="background:rgba(255,255,255,0.95);border-radius:24px;padding:2rem;box-shadow:0 6px 25px rgba(0,0,0,0.08)">
+            <div id="alert-box"></div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead><tr><th>#</th><th>Patient</th><th>Blood</th><th>Hospital</th><th>City</th><th>Urgency</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr id="row-{{ req.id }}">
+                            <td>{{ req.id }}</td>
+                            <td><strong>{{ req.patient_name }}</strong><br><small class="text-muted">{{ req.contact }}</small></td>
+                            <td><span style="background:linear-gradient(135deg,#E63946,#d62828);color:white;padding:3px 10px;border-radius:8px;font-weight:700;font-size:0.85rem">{{ req.blood_group }}</span></td>
+                            <td style="font-size:0.9rem">{{ req.hospital }}</td>
+                            <td>{{ req.city }}</td>
+                            <td><span style="padding:3px 10px;border-radius:50px;font-size:0.8rem;font-weight:700;background:{{ 'rgba(230,57,70,0.1)' if req.urgency=='Critical' else 'rgba(255,183,3,0.1)' if req.urgency=='Urgent' else 'rgba(42,157,143,0.1)' }};color:{{ '#E63946' if req.urgency=='Critical' else '#b38200' if req.urgency=='Urgent' else '#2A9D8F' }}">{{ req.urgency }}</span></td>
+                            <td><span style="padding:3px 10px;border-radius:50px;font-size:0.8rem;font-weight:700;background:{{ 'rgba(42,157,143,0.1)' if req.status=='Active' else 'rgba(0,0,0,0.05)' }};color:{{ '#2A9D8F' if req.status=='Active' else '#666' }}">{{ req.status }}</span></td>
+                            <td style="font-size:0.85rem;color:#666">{{ req.created_at[:10] if req.created_at else '-' }}</td>
+                            <td><button class="btn btn-sm btn-danger" onclick="deleteReq({{ req.id }})"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if total_pages > 1 %}
+            <nav class="mt-4"><ul class="pagination justify-content-center">
+                {% for p in range(1, total_pages+1) %}
+                <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+                {% endfor %}
+            </ul></nav>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+async function deleteReq(id) {
+    if (!confirm('Delete this request?')) return;
+    const res = await fetch(`/admin-request-delete/${id}`, {method:'POST'});
+    const data = await res.json();
+    if (data.success) { document.getElementById(`row-${id}`).remove(); document.getElementById('alert-box').innerHTML = '<div class="alert alert-success">Request deleted.</div>'; }
+}
+</script>
+{% endblock %}

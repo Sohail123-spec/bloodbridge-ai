@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Manage Donors - Admin{% endblock %}
+{% block content %}
+<section style="background:linear-gradient(135deg,#1D3557,#0a0a1a);padding:40px 0 80px;position:relative">
+    <div class="container text-white">
+        <a href="/admin-dashboard" style="color:rgba(255,255,255,0.6);text-decoration:none;font-weight:600"><i class="fas fa-arrow-left me-2"></i>Admin Dashboard</a>
+        <h2 style="font-size:2.2rem;font-weight:900;margin-top:1rem">Manage Donors <span style="font-size:1rem;opacity:0.7">({{ total }} total)</span></h2>
+    </div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);clip-path:ellipse(60% 100% at 50% 100%)"></div>
+</section>
+<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:40px 0 60px">
+    <div class="container">
+        <div style="background:rgba(255,255,255,0.95);border-radius:24px;padding:2rem;box-shadow:0 6px 25px rgba(0,0,0,0.08)">
+            <div id="alert-box"></div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead><tr><th>#</th><th>Name</th><th>Blood</th><th>City</th><th>Phone</th><th>Available</th><th>Registered</th><th>Action</th></tr></thead>
+                    <tbody>
+                        {% for donor in donors %}
+                        <tr id="row-{{ donor.id }}">
+                            <td>{{ donor.id }}</td>
+                            <td><strong>{{ donor.name }}</strong><br><small class="text-muted">{{ donor.email }}</small></td>
+                            <td><span style="background:linear-gradient(135deg,#E63946,#d62828);color:white;padding:3px 10px;border-radius:8px;font-weight:700;font-size:0.85rem">{{ donor.blood_group }}</span></td>
+                            <td>{{ donor.city }}</td>
+                            <td>{{ donor.phone }}</td>
+                            <td><span style="padding:3px 10px;border-radius:50px;font-size:0.8rem;font-weight:700;background:{{ 'rgba(42,157,143,0.1)' if donor.available else 'rgba(230,57,70,0.1)' }};color:{{ '#2A9D8F' if donor.available else '#E63946' }}">{{ 'Yes' if donor.available else 'No' }}</span></td>
+                            <td style="font-size:0.85rem;color:#666">{{ donor.created_at[:10] if donor.created_at else '-' }}</td>
+                            <td><button class="btn btn-sm btn-danger" onclick="deleteDonor({{ donor.id }})"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if total_pages > 1 %}
+            <nav class="mt-4"><ul class="pagination justify-content-center">
+                {% for p in range(1, total_pages+1) %}
+                <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+                {% endfor %}
+            </ul></nav>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+async function deleteDonor(id) {
+    if (!confirm('Delete this donor?')) return;
+    const res = await fetch(`/admin-donor-delete/${id}`, {method:'POST'});
+    const data = await res.json();
+    if (data.success) { document.getElementById(`row-${id}`).remove(); document.getElementById('alert-box').innerHTML = '<div class="alert alert-success">Donor deleted.</div>'; }
+}
+</script>
+{% endblock %}

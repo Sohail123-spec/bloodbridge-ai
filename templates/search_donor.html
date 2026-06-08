@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% block title %}Search Donors - BloodBridge AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-hero {
+        background: linear-gradient(135deg, #1D3557 0%, #2A9D8F 100%);
+        padding: 50px 0 90px; position: relative; overflow: hidden;
+    }
+    .search-hero::after {
+        content: '';
+        position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        clip-path: ellipse(60% 100% at 50% 100%);
+    }
+    .search-card {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(20px); border-radius: 24px;
+        padding: 2.5rem; box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+        margin-top: -50px; position: relative; z-index: 10;
+    }
+    .donor-card {
+        background: rgba(255,255,255,0.9); border-radius: 20px;
+        padding: 1.5rem; border: 1px solid rgba(0,0,0,0.06);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        transition: all 0.3s ease;
+    }
+    .donor-card:hover {
+        box-shadow: 0 12px 40px rgba(230,57,70,0.15);
+        transform: translateY(-6px);
+    }
+    .blood-type-badge {
+        width: 60px; height: 60px;
+        background: linear-gradient(135deg, #E63946, #d62828);
+        color: white; font-weight: 800; font-size: 1rem;
+        border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 6px 20px rgba(230,57,70,0.3);
+    }
+    .match-score {
+        display: flex; align-items: center; gap: 8px;
+    }
+    .match-bar {
+        flex: 1; height: 8px; background: #f0f0f0;
+        border-radius: 4px; overflow: hidden;
+    }
+    .match-bar-fill {
+        height: 100%; border-radius: 4px;
+        background: linear-gradient(90deg, #E63946, #FFB703);
+        transition: width 1s ease;
+    }
+    .score-text {
+        font-weight: 800; font-size: 1rem; color: #E63946; min-width: 45px;
+    }
+    .donor-status {
+        display: inline-block; padding: 4px 14px; border-radius: 50px;
+        font-size: 0.8rem; font-weight: 700;
+    }
+    .status-available { background: rgba(42,157,143,0.1); color: #2A9D8F; }
+    .status-unavailable { background: rgba(230,57,70,0.1); color: #E63946; }
+    .compatible-tag {
+        display: inline-block; padding: 3px 10px; border-radius: 50px;
+        font-size: 0.78rem; font-weight: 700;
+        background: rgba(255,183,3,0.15); color: #b38200;
+        border: 1px solid rgba(255,183,3,0.3);
+    }
+    .results-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+    .filter-chip {
+        display: inline-block; padding: 6px 14px; border-radius: 50px;
+        background: rgba(29,53,87,0.08); color: #1D3557;
+        font-size: 0.85rem; font-weight: 600; margin: 4px;
+    }
+    .no-results {
+        text-align: center; padding: 4rem 2rem;
+    }
+    .no-results i {
+        font-size: 4rem; color: #ccc; margin-bottom: 1.5rem; display: block;
+    }
+    .compatibility-info {
+        background: rgba(29,53,87,0.04); border-radius: 16px;
+        padding: 1.5rem; border-left: 4px solid #1D3557;
+    }
+    .compat-tag {
+        display: inline-block; padding: 4px 12px; border-radius: 50px;
+        background: white; border: 2px solid #1D3557;
+        font-weight: 700; font-size: 0.85rem; margin: 3px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="search-hero">
+    <div class="container text-white text-center">
+        <div class="d-inline-block px-4 py-2 rounded-pill mb-3" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3)">
+            <i class="fas fa-search me-2" style="color:#FFB703"></i> Smart Donor Search
+        </div>
+        <h1 style="font-size:2.8rem;font-weight:900">Find Compatible Blood Donors</h1>
+        <p style="opacity:0.85;font-size:1.1rem;margin-top:0.5rem">AI-powered matching finds the most compatible donors for your needs</p>
+    </div>
+</section>
+
+<section style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); padding-bottom: 60px;">
+    <div class="container">
+        <!-- Search Form -->
+        <div class="search-card mb-5">
+            <h5 style="color:#1D3557;font-weight:700;margin-bottom:1.5rem"><i class="fas fa-sliders-h me-2" style="color:#E63946"></i> Search Filters</h5>
+            <form method="GET" action="/search-donor" id="searchForm">
+                <div class="row gy-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Patient Blood Group</label>
+                        <select name="patient_blood" class="form-select" id="patientBlood">
+                            <option value="">Any Blood Group</option>
+                            {% for bg in blood_groups %}
+                            <option value="{{ bg }}" {% if request.args.get('patient_blood') == bg %}selected{% endif %}>{{ bg }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">AI will find compatible types</small>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Donor Blood Group</label>
+                        <select name="blood_group" class="form-select">
+                            <option value="">Any Type</option>
+                            {% for bg in blood_groups %}
+                            <option value="{{ bg }}" {% if request.args.get('blood_group') == bg %}selected{% endif %}>{{ bg }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-control" placeholder="Enter city..." value="{{ request.args.get('city', '') }}" list="citySuggestions">
+                        <datalist id="citySuggestions">
+                            {% for city in cities %}<option value="{{ city }}">{% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Availability</label>
+                        <select name="availability" class="form-select">
+                            <option value="">All</option>
+                            <option value="available" {% if request.args.get('availability') == 'available' %}selected{% endif %}>Available Only</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-primary w-100" style="height:46px">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Compatibility Info (appears when patient blood selected) -->
+            {% if request.args.get('patient_blood') %}
+            <div class="compatibility-info mt-4" id="compatInfo">
+                <h6 style="color:#1D3557;font-weight:700"><i class="fas fa-dna me-2"></i> Blood Compatibility for {{ request.args.get('patient_blood') }} Patient</h6>
+                <p class="text-muted small mb-2">Compatible donor blood types (shown with AI match score):</p>
+                <div id="compatTags"></div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Results -->
+        {% if results is defined %}
+        <div class="results-header">
+            <div>
+                <h4 style="color:#1D3557;font-weight:800;margin-bottom:0.3rem">
+                    {% if results %}{{ results|length }} Donor(s) Found{% else %}No Results{% endif %}
+                </h4>
+                <div>
+                    {% if request.args.get('blood_group') %}<span class="filter-chip"><i class="fas fa-tint me-1"></i>{{ request.args.get('blood_group') }}</span>{% endif %}
+                    {% if request.args.get('city') %}<span class="filter-chip"><i class="fas fa-map-marker-alt me-1"></i>{{ request.args.get('city') }}</span>{% endif %}
+                    {% if request.args.get('availability') %}<span class="filter-chip"><i class="fas fa-check me-1"></i>Available</span>{% endif %}
+                </div>
+            </div>
+            {% if results %}
+            <div class="text-muted small">Sorted by AI match score ↓</div>
+            {% endif %}
+        </div>
+
+        {% if results %}
+        <div class="row gy-4">
+            {% for donor in results %}
+            <div class="col-md-6 col-lg-4">
+                <div class="donor-card">
+                    <div class="d-flex gap-3 mb-3">
+                        <div class="blood-type-badge">{{ donor.blood_group }}</div>
+                        <div class="flex-grow-1">
+                            <h5 style="color:#1D3557;font-weight:700;margin-bottom:4px">{{ donor.name }}</h5>
+                            <div>
+                                <span class="donor-status {{ 'status-available' if donor.available else 'status-unavailable' }}">
+                                    <i class="fas fa-{{ 'check' if donor.available else 'times' }} me-1"></i>
+                                    {{ 'Available' if donor.available else 'Unavailable' }}
+                                </span>
+                                {% if request.args.get('patient_blood') %}
+                                <span class="compatible-tag ms-1"><i class="fas fa-dna me-1"></i>Compatible</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if donor.match_score is defined %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small style="color:#555;font-weight:600">AI Match Score</small>
+                            <span class="score-text">{{ donor.match_score }}%</span>
+                        </div>
+                        <div class="match-bar">
+                            <div class="match-bar-fill" style="width:{{ donor.match_score }}%"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row gy-2 mb-3">
+                        <div class="col-6">
+                            <small class="text-muted d-block"><i class="fas fa-map-marker-alt me-1"></i> City</small>
+                            <span style="font-weight:600;color:#1D3557">{{ donor.city }}</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block"><i class="fas fa-birthday-cake me-1"></i> Age</small>
+                            <span style="font-weight:600;color:#1D3557">{{ donor.age }} yrs</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block"><i class="fas fa-calendar me-1"></i> Last Donated</small>
+                            <span style="font-weight:600;color:#1D3557;font-size:0.9rem">
+                                {{ donor.last_donation.strftime('%d %b %Y') if donor.last_donation else 'First Donor' }}
+                            </span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block"><i class="fas fa-venus-mars me-1"></i> Gender</small>
+                            <span style="font-weight:600;color:#1D3557">{{ donor.gender }}</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="tel:{{ donor.phone }}" class="btn btn-primary flex-fill btn-sm">
+                            <i class="fas fa-phone me-1"></i> Contact
+                        </a>
+                        <a href="/donor-detail/{{ donor.id }}" class="btn btn-outline-secondary flex-fill btn-sm">
+                            <i class="fas fa-user me-1"></i> Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="glass-card no-results">
+            <i class="fas fa-search-minus"></i>
+            <h4 style="color:#1D3557;font-weight:700">No Donors Found</h4>
+            <p class="text-muted">Try adjusting your search filters or register more donors.</p>
+            <a href="/register-donor" class="btn btn-primary mt-2">
+                <i class="fas fa-user-plus me-2"></i> Register New Donor
+            </a>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const patientBlood = document.getElementById('patientBlood');
+    const compatInfo = document.getElementById('compatInfo');
+
+    async function loadCompatibility(bg) {
+        if (!bg || !compatInfo) return;
+        const res = await fetch(`/api/blood-compatibility/${bg}`);
+        const data = await res.json();
+        document.getElementById('compatTags').innerHTML = data.compatible.map(t =>
+            `<span class="compat-tag">${t}</span>`
+        ).join('');
+    }
+
+    if (patientBlood) {
+        patientBlood.addEventListener('change', () => loadCompatibility(patientBlood.value));
+        // Auto-load on page
+        const currentBg = "{{ request.args.get('patient_blood', '') }}";
+        if (currentBg) loadCompatibility(currentBg);
+    }
+
+    // Animate match bars
+    document.querySelectorAll('.match-bar-fill').forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => { bar.style.width = width; }, 200);
+    });
+</script>
+{% endblock %}

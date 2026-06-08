@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - BloodBridge AI{% endblock %}
+{% block content %}
+<section style="background:linear-gradient(135deg,#1D3557,#0a0a1a);padding:50px 0 90px;position:relative;overflow:hidden">
+    <div class="container text-white">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <div style="font-size:0.8rem;font-weight:700;letter-spacing:2px;color:rgba(255,183,3,0.9);text-transform:uppercase;margin-bottom:0.5rem">
+                    <i class="fas fa-shield-alt me-2"></i>Admin Control Panel
+                </div>
+                <h1 style="font-size:2.4rem;font-weight:900;margin:0">BloodBridge Admin</h1>
+                <p style="opacity:0.75;margin:0">Platform management & oversight</p>
+            </div>
+            <a href="/admin-logout" class="btn btn-outline-light"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
+        </div>
+    </div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);clip-path:ellipse(60% 100% at 50% 100%)"></div>
+</section>
+
+<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:40px 0 60px">
+    <div class="container">
+        <!-- KPI Cards -->
+        <div class="row gy-4 mb-5">
+            {% for icon, color, count, label, link in [
+                ('fas fa-users','#E63946', total_donors, 'Total Donors', '/admin-manage-donors'),
+                ('fas fa-hospital','#1D3557', total_hospitals, 'Hospitals', '/admin-manage-donors'),
+                ('fas fa-ambulance','#FFB703', total_requests, 'Emergency Requests', '/admin-manage-requests'),
+                ('fas fa-user-check','#2A9D8F', verified_donors, 'Verified Donors', '/admin-manage-donors')
+            ] %}
+            <div class="col-md-3 col-6">
+                <a href="{{ link }}" style="display:block;text-decoration:none">
+                    <div style="background:rgba(255,255,255,0.95);border-radius:20px;padding:1.8rem;box-shadow:0 6px 25px rgba(0,0,0,0.08);transition:all 0.3s ease" onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform=''">
+                        <div style="width:55px;height:55px;background:{{ color }}20;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:{{ color }};margin-bottom:1rem"><i class="{{ icon }}"></i></div>
+                        <div style="font-size:2rem;font-weight:900;background:linear-gradient(135deg,#E63946,#FFB703);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">{{ count }}</div>
+                        <div style="color:#555;font-weight:600;font-size:0.9rem;margin-top:6px">{{ label }}</div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Admin Navigation -->
+        <div class="row gy-4 mb-5">
+            {% for icon, color, title, desc, link in [
+                ('fas fa-users-cog','#E63946','Manage Donors','View, verify and delete donor records','/admin-manage-donors'),
+                ('fas fa-clipboard-list','#FFB703','Manage Requests','Monitor and moderate emergency requests','/admin-manage-requests'),
+                ('fas fa-chart-pie','#2A9D8F','View Analytics','Full platform analytics and insights','/analytics'),
+                ('fas fa-search','#1D3557','Search Donors','Use the donor search tool','/search-donor')
+            ] %}
+            <div class="col-md-3 col-6">
+                <a href="{{ link }}" style="display:block;background:rgba(255,255,255,0.95);border-radius:20px;padding:2rem;text-align:center;text-decoration:none;box-shadow:0 6px 25px rgba(0,0,0,0.08);transition:all 0.3s ease;height:100%" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform=''">
+                    <div style="width:65px;height:65px;background:{{ color }}15;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:{{ color }};margin:0 auto 1rem">
+                        <i class="{{ icon }}"></i>
+                    </div>
+                    <h6 style="color:#1D3557;font-weight:700;margin-bottom:0.5rem">{{ title }}</h6>
+                    <small class="text-muted">{{ desc }}</small>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Recent Data -->
+        <div class="row gy-4">
+            <!-- Recent Donors -->
+            <div class="col-lg-6">
+                <div style="background:rgba(255,255,255,0.95);border-radius:24px;padding:2rem;box-shadow:0 6px 25px rgba(0,0,0,0.08)">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 style="color:#1D3557;font-weight:800;margin:0"><i class="fas fa-users me-2" style="color:#E63946"></i>Recent Donors</h5>
+                        <a href="/admin-manage-donors" style="color:#E63946;font-weight:600;font-size:0.9rem">View All</a>
+                    </div>
+                    {% for donor in recent_donors %}
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.04)">
+                        <div style="width:40px;height:40px;background:linear-gradient(135deg,#E63946,#d62828);color:white;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0">{{ donor.blood_group }}</div>
+                        <div class="flex-grow-1">
+                            <div style="font-weight:600;color:#1D3557;font-size:0.95rem">{{ donor.name }}</div>
+                            <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ donor.city }}</small>
+                        </div>
+                        <small class="text-muted">{{ donor.created_at.strftime('%d %b') }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Requests -->
+            <div class="col-lg-6">
+                <div style="background:rgba(255,255,255,0.95);border-radius:24px;padding:2rem;box-shadow:0 6px 25px rgba(0,0,0,0.08)">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 style="color:#1D3557;font-weight:800;margin:0"><i class="fas fa-ambulance me-2" style="color:#FFB703"></i>Recent Requests</h5>
+                        <a href="/admin-manage-requests" style="color:#E63946;font-weight:600;font-size:0.9rem">View All</a>
+                    </div>
+                    {% for req in recent_requests %}
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.04)">
+                        <div style="width:40px;height:40px;background:linear-gradient(135deg,#E63946,#d62828);color:white;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0">{{ req.blood_group }}</div>
+                        <div class="flex-grow-1">
+                            <div style="font-weight:600;color:#1D3557;font-size:0.95rem">{{ req.patient_name }}</div>
+                            <small class="text-muted"><i class="fas fa-hospital me-1"></i>{{ req.hospital }}</small>
+                        </div>
+                        <span style="padding:3px 10px;border-radius:50px;font-size:0.75rem;font-weight:700;background:{{ 'rgba(230,57,70,0.1)' if req.urgency=='Critical' else 'rgba(255,183,3,0.1)' }};color:{{ '#E63946' if req.urgency=='Critical' else '#b38200' }}">{{ req.urgency }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

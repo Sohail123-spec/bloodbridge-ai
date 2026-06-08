@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+{% block title %}Register Donor - BloodBridge AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-hero {
+        background: linear-gradient(135deg, #1D3557 0%, #E63946 100%);
+        padding: 60px 0 120px;
+        position: relative; overflow: hidden;
+    }
+    .register-hero::after {
+        content: '';
+        position: absolute; bottom: 0; left: 0; right: 0;
+        height: 60px;
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        clip-path: ellipse(60% 100% at 50% 100%);
+    }
+    .register-form-card {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 28px;
+        padding: 3rem;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+        margin-top: -60px;
+        position: relative; z-index: 10;
+    }
+    .blood-group-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .blood-group-option { display: none; }
+    .blood-group-label {
+        display: flex; align-items: center; justify-content: center;
+        height: 58px;
+        border: 2px solid #e0e0e0;
+        border-radius: 14px;
+        font-weight: 700; font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        color: #555;
+        background: white;
+    }
+    .blood-group-label:hover {
+        border-color: #E63946; color: #E63946;
+        background: rgba(230,57,70,0.05);
+    }
+    .blood-group-option:checked + .blood-group-label {
+        background: linear-gradient(135deg, #E63946, #d62828);
+        border-color: #E63946; color: white;
+        box-shadow: 0 6px 20px rgba(230,57,70,0.35);
+        transform: scale(1.05);
+    }
+    .step-indicator {
+        display: flex; gap: 0; margin-bottom: 2.5rem;
+    }
+    .step {
+        flex: 1; text-align: center; padding: 12px;
+        border-bottom: 3px solid #e0e0e0;
+        color: #aaa; font-weight: 600; font-size: 0.9rem;
+        cursor: pointer; transition: all 0.3s;
+    }
+    .step.active { border-bottom-color: #E63946; color: #E63946; }
+    .step.done { border-bottom-color: #2A9D8F; color: #2A9D8F; }
+    .form-step { display: none; animation: fadeInUp 0.4s ease-out; }
+    .form-step.active { display: block; }
+    .eligibility-result {
+        border-radius: 14px; padding: 1.2rem 1.5rem;
+        border: 2px solid; margin-top: 1rem; display: none;
+    }
+    .eligibility-result.eligible { border-color: #2A9D8F; background: rgba(42,157,143,0.08); color: #1d7a74; }
+    .eligibility-result.ineligible { border-color: #E63946; background: rgba(230,57,70,0.08); color: #d62828; }
+    .gender-btn { display: none; }
+    .gender-label {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 12px 20px; border: 2px solid #e0e0e0;
+        border-radius: 12px; font-weight: 600; cursor: pointer;
+        transition: all 0.25s ease; background: white;
+    }
+    .gender-label:hover { border-color: #1D3557; color: #1D3557; }
+    .gender-btn:checked + .gender-label {
+        background: #1D3557; border-color: #1D3557; color: white;
+    }
+    .success-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+        z-index: 9999; align-items: center; justify-content: center;
+    }
+    .success-overlay.show { display: flex; }
+    .success-modal {
+        background: white; border-radius: 28px; padding: 3rem;
+        text-align: center; max-width: 420px; width: 90%;
+        animation: fadeInUp 0.5s ease-out;
+    }
+    .success-icon {
+        width: 90px; height: 90px;
+        background: linear-gradient(135deg, #2A9D8F, #1d7a74);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.5rem; color: white; margin: 0 auto 1.5rem;
+        box-shadow: 0 10px 30px rgba(42,157,143,0.4);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="register-hero">
+    <div class="container text-center text-white">
+        <div class="d-inline-block bg-white bg-opacity-10 px-4 py-2 rounded-pill mb-3" style="border:1px solid rgba(255,255,255,0.3)">
+            <i class="fas fa-user-plus me-2" style="color:#FFB703"></i> Donor Registration
+        </div>
+        <h1 style="font-size:2.8rem;font-weight:900">Become a Blood Donor</h1>
+        <p class="mt-2 mb-0" style="opacity:0.85;font-size:1.1rem">Register today and be ready to save a life when it matters most</p>
+    </div>
+</section>
+
+<section style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); padding-bottom: 60px;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="register-form-card">
+                    <!-- Step Indicators -->
+                    <div class="step-indicator">
+                        <div class="step active" id="step-tab-1"><i class="fas fa-user me-1"></i> Personal Info</div>
+                        <div class="step" id="step-tab-2"><i class="fas fa-tint me-1"></i> Blood & Health</div>
+                        <div class="step" id="step-tab-3"><i class="fas fa-check me-1"></i> Confirm</div>
+                    </div>
+
+                    <form id="donorForm">
+                        <!-- Step 1: Personal Info -->
+                        <div class="form-step active" id="step-1">
+                            <h4 style="color:#1D3557;font-weight:700" class="mb-4">Personal Information</h4>
+                            <div class="row gy-4">
+                                <div class="col-12">
+                                    <label class="form-label">Full Name *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" style="background:rgba(230,57,70,0.1);border:2px solid rgba(0,0,0,0.1);border-right:none"><i class="fas fa-user" style="color:#E63946"></i></span>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required style="border-left:none">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Age *</label>
+                                    <input type="number" class="form-control" id="age" name="age" min="18" max="65" placeholder="18 - 65" required>
+                                    <small class="text-muted">Must be between 18 and 65 years</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Gender *</label>
+                                    <div class="d-flex gap-3">
+                                        <div class="flex-fill">
+                                            <input type="radio" name="gender" id="gender-male" value="Male" class="gender-btn" required>
+                                            <label for="gender-male" class="gender-label w-100"><i class="fas fa-mars"></i> Male</label>
+                                        </div>
+                                        <div class="flex-fill">
+                                            <input type="radio" name="gender" id="gender-female" value="Female" class="gender-btn">
+                                            <label for="gender-female" class="gender-label w-100"><i class="fas fa-venus"></i> Female</label>
+                                        </div>
+                                        <div class="flex-fill">
+                                            <input type="radio" name="gender" id="gender-other" value="Other" class="gender-btn">
+                                            <label for="gender-other" class="gender-label w-100"><i class="fas fa-genderless"></i> Other</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">City *</label>
+                                    <input type="text" class="form-control" id="city" name="city" placeholder="Your city" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Mobile Number *</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="+91 9876543210" required pattern="[0-9+\-\s]{10,15}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="your@email.com" required>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-end">
+                                <button type="button" class="btn btn-primary btn-lg px-5" onclick="goToStep(2)">
+                                    Next <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Blood & Health -->
+                        <div class="form-step" id="step-2">
+                            <h4 style="color:#1D3557;font-weight:700" class="mb-4">Blood Group & Health Info</h4>
+                            <div class="mb-4">
+                                <label class="form-label">Select Blood Group *</label>
+                                <div class="blood-group-grid">
+                                    {% for bg in ['O+','O-','A+','A-','B+','B-','AB+','AB-'] %}
+                                    <div>
+                                        <input type="radio" name="blood_group" id="bg-{{ bg|replace('+','p')|replace('-','m') }}" value="{{ bg }}" class="blood-group-option" required>
+                                        <label for="bg-{{ bg|replace('+','p')|replace('-','m') }}" class="blood-group-label">{{ bg }}</label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="row gy-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Weight (kg) *</label>
+                                    <input type="number" class="form-control" id="weight" name="weight" min="50" placeholder="Min 50 kg" required>
+                                    <small class="text-muted">Minimum 50 kg required to donate</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Last Donation Date</label>
+                                    <input type="date" class="form-control" id="last_donation" name="last_donation">
+                                    <small class="text-muted">Leave blank if first time</small>
+                                </div>
+                            </div>
+
+                            <!-- Eligibility Checker -->
+                            <div class="mt-4">
+                                <button type="button" class="btn btn-outline-primary" onclick="checkEligibility()">
+                                    <i class="fas fa-stethoscope me-2"></i> Check My Eligibility
+                                </button>
+                                <div class="eligibility-result" id="eligibility-result">
+                                    <strong id="eligibility-title"></strong>
+                                    <ul class="mt-2 mb-0" id="eligibility-reasons" style="padding-left:1.2rem"></ul>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary btn-lg px-5" onclick="goToStep(1)">
+                                    <i class="fas fa-arrow-left me-2"></i> Back
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg px-5" onclick="goToStep(3)">
+                                    Next <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Confirm -->
+                        <div class="form-step" id="step-3">
+                            <h4 style="color:#1D3557;font-weight:700" class="mb-4">Confirm Your Details</h4>
+                            <div id="review-section" style="background:rgba(29,53,87,0.04);border-radius:16px;padding:2rem">
+                                <!-- populated by JS -->
+                            </div>
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="agree" required>
+                                <label class="form-check-label" for="agree">
+                                    I confirm that all the information provided is accurate and I consent to being contacted during blood donation emergencies.
+                                </label>
+                            </div>
+                            <div class="mt-4 d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary btn-lg px-5" onclick="goToStep(2)">
+                                    <i class="fas fa-arrow-left me-2"></i> Back
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-lg px-5" id="submitBtn">
+                                    <i class="fas fa-heart me-2"></i> Register as Donor
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Success Modal -->
+<div class="success-overlay" id="successOverlay">
+    <div class="success-modal">
+        <div class="success-icon"><i class="fas fa-check"></i></div>
+        <h3 style="color:#1D3557;font-weight:800">Registration Successful!</h3>
+        <p class="text-muted mt-2">You are now a verified BloodBridge donor. You'll be notified when someone nearby needs your blood type.</p>
+        <div class="mt-4 d-flex gap-3 justify-content-center">
+            <a href="/" class="btn btn-outline-secondary">Go Home</a>
+            <a href="/search-donor" class="btn btn-primary">Find Donors</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentStep = 1;
+
+    function goToStep(step) {
+        if (step > currentStep && !validateStep(currentStep)) return;
+
+        document.querySelector(`#step-${currentStep}`).classList.remove('active');
+        document.querySelector(`#step-tab-${currentStep}`).classList.remove('active');
+        document.querySelector(`#step-tab-${currentStep}`).classList.add('done');
+
+        currentStep = step;
+        document.querySelector(`#step-${currentStep}`).classList.add('active');
+        document.querySelector(`#step-tab-${currentStep}`).classList.add('active');
+        document.querySelector(`#step-tab-${currentStep}`).classList.remove('done');
+
+        if (step === 3) populateReview();
+        window.scrollTo({ top: 400, behavior: 'smooth' });
+    }
+
+    function validateStep(step) {
+        if (step === 1) {
+            const fields = ['name', 'age', 'city', 'phone', 'email'];
+            const genderChecked = document.querySelector('input[name="gender"]:checked');
+            if (!genderChecked) { alert('Please select your gender.'); return false; }
+            for (const f of fields) {
+                const el = document.getElementById(f);
+                if (!el.value) { el.focus(); alert(`Please fill in: ${f}`); return false; }
+            }
+            const age = parseInt(document.getElementById('age').value);
+            if (age < 18 || age > 65) { alert('Age must be between 18 and 65.'); return false; }
+        }
+        if (step === 2) {
+            if (!document.querySelector('input[name="blood_group"]:checked')) {
+                alert('Please select your blood group.');
+                return false;
+            }
+            const weight = parseFloat(document.getElementById('weight').value);
+            if (!weight || weight < 50) { alert('Minimum weight is 50 kg.'); return false; }
+        }
+        return true;
+    }
+
+    function populateReview() {
+        const data = {
+            'Full Name': document.getElementById('name').value,
+            'Age': document.getElementById('age').value,
+            'Gender': document.querySelector('input[name="gender"]:checked')?.value || '-',
+            'City': document.getElementById('city').value,
+            'Phone': document.getElementById('phone').value,
+            'Email': document.getElementById('email').value,
+            'Blood Group': document.querySelector('input[name="blood_group"]:checked')?.value || '-',
+            'Weight': document.getElementById('weight').value + ' kg',
+            'Last Donation': document.getElementById('last_donation').value || 'First time donor'
+        };
+        let html = '<div class="row gy-3">';
+        for (const [key, val] of Object.entries(data)) {
+            html += `<div class="col-6"><small class="text-muted d-block">${key}</small><strong style="color:#1D3557">${val}</strong></div>`;
+        }
+        html += '</div>';
+        document.getElementById('review-section').innerHTML = html;
+    }
+
+    function checkEligibility() {
+        const age = parseInt(document.getElementById('age').value);
+        const weight = parseFloat(document.getElementById('weight').value);
+        const lastDonation = document.getElementById('last_donation').value;
+
+        fetch('/api/donor-eligibility', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ age, weight, last_donation: lastDonation })
+        })
+        .then(r => r.json())
+        .then(data => {
+            const el = document.getElementById('eligibility-result');
+            const title = document.getElementById('eligibility-title');
+            const reasons = document.getElementById('eligibility-reasons');
+            el.style.display = 'block';
+            if (data.eligible) {
+                el.className = 'eligibility-result eligible';
+                title.innerHTML = '<i class="fas fa-check-circle me-2"></i> You are Eligible to Donate!';
+                reasons.innerHTML = '';
+            } else {
+                el.className = 'eligibility-result ineligible';
+                title.innerHTML = '<i class="fas fa-times-circle me-2"></i> Not Eligible at This Time';
+                reasons.innerHTML = data.reasons.map(r => `<li>${r}</li>`).join('');
+            }
+        });
+    }
+
+    document.getElementById('donorForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (!document.getElementById('agree').checked) {
+            alert('Please confirm your consent to proceed.');
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Registering...';
+
+        const formData = {
+            name: document.getElementById('name').value,
+            age: document.getElementById('age').value,
+            gender: document.querySelector('input[name="gender"]:checked').value,
+            city: document.getElementById('city').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value,
+            blood_group: document.querySelector('input[name="blood_group"]:checked').value,
+            weight: document.getElementById('weight').value,
+            last_donation: document.getElementById('last_donation').value
+        };
+
+        try {
+            const response = await fetch('/register-donor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('successOverlay').classList.add('show');
+            } else {
+                alert(data.message);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-heart me-2"></i> Register as Donor';
+            }
+        } catch (err) {
+            alert('Server error. Please try again.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-heart me-2"></i> Register as Donor';
+        }
+    });
+</script>
+{% endblock %}

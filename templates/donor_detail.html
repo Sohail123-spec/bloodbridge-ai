@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ donor.name }} - Donor Profile{% endblock %}
+{% block content %}
+<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);min-height:80vh;padding:50px 0">
+    <div class="container">
+        <a href="/search-donor" style="color:#1D3557;text-decoration:none;font-weight:600"><i class="fas fa-arrow-left me-2"></i>Back to Search</a>
+        <div class="row gy-4 mt-2">
+            <div class="col-lg-4">
+                <div style="background:rgba(255,255,255,0.95);border-radius:24px;padding:2.5rem;box-shadow:0 10px 40px rgba(0,0,0,0.1);text-align:center">
+                    <div style="width:100px;height:100px;background:linear-gradient(135deg,#E63946,#d62828);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.2rem;font-weight:900;color:white;box-shadow:0 10px 30px rgba(230,57,70,0.35)">
+                        {{ donor.blood_group }}
+                    </div>
+                    <h3 style="color:#1D3557;font-weight:800;margin-bottom:4px">{{ donor.name }}</h3>
+                    <p class="text-muted mb-3"><i class="fas fa-map-marker-alt me-1"></i>{{ donor.city }}</p>
+                    <div style="display:inline-block;padding:6px 18px;border-radius:50px;font-weight:700;background:{{ 'rgba(42,157,143,0.1)' if donor.available else 'rgba(230,57,70,0.1)' }};color:{{ '#2A9D8F' if donor.available else '#E63946' }};border:1px solid {{ '#2A9D8F' if donor.available else '#E63946' }}">
+                        <i class="fas fa-{{ 'check' if donor.available else 'times' }} me-1"></i>{{ 'Available to Donate' if donor.available else 'Not Available' }}
+                    </div>
+                    <hr class="my-4">
+                    <a href="tel:{{ donor.phone }}" class="btn btn-primary w-100 btn-lg mb-2">
+                        <i class="fas fa-phone me-2"></i> {{ donor.phone }}
+                    </a>
+                    <a href="mailto:{{ donor.email }}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-envelope me-2"></i> Send Email
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div style="background:rgba(255,255,255,0.95);border-radius:24px;padding:2.5rem;box-shadow:0 10px 40px rgba(0,0,0,0.1);margin-bottom:1.5rem">
+                    <h5 style="color:#1D3557;font-weight:800;margin-bottom:1.5rem"><i class="fas fa-user me-2" style="color:#E63946"></i>Donor Information</h5>
+                    <div class="row gy-4">
+                        {% for label, val, icon in [
+                            ('Full Name', donor.name, 'user'),
+                            ('Blood Group', donor.blood_group, 'tint'),
+                            ('Age', donor.age|string + ' years', 'birthday-cake'),
+                            ('Gender', donor.gender, 'venus-mars'),
+                            ('City', donor.city, 'map-marker-alt'),
+                            ('Phone', donor.phone, 'phone'),
+                            ('Email', donor.email, 'envelope'),
+                            ('Last Donation', donor.last_donation.strftime('%d %b %Y') if donor.last_donation else 'First Donor', 'calendar'),
+                            ('Registered Hospital', donor.hospital or 'Self Registered', 'hospital'),
+                            ('Total Donations', donation_count|string, 'hand-holding-heart')
+                        ] %}
+                        <div class="col-md-6">
+                            <small class="text-muted d-block"><i class="fas fa-{{ icon }} me-1"></i>{{ label }}</small>
+                            <strong style="color:#1D3557">{{ val }}</strong>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Eligibility Card -->
+                <div style="background:rgba(255,255,255,0.95);border-radius:24px;padding:2rem;box-shadow:0 10px 40px rgba(0,0,0,0.1);border-left:5px solid {{ '#2A9D8F' if eligible else '#E63946' }}">
+                    <h5 style="color:#1D3557;font-weight:800;margin-bottom:1rem"><i class="fas fa-stethoscope me-2" style="color:{{ '#2A9D8F' if eligible else '#E63946' }}"></i>Eligibility Status</h5>
+                    {% if eligible %}
+                    <div style="color:#2A9D8F;font-weight:700;font-size:1.1rem"><i class="fas fa-check-circle me-2"></i>This donor is currently eligible to donate blood.</div>
+                    {% else %}
+                    <div style="color:#E63946;font-weight:700;font-size:1.1rem;margin-bottom:0.8rem"><i class="fas fa-times-circle me-2"></i>Not eligible at this time:</div>
+                    <ul class="text-muted mb-0">
+                        {% for r in reasons %}<li>{{ r }}</li>{% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

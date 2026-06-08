@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Live Emergency Board - BloodBridge AI{% endblock %}
+{% block content %}
+<section style="background:linear-gradient(135deg,#1D3557,#E63946);padding:50px 0 90px;position:relative;overflow:hidden">
+    <div class="container text-white text-center">
+        <span style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);padding:6px 18px;border-radius:50px;font-size:0.85rem;font-weight:700">
+            <span style="display:inline-block;width:8px;height:8px;background:#E63946;border-radius:50%;margin-right:6px;animation:pulse 1.5s infinite"></span>
+            Live Board
+        </span>
+        <h1 style="font-size:3rem;font-weight:900;margin-top:1rem">Emergency Blood Requests</h1>
+        <p style="opacity:0.9;font-size:1.1rem">All active blood requests across the platform — respond to save lives</p>
+        <a href="/emergency-request" class="btn btn-warning btn-lg mt-3 px-5">
+            <i class="fas fa-plus me-2"></i> Post Emergency
+        </a>
+    </div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);clip-path:ellipse(60% 100% at 50% 100%)"></div>
+</section>
+<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:40px 0 60px">
+    <div class="container">
+        {% if requests %}
+        <div class="row gy-4">
+            {% for req in requests %}
+            <div class="col-md-6">
+                <div style="background:rgba(255,255,255,0.9);border-radius:20px;padding:2rem;border-left:5px solid {{ '#E63946' if req.urgency=='Critical' else '#FFB703' if req.urgency=='Urgent' else '#2A9D8F' }};box-shadow:0 6px 25px rgba(0,0,0,0.07);transition:all 0.3s ease" onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform=''">
+                    <div class="d-flex gap-3 align-items-start">
+                        <div style="min-width:60px;height:60px;background:linear-gradient(135deg,#E63946,#d62828);color:white;font-weight:800;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:0.95rem;box-shadow:0 6px 20px rgba(230,57,70,0.3)">{{ req.blood_group }}</div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 style="color:#1D3557;font-weight:700;margin-bottom:4px">{{ req.patient_name }}</h5>
+                                <span style="padding:4px 14px;border-radius:50px;font-size:0.8rem;font-weight:700;background:{{ 'rgba(230,57,70,0.15)' if req.urgency=='Critical' else 'rgba(255,183,3,0.15)' if req.urgency=='Urgent' else 'rgba(42,157,143,0.15)' }};color:{{ '#E63946' if req.urgency=='Critical' else '#b38200' if req.urgency=='Urgent' else '#2A9D8F' }}">
+                                    <i class="fas fa-{{ 'exclamation-triangle' if req.urgency=='Critical' else 'exclamation' if req.urgency=='Urgent' else 'info-circle' }} me-1"></i>{{ req.urgency }}
+                                </span>
+                            </div>
+                            <div class="text-muted small">
+                                <i class="fas fa-hospital me-1"></i>{{ req.hospital }} &nbsp;|&nbsp;
+                                <i class="fas fa-map-marker-alt me-1"></i>{{ req.city }} &nbsp;|&nbsp;
+                                <i class="fas fa-tint me-1"></i>{{ req.units_needed }} unit(s)
+                            </div>
+                            {% if req.description %}<p class="mt-2 mb-0 text-muted small">{{ req.description }}</p>{% endif %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top:1px solid rgba(0,0,0,0.06)">
+                        <small class="text-muted"><i class="fas fa-clock me-1"></i>{{ req.created_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+                        <a href="tel:{{ req.contact }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-phone me-1"></i> {{ req.contact }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:5rem 2rem">
+            <i class="fas fa-check-circle" style="font-size:5rem;color:#2A9D8F;display:block;margin-bottom:1.5rem"></i>
+            <h3 style="color:#1D3557;font-weight:800">No Active Emergencies</h3>
+            <p class="text-muted">Great news! There are currently no active blood emergencies.</p>
+            <a href="/register-donor" class="btn btn-primary mt-2">Become a Donor</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Register Hospital - BloodBridge AI{% endblock %}
+{% block content %}
+<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:60px 0">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div style="background:rgba(255,255,255,0.95);border-radius:28px;padding:3rem;box-shadow:0 30px 80px rgba(0,0,0,0.12)">
+                    <div class="text-center mb-4">
+                        <div style="width:70px;height:70px;background:linear-gradient(135deg,#1D3557,#2A9D8F);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+                            <i class="fas fa-hospital-alt" style="font-size:1.8rem;color:white"></i>
+                        </div>
+                        <h3 style="color:#1D3557;font-weight:800">Register Your Hospital</h3>
+                        <p class="text-muted">Join BloodBridge to manage your donor database</p>
+                    </div>
+                    <div id="alert-box"></div>
+                    <form id="registerForm">
+                        <div class="row gy-3">
+                            <div class="col-12">
+                                <label class="form-label">Hospital / Clinic Name *</label>
+                                <input type="text" class="form-control" id="name" required placeholder="Full hospital name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="email" required placeholder="hospital@example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="phone" required placeholder="+91 9876543210">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">City *</label>
+                                <input type="text" class="form-control" id="city" required placeholder="City">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Password *</label>
+                                <input type="password" class="form-control" id="password" required placeholder="Min 6 characters" minlength="6">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Full Address *</label>
+                                <textarea class="form-control" id="address" required rows="2" placeholder="Complete address"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mt-4" id="submitBtn">
+                            <i class="fas fa-hospital me-2"></i> Register Hospital
+                        </button>
+                        <div class="text-center mt-3">
+                            <a href="/hospital-login" style="color:#E63946;font-weight:600">Already registered? Login</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Registering...';
+        const res = await fetch('/hospital-register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                city: document.getElementById('city').value,
+                password: document.getElementById('password').value,
+                address: document.getElementById('address').value
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('alert-box').innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Registration successful! Redirecting to login...</div>';
+            setTimeout(() => window.location.href = '/hospital-login', 2000);
+        } else {
+            document.getElementById('alert-box').innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-hospital me-2"></i> Register Hospital';
+        }
+    });
+</script>
+{% endblock %}
