@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% block title %}Request Donation Certificate - BloodBridge AI{% endblock %}
+{% block extra_css %}
+<style>
+    .request-hero {
+        background: linear-gradient(135deg, #8B0000 0%, #C41E3A 50%, #1D3557 100%);
+        padding: 60px 0 100px; position: relative; overflow: hidden;
+    }
+    .request-hero::after {
+        content: '';
+        position: absolute; bottom: 0; left: 0; right: 0; height: 55px;
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        clip-path: ellipse(60% 100% at 50% 100%);
+    }
+    .form-card {
+        background: rgba(255,255,255,0.97); border-radius: 28px;
+        padding: 3rem; box-shadow: 0 30px 80px rgba(139,0,0,0.12);
+        margin-top: -60px; position: relative; z-index: 10;
+    }
+    .blood-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+    .bg-opt { display: none; }
+    .bg-lbl {
+        height: 54px; display: flex; align-items: center; justify-content: center;
+        border: 2px solid #e0e0e0; border-radius: 12px;
+        font-weight: 700; cursor: pointer; transition: all 0.25s;
+    }
+    .bg-opt:checked + .bg-lbl {
+        background: linear-gradient(135deg,#8B0000,#C41E3A);
+        border-color: #8B0000; color: white;
+        box-shadow: 0 4px 15px rgba(139,0,0,0.3);
+    }
+    .photo-drop {
+        border: 3px dashed #ccc; border-radius: 20px; padding: 3rem 2rem;
+        text-align: center; cursor: pointer; transition: all 0.3s ease;
+        background: rgba(255,255,255,0.5); position: relative;
+    }
+    .photo-drop.dragover { border-color: #C41E3A; background: rgba(196,30,58,0.04); }
+    .photo-drop.has-photo { border-color: #2A9D8F; background: rgba(42,157,143,0.04); }
+    .photo-preview {
+        display: none; margin-top: 1rem;
+        border-radius: 16px; overflow: hidden;
+        max-height: 280px; text-align: center;
+    }
+    .photo-preview img {
+        max-height: 280px; max-width: 100%; border-radius: 16px;
+        object-fit: cover; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .step-badge {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg,#8B0000,#C41E3A);
+        color: white; font-weight: 800; font-size: 0.9rem; margin-right: 10px;
+        flex-shrink: 0;
+    }
+    .info-box {
+        background: rgba(29,53,87,0.05); border-left: 4px solid #1D3557;
+        border-radius: 0 12px 12px 0; padding: 1.2rem 1.5rem;
+    }
+    .success-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+        z-index: 9999; align-items: center; justify-content: center;
+    }
+    .success-overlay.show { display: flex; }
+    .success-modal {
+        background: white; border-radius: 28px; padding: 3rem;
+        text-align: center; max-width: 420px; width: 90%;
+        animation: fadeInUp 0.5s ease-out;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="request-hero">
+    <div class="container text-white text-center">
+        <div class="d-inline-block px-4 py-2 rounded-pill mb-3" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3)">
+            <i class="fas fa-certificate me-2" style="color:#FFB703"></i> Certificate Request
+        </div>
+        <h1 style="font-size:2.8rem;font-weight:900">Request Your Donation Certificate</h1>
+        <p style="opacity:0.9;font-size:1.1rem;margin-top:0.5rem">
+            Upload proof of your donation — our admin will verify and issue your certificate within 24 hours
+        </p>
+    </div>
+</section>
+
+<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding-bottom:60px">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <!-- How it works -->
+                <div class="row gy-3 mb-4 mt-3" style="margin-top:-30px!important;position:relative;z-index:5">
+                    {% for icon, color, step, text in [
+                        ('fas fa-camera','#C41E3A','Upload Photo','Take a clear photo of yourself donating blood at the hospital'),
+                        ('fas fa-paper-plane','#1D3557','Submit Request','Fill your details and submit the request for verification'),
+                        ('fas fa-shield-check','#FFB703','Admin Verifies','Our admin reviews your photo and approves within 24 hrs'),
+                        ('fas fa-certificate','#2A9D8F','Get Certificate','Download and share your official BloodBridge certificate')
+                    ] %}
+                    <div class="col-6 col-md-3">
+                        <div style="background:rgba(255,255,255,0.9);border-radius:16px;padding:1.2rem;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.07)">
+                            <div style="width:48px;height:48px;background:{{ color }}18;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.8rem">
+                                <i class="{{ icon }}" style="color:{{ color }};font-size:1.3rem"></i>
+                            </div>
+                            <div style="font-weight:700;color:#1D3557;font-size:0.85rem">{{ step }}</div>
+                            <div style="color:#888;font-size:0.75rem;margin-top:4px">{{ text }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-card">
+                    <!-- Info box -->
+                    <div class="info-box mb-4">
+                        <h6 style="color:#1D3557;font-weight:700;margin-bottom:0.5rem">
+                            <i class="fas fa-info-circle me-2"></i>Photo Requirements
+                        </h6>
+                        <ul class="text-muted mb-0 small" style="padding-left:1.2rem">
+                            <li>Must show you donating blood (needle in arm / at donation bed)</li>
+                            <li>Hospital or blood bank name visible in background is a plus</li>
+                            <li>Clear, well-lit photo — blurry images will be rejected</li>
+                            <li>JPG, PNG or WEBP format — max 5MB</li>
+                        </ul>
+                    </div>
+
+                    <form id="certRequestForm" enctype="multipart/form-data">
+                        <!-- Personal Details -->
+                        <h6 style="color:#1D3557;font-weight:800;margin-bottom:1rem">
+                            <span class="step-badge">1</span> Your Details
+                        </h6>
+                        <div class="row gy-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="donor_name" name="donor_name" placeholder="As it should appear on certificate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Registered phone number" required>
+                                <small class="text-muted">Used to link your donor profile</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Hospital / Blood Bank Name *</label>
+                                <input type="text" class="form-control" id="hospital" name="hospital" placeholder="Where you donated" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Donation Date *</label>
+                                <input type="date" class="form-control" id="donation_date" name="donation_date" required>
+                            </div>
+                        </div>
+
+                        <!-- Blood Group -->
+                        <h6 style="color:#1D3557;font-weight:800;margin-bottom:1rem">
+                            <span class="step-badge">2</span> Blood Group
+                        </h6>
+                        <div class="blood-grid mb-4">
+                            {% for bg in blood_groups %}
+                            <div>
+                                <input type="radio" name="blood_group" id="bg-{{ bg|replace('+','p')|replace('-','m') }}" value="{{ bg }}" class="bg-opt" required>
+                                <label for="bg-{{ bg|replace('+','p')|replace('-','m') }}" class="bg-lbl">{{ bg }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Photo Upload -->
+                        <h6 style="color:#1D3557;font-weight:800;margin-bottom:1rem">
+                            <span class="step-badge">3</span> Upload Proof Photo
+                        </h6>
+                        <div class="photo-drop" id="photoDrop" onclick="document.getElementById('photoInput').click()">
+                            <input type="file" id="photoInput" name="photo" accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none" required>
+                            <i class="fas fa-camera" style="font-size:3rem;color:#ccc;display:block;margin-bottom:1rem" id="dropIcon"></i>
+                            <h5 style="color:#1D3557;font-weight:700" id="dropTitle">Click or drag photo here</h5>
+                            <p class="text-muted mb-0" id="dropSub">JPG, PNG or WEBP — max 5MB</p>
+                        </div>
+                        <div class="photo-preview" id="photoPreview">
+                            <img id="previewImg" src="" alt="Donation proof">
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearPhoto()">
+                                    <i class="fas fa-times me-1"></i> Remove Photo
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="alert-box" class="mt-3"></div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-4" id="submitBtn" style="background:linear-gradient(135deg,#8B0000,#C41E3A);border:none;font-size:1.1rem;padding:14px">
+                            <i class="fas fa-paper-plane me-2"></i> Submit Certificate Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Success Modal -->
+<div class="success-overlay" id="successOverlay">
+    <div class="success-modal">
+        <div style="width:90px;height:90px;background:linear-gradient(135deg,#2A9D8F,#1d7a74);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:0 10px 30px rgba(42,157,143,0.4)">
+            <i class="fas fa-check" style="font-size:2.5rem;color:white"></i>
+        </div>
+        <h3 style="color:#1D3557;font-weight:800">Request Submitted!</h3>
+        <p class="text-muted mt-2">Your certificate request is under review. Our admin will verify your donation photo and issue the certificate within 24 hours.</p>
+        <div class="mt-4 d-flex gap-3 justify-content-center">
+            <a href="/" class="btn btn-outline-secondary">Go Home</a>
+            <a href="/search-donor" class="btn btn-primary">Find Donors</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set today as max date
+    document.getElementById('donation_date').max = new Date().toISOString().split('T')[0];
+
+    // Photo drag-drop
+    const drop = document.getElementById('photoDrop');
+    const input = document.getElementById('photoInput');
+
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+    drop.addEventListener('drop', e => {
+        e.preventDefault(); drop.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) setPhoto(e.dataTransfer.files[0]);
+    });
+    input.addEventListener('change', () => { if (input.files[0]) setPhoto(input.files[0]); });
+
+    function setPhoto(file) {
+        if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB'); return; }
+        drop.classList.add('has-photo');
+        document.getElementById('dropIcon').style.color = '#2A9D8F';
+        document.getElementById('dropTitle').textContent = file.name;
+        document.getElementById('dropSub').textContent = `${(file.size/1024).toFixed(0)} KB — Looks good ✓`;
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('photoPreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function clearPhoto() {
+        input.value = '';
+        drop.classList.remove('has-photo');
+        document.getElementById('dropIcon').style.color = '#ccc';
+        document.getElementById('dropTitle').textContent = 'Click or drag photo here';
+        document.getElementById('dropSub').textContent = 'JPG, PNG or WEBP — max 5MB';
+        document.getElementById('photoPreview').style.display = 'none';
+        document.getElementById('previewImg').src = '';
+    }
+
+    document.getElementById('certRequestForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const bg = document.querySelector('input[name="blood_group"]:checked');
+        if (!bg) { alert('Please select your blood group.'); return; }
+        if (!input.files[0]) { alert('Please upload a photo of your donation.'); return; }
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Submitting...';
+
+        const formData = new FormData(this);
+        try {
+            const res = await fetch('/request-certificate', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('successOverlay').classList.add('show');
+            } else {
+                document.getElementById('alert-box').innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Submit Certificate Request';
+            }
+        } catch(err) {
+            document.getElementById('alert-box').innerHTML = '<div class="alert alert-danger">Server error. Please try again.</div>';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Submit Certificate Request';
+        }
+    });
+</script>
+{% endblock %}

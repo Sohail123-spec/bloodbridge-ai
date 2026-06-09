@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Certificate Pending - BloodBridge AI{% endblock %}
+{% block content %}
+<section style="min-height:75vh;display:flex;align-items:center;background:linear-gradient(135deg,#f5f7fa,#c3cfe2)">
+    <div class="container text-center">
+        <div style="width:100px;height:100px;background:linear-gradient(135deg,#FFB703,#ff9500);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;box-shadow:0 15px 40px rgba(255,183,3,0.3)">
+            <i class="fas fa-hourglass-half" style="font-size:2.5rem;color:white"></i>
+        </div>
+        <h2 style="color:#1D3557;font-weight:800;margin-bottom:1rem">Certificate Pending Approval</h2>
+        <p class="text-muted" style="font-size:1.1rem;max-width:480px;margin:0 auto 2rem">
+            Your donation certificate request is still under review by our admin team. You'll be able to access it once approved — usually within 24 hours.
+        </p>
+        <a href="/" class="btn btn-primary btn-lg px-5"><i class="fas fa-home me-2"></i>Go Home</a>
+    </div>
+</section>
+{% endblock %}

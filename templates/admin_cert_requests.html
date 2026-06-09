@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}Certificate Requests - Admin{% endblock %}
+{% block extra_css %}
+<style>
+    .tab-pill {
+        padding: 8px 20px; border-radius: 50px; font-weight: 700; font-size: 0.9rem;
+        cursor: pointer; border: 2px solid transparent; text-decoration: none;
+        transition: all 0.25s ease; display: inline-block;
+    }
+    .tab-pill.pending { border-color: #FFB703; color: #FFB703; }
+    .tab-pill.pending.active { background: #FFB703; color: white; }
+    .tab-pill.approved { border-color: #2A9D8F; color: #2A9D8F; }
+    .tab-pill.approved.active { background: #2A9D8F; color: white; }
+    .tab-pill.rejected { border-color: #E63946; color: #E63946; }
+    .tab-pill.rejected.active { background: #E63946; color: white; }
+    .req-card {
+        background: rgba(255,255,255,0.95); border-radius: 20px;
+        padding: 1.5rem; box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+        transition: all 0.3s ease;
+    }
+    .req-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.12); transform: translateY(-3px); }
+    .proof-img {
+        width: 100%; max-height: 220px; object-fit: cover;
+        border-radius: 14px; cursor: pointer;
+        border: 3px solid rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    .proof-img:hover { border-color: #E63946; transform: scale(1.02); }
+    .blood-badge-sm {
+        width: 44px; height: 44px; border-radius: 12px;
+        background: linear-gradient(135deg,#E63946,#d62828);
+        color: white; font-weight: 800; font-size: 0.85rem;
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .lightbox {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.9); z-index: 9999;
+        align-items: center; justify-content: center;
+        cursor: pointer;
+    }
+    .lightbox.show { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 12px; }
+    .note-input {
+        border: 2px solid #e0e0e0; border-radius: 10px;
+        padding: 8px 12px; width: 100%; font-size: 0.9rem;
+        transition: border-color 0.25s;
+        resize: none;
+    }
+    .note-input:focus { border-color: #E63946; outline: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section style="background:linear-gradient(135deg,#1D3557,#0a0a1a);padding:45px 0 90px;position:relative">
+    <div class="container text-white">
+        <a href="/admin-dashboard" style="color:rgba(255,255,255,0.6);text-decoration:none;font-weight:600">
+            <i class="fas fa-arrow-left me-2"></i>Admin Dashboard
+        </a>
+        <h2 style="font-size:2.2rem;font-weight:900;margin-top:1rem">
+            <i class="fas fa-certificate me-2" style="color:#FFB703"></i>Certificate Requests
+        </h2>
+        <p style="opacity:0.75">Review donor proof photos and approve or reject certificate requests</p>
+    </div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:55px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);clip-path:ellipse(60% 100% at 50% 100%)"></div>
+</section>
+
+<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:40px 0 60px">
+    <div class="container">
+
+        <!-- Status Tabs -->
+        <div class="d-flex gap-3 flex-wrap mb-4">
+            <a href="?status=Pending" class="tab-pill pending {{ 'active' if status_filter=='Pending' else '' }}">
+                <i class="fas fa-clock me-1"></i> Pending
+                <span style="background:rgba(255,183,3,0.2);padding:2px 8px;border-radius:10px;margin-left:6px">{{ counts.Pending }}</span>
+            </a>
+            <a href="?status=Approved" class="tab-pill approved {{ 'active' if status_filter=='Approved' else '' }}">
+                <i class="fas fa-check-circle me-1"></i> Approved
+                <span style="background:rgba(42,157,143,0.2);padding:2px 8px;border-radius:10px;margin-left:6px">{{ counts.Approved }}</span>
+            </a>
+            <a href="?status=Rejected" class="tab-pill rejected {{ 'active' if status_filter=='Rejected' else '' }}">
+                <i class="fas fa-times-circle me-1"></i> Rejected
+                <span style="background:rgba(230,57,70,0.2);padding:2px 8px;border-radius:10px;margin-left:6px">{{ counts.Rejected }}</span>
+            </a>
+        </div>
+
+        {% if requests %}
+        <div class="row gy-4">
+            {% for req in requests %}
+            <div class="col-lg-6" id="card-{{ req.id }}">
+                <div class="req-card">
+                    <div class="d-flex gap-3 align-items-start mb-3">
+                        <div class="blood-badge-sm">{{ req.blood_group }}</div>
+                        <div class="flex-grow-1">
+                            <h5 style="color:#1D3557;font-weight:800;margin-bottom:3px">{{ req.donor_name }}</h5>
+                            <div class="text-muted small">
+                                <i class="fas fa-hospital me-1"></i>{{ req.hospital }} &nbsp;|&nbsp;
+                                <i class="fas fa-calendar me-1"></i>{{ req.donation_date[:10] if req.donation_date else '-' }}
+                            </div>
+                        </div>
+                        <span style="padding:4px 12px;border-radius:50px;font-size:0.78rem;font-weight:700;
+                            background:{{ 'rgba(255,183,3,0.15)' if req.status=='Pending' else 'rgba(42,157,143,0.15)' if req.status=='Approved' else 'rgba(230,57,70,0.15)' }};
+                            color:{{ '#b38200' if req.status=='Pending' else '#2A9D8F' if req.status=='Approved' else '#E63946' }}">
+                            {{ req.status }}
+                        </span>
+                    </div>
+
+                    <!-- Proof Photo -->
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-2 fw-bold"><i class="fas fa-camera me-1"></i>Proof Photo — click to enlarge</small>
+                        <img src="data:{{ req.photo_mime }};base64,{{ req.photo_base64 }}"
+                             class="proof-img"
+                             alt="Donation proof"
+                             onclick="openLightbox(this.src)">
+                    </div>
+
+                    <div class="text-muted small mb-3">
+                        <i class="fas fa-clock me-1"></i>Requested: {{ req.requested_at[:16] if req.requested_at else '-' }}
+                        {% if req.approved_at %}
+                        &nbsp;|&nbsp;<i class="fas fa-check me-1"></i>Processed: {{ req.approved_at[:16] }}
+                        {% endif %}
+                    </div>
+
+                    {% if req.admin_note %}
+                    <div style="background:rgba(0,0,0,0.04);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1rem;font-size:0.88rem">
+                        <strong>Admin Note:</strong> {{ req.admin_note }}
+                    </div>
+                    {% endif %}
+
+                    {% if req.status == 'Pending' %}
+                    <!-- Action Buttons -->
+                    <div>
+                        <textarea class="note-input mb-3" rows="2" id="note-{{ req.id }}"
+                            placeholder="Optional note (reason for rejection, or approval message)..."></textarea>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success flex-fill" onclick="approve({{ req.id }})">
+                                <i class="fas fa-check me-1"></i> Approve & Issue Certificate
+                            </button>
+                            <button class="btn btn-danger flex-fill" onclick="reject({{ req.id }})">
+                                <i class="fas fa-times me-1"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                    {% elif req.status == 'Approved' %}
+                    <a href="/certificate/req/{{ req.id }}" target="_blank" class="btn btn-outline-success w-100">
+                        <i class="fas fa-external-link-alt me-1"></i> View Certificate
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:4rem 2rem;background:rgba(255,255,255,0.9);border-radius:24px">
+            <i class="fas fa-certificate" style="font-size:4rem;color:#ccc;display:block;margin-bottom:1.5rem"></i>
+            <h4 style="color:#1D3557;font-weight:700">No {{ status_filter }} Requests</h4>
+            <p class="text-muted">No certificate requests with status "{{ status_filter }}" found.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <img id="lightboxImg" src="" alt="Proof photo">
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openLightbox(src) {
+        document.getElementById('lightboxImg').src = src;
+        document.getElementById('lightbox').classList.add('show');
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('show');
+    }
+
+    async function approve(id) {
+        const note = document.getElementById(`note-${id}`).value;
+        if (!confirm('Approve this certificate request?')) return;
+        const res = await fetch(`/admin-approve-certificate/${id}`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({note})
+        });
+        const data = await res.json();
+        if (data.success) {
+            const card = document.getElementById(`card-${id}`);
+            card.innerHTML = `<div class="req-card" style="text-align:center;padding:2rem">
+                <i class="fas fa-check-circle" style="font-size:3rem;color:#2A9D8F;display:block;margin-bottom:1rem"></i>
+                <h5 style="color:#1D3557;font-weight:700">Certificate Approved!</h5>
+                <a href="${data.certificate_url}" target="_blank" class="btn btn-success mt-2">View Certificate</a>
+            </div>`;
+        }
+    }
+
+    async function reject(id) {
+        const note = document.getElementById(`note-${id}`).value;
+        if (!note.trim()) { alert('Please add a reason for rejection in the note box.'); return; }
+        if (!confirm('Reject this certificate request?')) return;
+        const res = await fetch(`/admin-reject-certificate/${id}`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({note})
+        });
+        const data = await res.json();
+        if (data.success) {
+            const card = document.getElementById(`card-${id}`);
+            card.innerHTML = `<div class="req-card" style="text-align:center;padding:2rem">
+                <i class="fas fa-times-circle" style="font-size:3rem;color:#E63946;display:block;margin-bottom:1rem"></i>
+                <h5 style="color:#1D3557;font-weight:700">Request Rejected</h5>
+                <p class="text-muted">${note}</p>
+            </div>`;
+        }
+    }
+</script>
+{% endblock %}
