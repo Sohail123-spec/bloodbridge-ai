@@ -790,6 +790,50 @@ def api_eligibility():
     el, reasons = check_eligibility(int(d.get('age',0)), float(d.get('weight',50)), d.get('last_donation'))
     return jsonify({'eligible':el,'reasons':reasons})
 
+
+# ---- CHECK CERTIFICATE STATUS ----
+@app.route('/check-certificate')
+def check_certificate():
+    phone = request.args.get('phone', '').strip()
+    if not phone:
+        return render_template('check_certificate.html')
+    conn = get_db()
+    cur = db_execute(conn, """
+        SELECT id, donor_name, blood_group, hospital, donation_date,
+               status, admin_note, requested_at
+        FROM certificate_requests
+        WHERE donor_id IN (SELECT id FROM donors WHERE phone=?)
+           OR donor_name IN (SELECT name FROM donors WHERE phone=?)
+        ORDER BY requested_at DESC
+    """, (phone, phone))
+    rows = fetchall(cur)
+    conn.close()
+    if not rows:
+        return jsonify({'found': False})
+    results = []
+    for r in rows:
+        dd = r['donation_date']
+        try:
+            date_fmt = dd.strftime('%d %b %Y') if hasattr(dd,'strftime') else datetime.strptime(str(dd)[:10],'%Y-%m-%d').strftime('%d %b %Y')
+        except:
+            date_fmt = str(dd)[:10]
+        ra = r['requested_at']
+        try:
+            ra_fmt = ra.strftime('%d %b %Y, %I:%M %p') if hasattr(ra,'strftime') else str(ra)[:16]
+        except:
+            ra_fmt = str(ra)[:16]
+        results.append({
+            'id':           r['id'],
+            'donor_name':   r['donor_name'],
+            'blood_group':  r['blood_group'],
+            'hospital':     r['hospital'],
+            'donation_date':date_fmt,
+            'status':       r['status'],
+            'admin_note':   r['admin_note'] or '',
+            'requested_at': ra_fmt
+        })
+    return jsonify({'found': True, 'requests': results})
+
 # ---- ERRORS ----
 @app.errorhandler(404)
 def not_found(e): return render_template('404.html'), 404

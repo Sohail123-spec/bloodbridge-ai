@@ -1,488 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blood Donation Certificate - {{ donation.name }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Donation Certificate — {{ donation.name }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;700;900&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 16px;font-family:'Lato',sans-serif}
 
-        body {
-            background: #f0e6d3;
-            min-height: 100vh;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start;
-            padding: 30px 20px;
-            font-family: 'Lato', sans-serif;
-        }
+.action-bar{display:flex;gap:12px;margin-bottom:22px;width:100%;max-width:960px;justify-content:flex-end}
+.btn-print{background:linear-gradient(135deg,#8B0000,#C41E3A);color:white;border:none;padding:11px 26px;border-radius:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 15px rgba(139,0,0,.35);transition:all .3s}
+.btn-print:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(139,0,0,.45)}
+.btn-share{background:white;color:#8B0000;border:2px solid #8B0000;padding:10px 22px;border-radius:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .3s}
+.btn-share:hover{background:#8B0000;color:white}
 
-        .action-bar {
-            display: flex; gap: 12px; margin-bottom: 24px;
-            width: 100%; max-width: 900px; justify-content: flex-end;
-        }
+/* ===== CERTIFICATE WRAPPER ===== */
+.cert-wrap{width:100%;max-width:960px}
 
-        .btn-print {
-            background: linear-gradient(135deg, #8B0000, #C41E3A);
-            color: white; border: none; padding: 12px 28px;
-            border-radius: 10px; font-weight: 700; font-size: 0.95rem;
-            cursor: pointer; display: flex; align-items: center; gap: 8px;
-            transition: all 0.3s; box-shadow: 0 4px 15px rgba(139,0,0,0.3);
-        }
-        .btn-print:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139,0,0,0.4); }
+.certificate{
+  background:#fff9f4;
+  width:100%;
+  aspect-ratio:1.414/1;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 25px 70px rgba(0,0,0,.3);
+}
 
-        .btn-share {
-            background: white; color: #8B0000;
-            border: 2px solid #8B0000; padding: 11px 24px;
-            border-radius: 10px; font-weight: 700; font-size: 0.95rem;
-            cursor: pointer; display: flex; align-items: center; gap: 8px;
-            transition: all 0.3s;
-        }
-        .btn-share:hover { background: #8B0000; color: white; }
+/* Layered borders */
+.b1{position:absolute;inset:8px;border:3px solid #8B0000;pointer-events:none;z-index:5}
+.b2{position:absolute;inset:13px;border:1px solid #C41E3A;pointer-events:none;z-index:5}
+.b3{position:absolute;inset:16px;border:1px solid rgba(184,134,11,.4);pointer-events:none;z-index:5}
 
-        /* ===== CERTIFICATE ===== */
-        .certificate-wrap {
-            width: 100%; max-width: 900px;
-            position: relative;
-        }
+/* SVG corner ornaments */
+.corner{position:absolute;width:90px;height:90px;z-index:6;pointer-events:none}
+.corner svg{width:100%;height:100%}
+.tl{top:6px;left:6px}
+.tr{top:6px;right:6px;transform:scaleX(-1)}
+.bl{bottom:6px;left:6px;transform:scaleY(-1)}
+.br{bottom:6px;right:6px;transform:scale(-1)}
 
-        .certificate {
-            background: #fff9f5;
-            width: 100%;
-            aspect-ratio: 1.414 / 1;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-        }
+/* Background decorative waves */
+.bg-waves{position:absolute;inset:0;opacity:.04;z-index:1;pointer-events:none;overflow:hidden}
+.bg-waves svg{width:100%;height:100%}
 
-        /* Outer ornate border */
-        .cert-border-outer {
-            position: absolute; inset: 10px;
-            border: 3px solid #8B0000;
-            border-radius: 2px;
-            pointer-events: none; z-index: 2;
-        }
+/* Main content */
+.cert-body{
+  position:absolute;inset:22px;z-index:10;
+  display:flex;flex-direction:column;align-items:center;
+  padding:16px 52px 12px;
+}
 
-        .cert-border-inner {
-            position: absolute; inset: 16px;
-            border: 1px solid #C41E3A;
-            border-radius: 1px;
-            pointer-events: none; z-index: 2;
-        }
+/* ── TOP ROW ── */
+.top-row{width:100%;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 
-        /* Corner ornaments */
-        .corner {
-            position: absolute; width: 70px; height: 70px;
-            z-index: 3; pointer-events: none;
-        }
-        .corner svg { width: 100%; height: 100%; }
-        .corner.tl { top: 8px; left: 8px; }
-        .corner.tr { top: 8px; right: 8px; transform: scaleX(-1); }
-        .corner.bl { bottom: 8px; left: 8px; transform: scaleY(-1); }
-        .corner.br { bottom: 8px; right: 8px; transform: scale(-1); }
+.logo-block{display:flex;align-items:center;gap:8px}
+.logo-icon{width:46px;height:46px;background:linear-gradient(135deg,#8B0000,#C41E3A);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(139,0,0,.4)}
+.logo-icon svg{width:26px;height:26px}
+.logo-text{font-family:'Cinzel',serif;font-size:.62rem;font-weight:700;color:#8B0000;line-height:1.4;text-transform:uppercase;letter-spacing:.5px}
+.logo-text span{font-size:.52rem;font-weight:400;color:#C41E3A;display:block}
 
-        /* Background watermark */
-        .watermark {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 18vw; color: rgba(196,30,58,0.04);
-            font-family: 'Cinzel', serif; font-weight: 900;
-            white-space: nowrap; z-index: 1; pointer-events: none;
-            user-select: none;
-        }
+.qr-block{text-align:right}
+#qrcode{width:58px!important;height:58px!important;margin-left:auto}
+#qrcode canvas,#qrcode img{width:58px!important;height:58px!important}
+.cert-id-label{font-size:.48rem;font-weight:700;color:#999;letter-spacing:1px;text-transform:uppercase;text-align:right;margin-top:3px}
+.cert-id-val{font-size:.55rem;font-weight:900;color:#8B0000;text-align:right;letter-spacing:.5px}
 
-        /* Blood drop watermark */
-        .drop-watermark {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px; height: 200px;
-            opacity: 0.04; z-index: 1; pointer-events: none;
-        }
+/* ── DIVIDER ── */
+.divider{display:flex;align-items:center;gap:10px;width:100%;margin:4px 0}
+.div-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,#C41E3A 40%,#B8860B 60%,transparent)}
+.div-gem{font-size:.75rem;color:#8B0000}
 
-        /* Content */
-        .cert-content {
-            position: absolute; inset: 22px;
-            z-index: 4;
-            display: flex; flex-direction: column;
-            align-items: center;
-            padding: 18px 50px 15px;
-        }
+/* ── TITLE ── */
+.cert-title{font-family:'Cinzel',serif;font-size:clamp(.95rem,3.2vw,1.85rem);font-weight:900;color:#8B0000;text-align:center;letter-spacing:4px;line-height:1.1;margin:2px 0}
 
-        /* Header row */
-        .cert-header {
-            width: 100%; display: flex;
-            justify-content: space-between; align-items: flex-start;
-            margin-bottom: 6px;
-        }
+/* ── RED RIBBON BANNER ── */
+.ribbon-wrap{position:relative;width:75%;margin:6px auto;text-align:center}
+.ribbon{background:linear-gradient(135deg,#8B0000,#C41E3A);color:white;padding:5px 0;font-family:'Cinzel',serif;font-size:clamp(.42rem,1.05vw,.65rem);font-weight:700;letter-spacing:3px;text-transform:uppercase;clip-path:polygon(0 0,100% 0,98% 50%,100% 100%,0 100%,2% 50%)}
+/* ribbon tails */
+.ribbon-wrap::before,.ribbon-wrap::after{content:'';position:absolute;top:50%;transform:translateY(-50%);width:24px;height:24px;background:#6b0000;clip-path:polygon(0 0,100% 50%,0 100%)}
+.ribbon-wrap::before{left:-12px}
+.ribbon-wrap::after{right:-12px;transform:translateY(-50%) scaleX(-1)}
 
-        .cert-logo {
-            display: flex; align-items: center; gap: 8px;
-        }
+/* ── PRESENTED TO ── */
+.presented{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(.52rem,1.2vw,.72rem);color:#555;margin:4px 0 1px}
 
-        .logo-icon {
-            width: 44px; height: 44px;
-            background: linear-gradient(135deg, #8B0000, #C41E3A);
-            border-radius: 50%; display: flex; align-items: center;
-            justify-content: center;
-        }
+/* ── DONOR NAME ── */
+.donor-name{font-family:'Great Vibes',cursive;font-size:clamp(1.8rem,6.5vw,3.8rem);color:#8B0000;line-height:1;text-shadow:1px 2px 4px rgba(139,0,0,.15);margin:2px 0}
 
-        .logo-icon svg { width: 26px; height: 26px; }
+/* ── GOLD UNDERLINE ── */
+.gold-line{width:65%;height:2px;background:linear-gradient(90deg,transparent,#B8860B 20%,#FFD700 50%,#B8860B 80%,transparent);margin:3px auto 6px;position:relative}
+.gold-line::before,.gold-line::after{content:'❖';position:absolute;top:50%;transform:translateY(-50%);font-size:.6rem;color:#B8860B}
+.gold-line::before{left:15%}
+.gold-line::after{right:15%}
 
-        .logo-text {
-            font-family: 'Cinzel', serif;
-            font-size: 0.7rem; font-weight: 700; color: #8B0000;
-            line-height: 1.3; text-transform: uppercase; letter-spacing: 1px;
-        }
+/* ── NOBLE TEXT ── */
+.noble-text{font-size:clamp(.48rem,1.1vw,.68rem);color:#444;text-align:center;line-height:1.6;margin-bottom:8px}
 
-        /* QR section */
-        .qr-section {
-            text-align: right;
-        }
+/* ── INFO PILLS ── */
+.info-row{display:flex;align-items:stretch;border:1.5px solid #e8cece;border-radius:8px;overflow:hidden;width:82%;background:white;box-shadow:0 2px 10px rgba(139,0,0,.08);margin-bottom:10px}
+.info-cell{flex:1;display:flex;align-items:center;gap:8px;padding:8px 14px}
+.info-cell+.info-cell{border-left:1.5px solid #e8cece}
+.info-ico{width:30px;height:30px;background:rgba(196,30,58,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.info-ico svg{width:16px;height:16px}
+.info-lbl{font-size:.47rem;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;display:block}
+.info-val{font-size:clamp(.55rem,1.3vw,.78rem);font-weight:700;color:#C41E3A;display:block;margin-top:1px}
 
-        #qrcode {
-            width: 60px !important; height: 60px !important;
-            margin-left: auto;
-        }
+/* ── BOTTOM ROW ── */
+.bottom-row{width:100%;display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:4px}
 
-        #qrcode canvas, #qrcode img {
-            width: 60px !important; height: 60px !important;
-        }
+.verified-badge{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.badge-circle{width:52px;height:52px;border-radius:50%;border:2px solid #8B0000;display:flex;flex-direction:column;align-items:center;justify-content:center;background:white;box-shadow:0 3px 10px rgba(139,0,0,.15)}
+.badge-circle svg{width:18px;height:18px;margin-bottom:1px}
+.badge-text{font-size:.38rem;font-weight:900;color:#8B0000;text-transform:uppercase;letter-spacing:.8px;text-align:center;line-height:1.2}
+.verified-label{font-size:.44rem;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:center;margin-top:2px}
 
-        .cert-id-text {
-            font-size: 0.52rem; color: #8B0000;
-            font-family: 'Lato', sans-serif; font-weight: 700;
-            text-align: right; margin-top: 3px;
-            letter-spacing: 0.5px;
-        }
+/* Center stamp */
+.center-stamp{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1.2}
+.stamp-outer{width:65px;height:65px;border-radius:50%;border:2px solid #8B0000;display:flex;align-items:center;justify-content:center;position:relative;background:white}
+.stamp-inner{width:52px;height:52px;border-radius:50%;border:1.5px dashed #C41E3A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.stamp-text-top{font-size:.32rem;font-weight:900;color:#8B0000;text-transform:uppercase;letter-spacing:1px}
+.stamp-heart{font-size:.9rem;color:#C41E3A}
+.stamp-text-bot{font-size:.3rem;font-weight:900;color:#8B0000;text-transform:uppercase;letter-spacing:.8px}
+.stamp-footer{font-size:.44rem;color:#8B0000;font-weight:700;text-align:center;letter-spacing:.5px}
+.stamp-hearts{color:#C41E3A;font-size:.7rem}
 
-        /* Title */
-        .cert-title-section { text-align: center; margin-bottom: 4px; }
+/* Laurel badge */
+.laurel-badge{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.laurel-circle{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgba(184,134,11,.15),rgba(255,215,0,.1));border:2px solid #B8860B;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.laurel-circle svg{width:32px;height:32px}
+.laurel-label{font-size:.44rem;color:#B8860B;font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:center;margin-top:2px}
 
-        .cert-top-divider {
-            display: flex; align-items: center; gap: 10px; width: 100%; margin-bottom: 6px;
-        }
+/* ===== PRINT ===== */
+@media print{
+  body{background:white;padding:0}
+  .action-bar{display:none!important}
+  .cert-wrap{max-width:100%}
+  .certificate{box-shadow:none;width:100%;aspect-ratio:auto;height:100vh}
+  @page{margin:0;size:A4 landscape}
+}
 
-        .divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #C41E3A, transparent); }
-        .divider-diamond { color: #8B0000; font-size: 0.7rem; }
-
-        .cert-main-title {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(1rem, 3.5vw, 2rem);
-            font-weight: 900; color: #8B0000;
-            letter-spacing: 4px; text-transform: uppercase;
-            line-height: 1.1;
-        }
-
-        .cert-subtitle-banner {
-            background: linear-gradient(135deg, #8B0000, #C41E3A);
-            color: white; padding: 5px 30px;
-            font-family: 'Cinzel', serif;
-            font-size: clamp(0.45rem, 1.2vw, 0.7rem);
-            font-weight: 700; letter-spacing: 3px;
-            text-transform: uppercase; border-radius: 2px;
-            margin: 6px 0;
-        }
-
-        .cert-presented-text {
-            font-size: clamp(0.55rem, 1.3vw, 0.78rem);
-            color: #555; font-style: italic;
-            margin-bottom: 2px;
-        }
-
-        /* Donor name */
-        .donor-name {
-            font-family: 'Great Vibes', cursive;
-            font-size: clamp(2rem, 7vw, 4.2rem);
-            color: #8B0000;
-            line-height: 1;
-            margin: 2px 0;
-            text-shadow: 1px 1px 3px rgba(139,0,0,0.15);
-        }
-
-        .name-underline {
-            width: 70%; height: 1px;
-            background: linear-gradient(90deg, transparent, #C41E3A 20%, #FFD700 50%, #C41E3A 80%, transparent);
-            margin: 2px auto 6px;
-        }
-
-        .cert-noble-text {
-            font-size: clamp(0.5rem, 1.2vw, 0.72rem);
-            color: #444; text-align: center;
-            line-height: 1.5; margin-bottom: 8px;
-        }
-
-        /* Info pills */
-        .cert-info-row {
-            display: flex; align-items: stretch;
-            border: 1px solid #e0c0c0; border-radius: 6px;
-            overflow: hidden; width: 85%;
-            margin-bottom: 10px; background: white;
-        }
-
-        .info-pill {
-            flex: 1; display: flex; align-items: center; gap: 8px;
-            padding: 8px 12px;
-        }
-
-        .info-pill + .info-pill {
-            border-left: 1px solid #e0c0c0;
-        }
-
-        .info-icon {
-            width: 28px; height: 28px;
-            background: rgba(196,30,58,0.1); border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .info-icon svg { width: 16px; height: 16px; color: #C41E3A; fill: #C41E3A; }
-
-        .info-label {
-            font-size: 0.52rem; font-weight: 700; color: #999;
-            text-transform: uppercase; letter-spacing: 1px; display: block;
-        }
-
-        .info-value {
-            font-size: clamp(0.6rem, 1.4vw, 0.82rem);
-            font-weight: 700; color: #C41E3A; display: block; margin-top: 1px;
-        }
-
-        /* Footer */
-        .cert-footer {
-            width: 100%; display: flex;
-            justify-content: center; align-items: center;
-            gap: 6px; margin-top: auto;
-        }
-
-        .footer-text {
-            font-size: clamp(0.5rem, 1.1vw, 0.65rem);
-            color: #C41E3A; font-weight: 700;
-        }
-
-        .footer-heart { color: #C41E3A; font-size: 0.8rem; }
-
-        /* Seal */
-        .donate-seal {
-            width: 60px; height: 60px; position: relative;
-        }
-
-        .seal-circle {
-            width: 60px; height: 60px; border-radius: 50%;
-            border: 2px solid #8B0000;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            background: white;
-        }
-
-        .seal-text {
-            font-size: 0.35rem; font-weight: 900; color: #8B0000;
-            text-transform: uppercase; letter-spacing: 1px; text-align: center;
-            line-height: 1.2;
-        }
-
-        /* ===== PRINT ===== */
-        @media print {
-            body { background: white; padding: 0; }
-            .action-bar { display: none !important; }
-            .certificate { box-shadow: none; }
-            .certificate-wrap { max-width: 100%; }
-            @page { margin: 0; size: A4 landscape; }
-        }
-
-        /* ===== MOBILE ===== */
-        @media (max-width: 600px) {
-            .cert-content { padding: 12px 20px 10px; }
-            .cert-main-title { letter-spacing: 2px; }
-            .info-pill { padding: 6px 8px; gap: 5px; }
-        }
-    </style>
+@media(max-width:600px){
+  .cert-body{padding:12px 22px 10px}
+  .cert-title{letter-spacing:2px}
+  .info-cell{padding:6px 8px;gap:5px}
+  .ribbon{letter-spacing:1.5px}
+}
+</style>
 </head>
 <body>
 
-    <div class="action-bar">
-        <button class="btn-share" onclick="shareOrCopy()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            Share Certificate
-        </button>
-        <button class="btn-print" onclick="window.print()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6,18H4a2,2,0,0,1-2-2V11a2,2,0,0,1,2-2H20a2,2,0,0,1,2,2v5a2,2,0,0,1-2,2H18"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Download / Print
-        </button>
+<div class="action-bar">
+  <button class="btn-share" onclick="shareOrCopy()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    Share
+  </button>
+  <button class="btn-print" onclick="window.print()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6,18H4a2,2,0,0,1-2-2V11a2,2,0,0,1,2-2H20a2,2,0,0,1,2,2v5a2,2,0,0,1-2,2H18"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Download / Print
+  </button>
+</div>
+
+<div class="cert-wrap">
+<div class="certificate" id="certificate">
+
+  <!-- Borders -->
+  <div class="b1"></div><div class="b2"></div><div class="b3"></div>
+
+  <!-- Corner ornaments -->
+  {% for cls in ['tl','tr','bl','br'] %}
+  <div class="corner {{ cls }}">
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8,8 L8,55 Q8,8 55,8 Z" fill="#8B0000" opacity=".85"/>
+      <path d="M8,8 L8,70 Q8,8 70,8" stroke="#8B0000" stroke-width="2.5" fill="none"/>
+      <path d="M8,8 L8,90 Q8,8 90,8" stroke="#C41E3A" stroke-width="1.2" fill="none" opacity=".5"/>
+      <path d="M8,8 L8,108 Q8,8 108,8" stroke="#B8860B" stroke-width=".8" fill="none" opacity=".4"/>
+      <circle cx="8" cy="8" r="5" fill="#8B0000"/>
+      <circle cx="50" cy="8" r="2.5" fill="#C41E3A"/>
+      <circle cx="8" cy="50" r="2.5" fill="#C41E3A"/>
+      <path d="M20,8 Q8,8 8,20" stroke="#B8860B" stroke-width="2" fill="none"/>
+      <path d="M32,8 Q8,8 8,32" stroke="#B8860B" stroke-width="1.2" fill="none" opacity=".6"/>
+      <circle cx="20" cy="8" r="1.5" fill="#B8860B"/>
+      <circle cx="8" cy="20" r="1.5" fill="#B8860B"/>
+    </svg>
+  </div>
+  {% endfor %}
+
+  <!-- Background waves -->
+  <div class="bg-waves">
+    <svg viewBox="0 0 960 680" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,340 Q240,200 480,340 Q720,480 960,340 L960,680 L0,680 Z" fill="#C41E3A"/>
+      <path d="M0,400 Q240,260 480,400 Q720,540 960,400 L960,680 L0,680 Z" fill="#8B0000"/>
+      <text x="480" y="380" text-anchor="middle" font-size="200" fill="#C41E3A" font-family="serif">♥</text>
+    </svg>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="cert-body">
+
+    <!-- TOP ROW -->
+    <div class="top-row">
+      <div class="logo-block">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+        </div>
+        <div class="logo-text">
+          BloodBridge AI
+          <span>Save Blood · Save Lives</span>
+        </div>
+      </div>
+      <div class="qr-block">
+        <div id="qrcode"></div>
+        <div class="cert-id-label">Certificate ID</div>
+        <div class="cert-id-val">{{ cert_id }}</div>
+      </div>
     </div>
 
-    <div class="certificate-wrap">
-        <div class="certificate" id="certificate">
+    <!-- DIVIDER -->
+    <div class="divider"><div class="div-line"></div><div class="div-gem">❖</div><div class="div-line"></div></div>
 
-            <!-- Borders -->
-            <div class="cert-border-outer"></div>
-            <div class="cert-border-inner"></div>
+    <!-- TITLE -->
+    <div class="cert-title">Blood Donation<br>Certificate</div>
 
-            <!-- Corner ornaments -->
-            <div class="corner tl">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5,5 L5,40 Q5,5 40,5 Z" fill="#8B0000" opacity="0.8"/>
-                    <path d="M5,5 L5,60 Q5,5 60,5" stroke="#8B0000" stroke-width="2" fill="none"/>
-                    <path d="M5,5 L5,80 Q5,5 80,5" stroke="#C41E3A" stroke-width="1" fill="none" opacity="0.5"/>
-                    <circle cx="5" cy="5" r="4" fill="#8B0000"/>
-                    <circle cx="40" cy="5" r="2" fill="#C41E3A"/>
-                    <circle cx="5" cy="40" r="2" fill="#C41E3A"/>
-                    <path d="M15,5 Q5,5 5,15" stroke="#FFD700" stroke-width="1.5" fill="none"/>
-                    <path d="M25,5 Q5,5 5,25" stroke="#FFD700" stroke-width="1" fill="none" opacity="0.6"/>
-                </svg>
-            </div>
-            <div class="corner tr">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5,5 L5,40 Q5,5 40,5 Z" fill="#8B0000" opacity="0.8"/>
-                    <path d="M5,5 L5,60 Q5,5 60,5" stroke="#8B0000" stroke-width="2" fill="none"/>
-                    <path d="M5,5 L5,80 Q5,5 80,5" stroke="#C41E3A" stroke-width="1" fill="none" opacity="0.5"/>
-                    <circle cx="5" cy="5" r="4" fill="#8B0000"/>
-                    <circle cx="40" cy="5" r="2" fill="#C41E3A"/>
-                    <circle cx="5" cy="40" r="2" fill="#C41E3A"/>
-                    <path d="M15,5 Q5,5 5,15" stroke="#FFD700" stroke-width="1.5" fill="none"/>
-                </svg>
-            </div>
-            <div class="corner bl">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5,5 L5,40 Q5,5 40,5 Z" fill="#8B0000" opacity="0.8"/>
-                    <path d="M5,5 L5,60 Q5,5 60,5" stroke="#8B0000" stroke-width="2" fill="none"/>
-                    <circle cx="5" cy="5" r="4" fill="#8B0000"/>
-                    <path d="M15,5 Q5,5 5,15" stroke="#FFD700" stroke-width="1.5" fill="none"/>
-                </svg>
-            </div>
-            <div class="corner br">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5,5 L5,40 Q5,5 40,5 Z" fill="#8B0000" opacity="0.8"/>
-                    <path d="M5,5 L5,60 Q5,5 60,5" stroke="#8B0000" stroke-width="2" fill="none"/>
-                    <circle cx="5" cy="5" r="4" fill="#8B0000"/>
-                    <path d="M15,5 Q5,5 5,15" stroke="#FFD700" stroke-width="1.5" fill="none"/>
-                </svg>
-            </div>
-
-            <!-- Watermark -->
-            <div class="watermark">♥</div>
-
-            <!-- Main Content -->
-            <div class="cert-content">
-
-                <!-- Header Row -->
-                <div class="cert-header">
-                    <div class="cert-logo">
-                        <div class="logo-icon">
-                            <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
-                            </svg>
-                        </div>
-                        <div class="logo-text">BloodBridge AI<br><span style="font-size:0.55rem;font-weight:400;color:#C41E3A">Save Blood · Save Lives</span></div>
-                    </div>
-
-                    <div class="qr-section">
-                        <div id="qrcode"></div>
-                        <div class="cert-id-text">
-                            CERTIFICATE ID<br>
-                            <strong>{{ cert_id }}</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Top divider -->
-                <div class="cert-top-divider">
-                    <div class="divider-line"></div>
-                    <div class="divider-diamond">❖</div>
-                    <div class="divider-line"></div>
-                </div>
-
-                <!-- Title -->
-                <div class="cert-title-section">
-                    <div class="cert-main-title">Blood Donation<br>Certificate</div>
-                </div>
-
-                <!-- Banner -->
-                <div class="cert-subtitle-banner">Thank You For Donating Blood</div>
-
-                <!-- Presented to -->
-                <div class="cert-presented-text">This certificate is proudly presented to</div>
-
-                <!-- Donor Name -->
-                <div class="donor-name">{{ donation.name }}</div>
-                <div class="name-underline"></div>
-
-                <!-- Noble text -->
-                <div class="cert-noble-text">
-                    For the noble act of donating blood and helping save precious lives.
-                </div>
-
-                <!-- Info Row -->
-                <div class="cert-info-row">
-                    <div class="info-pill">
-                        <div class="info-icon">
-                            <svg viewBox="0 0 24 24" fill="#C41E3A"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
-                        </div>
-                        <div>
-                            <span class="info-label">Blood Group</span>
-                            <span class="info-value">{{ donation.blood_group }}</span>
-                        </div>
-                    </div>
-                    <div class="info-pill">
-                        <div class="info-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#C41E3A" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        </div>
-                        <div>
-                            <span class="info-label">Donation Date</span>
-                            <span class="info-value">{{ donation.donation_date_fmt }}</span>
-                        </div>
-                    </div>
-                    <div class="info-pill">
-                        <div class="info-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#C41E3A" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
-                        </div>
-                        <div>
-                            <span class="info-label">Hospital</span>
-                            <span class="info-value">{{ donation.hospital }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="cert-footer">
-                    <span class="footer-heart">♥</span>
-                    <span class="footer-text">Donate Blood, Save Lives</span>
-                    <span class="footer-heart">♥</span>
-                    &nbsp;&nbsp;
-                    <div class="seal-circle">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#8B0000"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
-                        <div class="seal-text">VERIFIED<br>DONOR</div>
-                    </div>
-                </div>
-
-            </div><!-- cert-content -->
-        </div><!-- certificate -->
+    <!-- RIBBON -->
+    <div class="ribbon-wrap">
+      <div class="ribbon">Thank You For Donating Blood</div>
     </div>
 
-    <script>
-        // Generate QR code
-        new QRCode(document.getElementById("qrcode"), {
-            text: "{{ cert_url }}",
-            width: 60, height: 60,
-            colorDark: "#8B0000", colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.M
-        });
+    <!-- PRESENTED TO -->
+    <div class="presented">This certificate is proudly presented to</div>
 
-        // Share functionality
-        function shareOrCopy() {
-            const url = "{{ cert_url }}";
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Blood Donation Certificate - {{ donation.name }}',
-                    text: '🩸 I donated blood on {{ donation.donation_date_fmt }}! Certificate: {{ cert_id }}',
-                    url: url
-                });
-            } else {
-                navigator.clipboard.writeText(url).then(() => {
-                    alert('Certificate link copied to clipboard!');
-                });
-            }
-        }
-    </script>
+    <!-- NAME -->
+    <div class="donor-name">{{ donation.name }}</div>
+
+    <!-- GOLD UNDERLINE -->
+    <div class="gold-line"></div>
+
+    <!-- NOBLE TEXT -->
+    <div class="noble-text">For the noble act of donating blood and helping save precious lives.</div>
+
+    <!-- INFO ROW -->
+    <div class="info-row">
+      <div class="info-cell">
+        <div class="info-ico"><svg viewBox="0 0 24 24" fill="#C41E3A"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></div>
+        <div><span class="info-lbl">Blood Group</span><span class="info-val">{{ donation.blood_group }}</span></div>
+      </div>
+      <div class="info-cell">
+        <div class="info-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#C41E3A" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><span class="info-lbl">Donation Date</span><span class="info-val">{{ donation.donation_date_fmt }}</span></div>
+      </div>
+      <div class="info-cell">
+        <div class="info-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#C41E3A" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+        <div><span class="info-lbl">Hospital</span><span class="info-val">{{ donation.hospital }}</span></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="bottom-row">
+
+      <!-- Left: Verified Donor Badge -->
+      <div class="verified-badge">
+        <div class="badge-circle">
+          <svg viewBox="0 0 24 24" fill="#8B0000"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9,12 11,14 15,10" stroke="white" stroke-width="2" fill="none"/></svg>
+          <div class="badge-text">Verified<br>Donor</div>
+        </div>
+        <div class="verified-label">BloodBridge Verified</div>
+      </div>
+
+      <!-- Center: Stamp -->
+      <div class="center-stamp">
+        <div class="stamp-outer">
+          <div class="stamp-inner">
+            <div class="stamp-text-top">Donate Blood</div>
+            <div class="stamp-heart">♥</div>
+            <div class="stamp-text-bot">Save Lives</div>
+          </div>
+        </div>
+        <div class="stamp-footer">
+          <span class="stamp-hearts">♥</span> Donate Blood, Save Lives <span class="stamp-hearts">♥</span>
+        </div>
+      </div>
+
+      <!-- Right: Appreciation Badge -->
+      <div class="laurel-badge">
+        <div class="laurel-circle">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Laurel leaves left -->
+            <path d="M12,20 Q6,15 8,8 Q12,14 12,20Z" fill="#B8860B" opacity=".8"/>
+            <path d="M12,20 Q4,18 5,11 Q10,16 12,20Z" fill="#B8860B" opacity=".6"/>
+            <path d="M12,22 Q5,22 6,15 Q11,19 12,22Z" fill="#B8860B" opacity=".7"/>
+            <!-- Laurel leaves right -->
+            <path d="M28,20 Q34,15 32,8 Q28,14 28,20Z" fill="#B8860B" opacity=".8"/>
+            <path d="M28,20 Q36,18 35,11 Q30,16 28,20Z" fill="#B8860B" opacity=".6"/>
+            <path d="M28,22 Q35,22 34,15 Q29,19 28,22Z" fill="#B8860B" opacity=".7"/>
+            <!-- Center heart -->
+            <path d="M20 26c-4-3.5-8-6.5-8-10 0-2.5 2-3.5 3.5-3.5.9 0 2.8.4 4.5 3 1.7-2.6 3.5-3 4.5-3 2 0 3.5 1 3.5 3.5 0 3.5-4 6.5-8 10z" fill="#C41E3A"/>
+          </svg>
+        </div>
+        <div class="laurel-label">Certificate of<br>Appreciation</div>
+      </div>
+
+    </div><!-- bottom-row -->
+
+  </div><!-- cert-body -->
+</div><!-- certificate -->
+</div><!-- cert-wrap -->
+
+<script>
+new QRCode(document.getElementById("qrcode"),{
+  text:"{{ cert_url }}",width:58,height:58,
+  colorDark:"#8B0000",colorLight:"#ffffff",
+  correctLevel:QRCode.CorrectLevel.M
+});
+
+function shareOrCopy(){
+  const url="{{ cert_url }}";
+  if(navigator.share){
+    navigator.share({title:'Blood Donation Certificate — {{ donation.name }}',
+      text:'🩸 I donated blood on {{ donation.donation_date_fmt }}! Certificate: {{ cert_id }}',url});
+  } else {
+    navigator.clipboard.writeText(url).then(()=>alert('Certificate link copied!'));
+  }
+}
+</script>
 </body>
 </html>
