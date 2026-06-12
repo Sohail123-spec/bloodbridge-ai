@@ -109,7 +109,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 /* NAME */
 .donor-name{
   font-family:'Great Vibes',cursive;
-  font-size:clamp(2.8rem,8vw,5.8rem);
+  font-size:clamp(3.2rem,9vw,6.4rem);
   color:#8B0000;line-height:1;
   text-shadow:1px 2px 6px rgba(139,0,0,.2);
   margin:2px 0;
@@ -271,10 +271,11 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
     <div class="divider"><div class="div-line"></div><div class="div-gem">❖</div><div class="div-line"></div></div>
 
     <!-- TITLE -->
-    <div class="cert-title">Blood Donation<br>Certificate</div>
+    <div style="color:#B8860B;font-size:.8rem;letter-spacing:6px;margin-bottom:4px;">✦ ✦ ✦</div>
+    <div class="cert-title">Certificate<br>of Appreciation</div>
 
     <!-- RIBBON -->
-    <div class="ribbon-outer"><div class="ribbon-body">Thank You For Donating Blood</div></div>
+    <div class="ribbon-outer"><div class="ribbon-body">Awarded For Voluntary Blood Donation</div></div>
 
     <!-- SCROLL SIDE DECORATORS -->
     <div class="side-deco">
@@ -286,7 +287,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
     </div>
 
     <!-- PRESENTED TO -->
-    <div class="presented">This certificate is proudly presented to</div>
+    <div class="presented">This Certificate Is Proudly Presented To</div>
 
     <!-- DONOR NAME -->
     <div class="donor-name">{{ donation.name }}</div>
@@ -295,7 +296,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
     <div class="gold-line"></div>
 
     <!-- NOBLE TEXT -->
-    <div class="noble-text">In recognition of your generous blood donation and contribution toward saving precious lives.</div>
+    <div class="noble-text">In recognition of your selfless contribution to humanity through voluntary blood donation and dedication to saving lives.</div>
 
     <!-- INFO ROW -->
     <div class="info-row">
@@ -314,56 +315,71 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
     </div>
 
     
-    <!-- REFERENCE STYLE RECOGNITION SECTION -->
-    <div style="width:100%;margin-top:18px;">
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;padding:0 25px;">
+    
+<!-- REFERENCE STYLE RECOGNITION SECTION -->
+<div style="width:100%;margin-top:18px;">
 
-        <div style="flex:1;text-align:center;">
-          <div style="font-family:'Great Vibes',cursive;font-size:1.6rem;color:#444;">
-            BloodBridge AI
-          </div>
-          <div style="height:2px;width:140px;background:#B8860B;margin:4px auto;"></div>
-          <div style="font-size:.55rem;font-weight:700;color:#555;text-transform:uppercase;">
-            Certified Donation Recognition
-          </div>
-        </div>
+<div style="display:flex;justify-content:center;align-items:center;margin-bottom:10px;">
+    <div style="height:1px;width:120px;background:#D4AF37;"></div>
+    <div style="margin:0 12px;color:#D4AF37;font-size:1.2rem;">❖</div>
+    <div style="height:1px;width:120px;background:#D4AF37;"></div>
+</div>
 
-        <div style="flex:1.2;text-align:center;">
-          <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
-            <div style="font-size:3rem;color:#D4AF37;">❦</div>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;padding:0 18px;">
 
-            <div style="width:110px;height:110px;border:3px solid #8B0000;border-radius:50%;
-                        display:flex;align-items:center;justify-content:center;background:white;
-                        box-shadow:0 6px 18px rgba(139,0,0,.15);">
-              <div>
-                <div style="font-size:.55rem;font-weight:900;color:#8B0000;">DONATE BLOOD</div>
-                <div style="font-size:2rem;color:#C41E3A;">♥</div>
-                <div style="font-size:.55rem;font-weight:900;color:#8B0000;">SAVE LIVES</div>
-              </div>
-            </div>
-
-            <div style="font-size:3rem;color:#D4AF37;">❦</div>
-          </div>
-
-          <div style="margin-top:8px;color:#8B0000;font-weight:700;">
-            ♥ Donate Blood, Save Lives ♥
-          </div>
-        </div>
-
-        <div style="flex:1;text-align:center;">
-          <div style="font-family:'Great Vibes',cursive;font-size:1.6rem;color:#444;">
-            {{ donation.hospital }}
-          </div>
-          <div style="height:2px;width:140px;background:#B8860B;margin:4px auto;"></div>
-          <div style="font-size:.55rem;font-weight:700;color:#555;text-transform:uppercase;">
-            Verified Donation Center
-          </div>
-        </div>
-
-      </div>
+<div style="flex:1;text-align:center;">
+    <div style="font-family:'Great Vibes',cursive;font-size:1.8rem;color:#555;">
+        BloodBridge AI
+    </div>
+    <div style="width:160px;height:2px;background:#B8860B;margin:6px auto;"></div>
+    <div style="font-size:.58rem;letter-spacing:1px;color:#777;text-transform:uppercase;">
+        Donation Recognition Authority
     </div>
 </div>
-  </div><!-- cert-body -->
+
+<div style="flex:1.4;text-align:center;">
+
+    <div style="display:flex;justify-content:center;align-items:center;gap:10px;">
+
+        <svg width="70" height="70" viewBox="0 0 70 70">
+            <path d="M60 35 C45 20,40 12,32 8 C25 5,20 10,23 18 C26 24,35 28,44 34 C35 36,28 40,22 47 C18 52,20 60,28 60 C38 60,48 50,60 35Z" fill="#D4AF37"/>
+        </svg>
+
+        <div style="width:130px;height:130px;border-radius:50%;border:4px solid #8B0000;position:relative;background:white;">
+            <div style="position:absolute;inset:8px;border:2px dashed #D4AF37;border-radius:50%;"></div>
+            <div style="position:absolute;top:25px;left:0;right:0;text-align:center;">
+                <div style="font-size:.55rem;font-weight:900;color:#8B0000;">DONATE BLOOD</div>
+                <div style="font-size:2.2rem;color:#C41E3A;">♥</div>
+                <div style="font-size:.55rem;font-weight:900;color:#8B0000;">SAVE LIVES</div>
+            </div>
+        </div>
+
+        <svg width="70" height="70" viewBox="0 0 70 70" style="transform:scaleX(-1)">
+            <path d="M60 35 C45 20,40 12,32 8 C25 5,20 10,23 18 C26 24,35 28,44 34 C35 36,28 40,22 47 C18 52,20 60,28 60 C38 60,48 50,60 35Z" fill="#D4AF37"/>
+        </svg>
+
+    </div>
+
+    <div style="margin-top:8px;font-size:.75rem;font-weight:700;color:#8B0000;">
+        HONORED FOR SAVING LIVES THROUGH DONATION
+    </div>
+
+</div>
+
+<div style="flex:1;text-align:center;">
+    <div style="font-family:'Great Vibes',cursive;font-size:1.8rem;color:#555;">
+        {{ donation.hospital }}
+    </div>
+    <div style="width:160px;height:2px;background:#B8860B;margin:6px auto;"></div>
+    <div style="font-size:.58rem;letter-spacing:1px;color:#777;text-transform:uppercase;">
+        Verified Donation Center
+    </div>
+</div>
+
+</div>
+</div>
+</div><!-- cert-body -->
+
 </div></div><!-- certificate / cert-wrap -->
 
 <script>
