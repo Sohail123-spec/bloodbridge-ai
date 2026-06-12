@@ -94,7 +94,7 @@
                             <h5 style="color:#1D3557;font-weight:800;margin-bottom:3px">{{ req.donor_name }}</h5>
                             <div class="text-muted small">
                                 <i class="fas fa-hospital me-1"></i>{{ req.hospital }} &nbsp;|&nbsp;
-                                <i class="fas fa-calendar me-1"></i>{{ req.donation_date[:10] if req.donation_date else '-' }}
+                                <i class="fas fa-calendar me-1"></i>{{ req.donation_date|dateformat('%d %b %Y') if req.donation_date else '-' }}
                             </div>
                         </div>
                         <span style="padding:4px 12px;border-radius:50px;font-size:0.78rem;font-weight:700;
