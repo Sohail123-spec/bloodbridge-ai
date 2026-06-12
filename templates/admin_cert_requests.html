@@ -94,7 +94,7 @@
                             <h5 style="color:#1D3557;font-weight:800;margin-bottom:3px">{{ req.donor_name }}</h5>
                             <div class="text-muted small">
                                 <i class="fas fa-hospital me-1"></i>{{ req.hospital }} &nbsp;|&nbsp;
-                                <i class="fas fa-calendar me-1"></i>{{ req.donation_date|dateformat('%d %b %Y') if req.donation_date else '-' }}
+                                <i class="fas fa-calendar me-1"></i>{{ req.donation_date|dateformat('%Y-%m-%d') if req.donation_date else '-' }}
                             </div>
                         </div>
                         <span style="padding:4px 12px;border-radius:50px;font-size:0.78rem;font-weight:700;
@@ -114,9 +114,11 @@
                     </div>
 
                     <div class="text-muted small mb-3">
-                        <i class="fas fa-clock me-1"></i>Requested: {{ req.requested_at[:16] if req.requested_at else '-' }}
+                        <i class="fas fa-clock me-1"></i>Requested:
+{{ req.requested_at.strftime('%Y-%m-%d %H:%M') if req.requested_at else '-' }}
                         {% if req.approved_at %}
-                        &nbsp;|&nbsp;<i class="fas fa-check me-1"></i>Processed: {{ req.approved_at[:16] }}
+                        &nbsp;|&nbsp;<i class="fas fa-check me-1"></i>Processed:
+{{ req.approved_at.strftime('%Y-%m-%d %H:%M') }}
                         {% endif %}
                     </div>
 
