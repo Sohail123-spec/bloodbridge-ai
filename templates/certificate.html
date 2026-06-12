@@ -58,8 +58,8 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 .logo-text{font-family:'Cinzel',serif;font-size:.58rem;font-weight:700;color:#8B0000;line-height:1.4;letter-spacing:.5px;text-transform:uppercase}
 .logo-text span{font-size:.5rem;font-weight:400;color:#C41E3A;display:block;letter-spacing:1px}
 .qr-block{text-align:right}
-#qrcode{width:60px!important;height:60px!important;margin-left:auto}
-#qrcode canvas,#qrcode img{width:60px!important;height:60px!important}
+#qrcode{width:48px!important;height:48px!important;margin-left:auto}
+#qrcode canvas,#qrcode img{width:48px!important;height:48px!important}
 .cert-id-label{font-size:.45rem;font-weight:700;color:#999;letter-spacing:1.5px;text-transform:uppercase;text-align:right;margin-top:3px}
 .cert-id-val{font-size:.54rem;font-weight:900;color:#8B0000;text-align:right;letter-spacing:.5px}
 
@@ -109,7 +109,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 /* NAME */
 .donor-name{
   font-family:'Great Vibes',cursive;
-  font-size:clamp(1.6rem,6vw,3.6rem);
+  font-size:clamp(2.2rem,7vw,4.8rem);
   color:#8B0000;line-height:1;
   text-shadow:1px 2px 6px rgba(139,0,0,.2);
   margin:2px 0;
@@ -143,7 +143,13 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 .info-val{font-size:clamp(.52rem,1.2vw,.75rem);font-weight:700;color:#C41E3A;display:block;margin-top:1px}
 
 /* BOTTOM ROW */
-.bottom-row{width:100%;display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.bottom-row{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:25px;
+}
 
 /* Verified badge */
 .v-badge{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
@@ -289,7 +295,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
     <div class="gold-line"></div>
 
     <!-- NOBLE TEXT -->
-    <div class="noble-text">For the noble act of donating blood and helping save precious lives.</div>
+    <div class="noble-text">In recognition of your generous blood donation and valuable contribution toward saving lives and strengthening our community.</div>
 
     <!-- INFO ROW -->
     <div class="info-row">
@@ -307,47 +313,33 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
       </div>
     </div>
 
-    <!-- BOTTOM ROW -->
-    <div class="bottom-row">
+    
+    <!-- RECOGNITION SECTION -->
+    <div style="margin-top:28px;text-align:center;width:100%;">
+      <div style="display:flex;justify-content:center;align-items:center;gap:24px;">
+        <div style="font-size:2rem;color:#B8860B;">❦</div>
 
-      <!-- Verified Donor -->
-      <div class="v-badge">
-        <div class="v-circle">
-          <svg viewBox="0 0 24 24" fill="#8B0000"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9,12 11,14 15,10" stroke="white" stroke-width="2" fill="none"/></svg>
-          <div class="v-text">Verified<br>Donor</div>
-        </div>
-        <div class="v-label">BloodBridge Verified</div>
-      </div>
+        <div>
+          <div style="width:95px;height:95px;border:3px solid #8B0000;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;background:white;box-shadow:0 6px 18px rgba(139,0,0,.15);">
+            <div>
+              <div style="font-size:1.8rem;color:#C41E3A;">♥</div>
+              <div style="font-size:.55rem;font-weight:900;color:#8B0000;letter-spacing:1px;">LIFE SAVER</div>
+            </div>
+          </div>
 
-      <!-- Center Stamp -->
-      <div class="c-stamp">
-        <div class="stamp-ring">
-          <div class="stamp-inner">
-            <div class="s-top">Donate Blood</div>
-            <div class="s-heart">♥</div>
-            <div class="s-bot">Save Lives</div>
+          <div style="margin-top:10px;font-size:.72rem;font-weight:700;color:#8B0000;letter-spacing:1px;text-transform:uppercase;">
+            Recognized For Voluntary Blood Donation
+          </div>
+
+          <div style="margin-top:6px;font-size:.62rem;color:#666;">
+            Donate Blood • Save Lives • BloodBridge AI
           </div>
         </div>
-        <div class="stamp-footer"><span class="s-hearts">♥</span> Donate Blood, Save Lives <span class="s-hearts">♥</span></div>
-      </div>
 
-      <!-- Certificate of Appreciation -->
-      <div class="a-badge">
-        <div class="a-circle">
-          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13,20 Q7,15 9,8 Q13,14 13,20Z" fill="#B8860B" opacity=".85"/>
-            <path d="M13,20 Q5,18 6,11 Q11,16 13,20Z" fill="#B8860B" opacity=".6"/>
-            <path d="M13,23 Q6,23 7,16 Q12,20 13,23Z" fill="#B8860B" opacity=".7"/>
-            <path d="M27,20 Q33,15 31,8 Q27,14 27,20Z" fill="#B8860B" opacity=".85"/>
-            <path d="M27,20 Q35,18 34,11 Q29,16 27,20Z" fill="#B8860B" opacity=".6"/>
-            <path d="M27,23 Q34,23 33,16 Q28,20 27,23Z" fill="#B8860B" opacity=".7"/>
-            <path d="M20 27c-4-3.5-8-6.5-8-10 0-2.5 2-3.5 3.5-3.5.9 0 2.8.4 4.5 3 1.7-2.6 3.5-3 4.5-3 2 0 3.5 1 3.5 3.5 0 3.5-4 6.5-8 10z" fill="#C41E3A"/>
-          </svg>
-        </div>
-        <div class="a-label">Certificate of<br>Appreciation</div>
+        <div style="font-size:2rem;color:#B8860B;">❦</div>
       </div>
-
     </div>
+</div>
   </div><!-- cert-body -->
 </div></div><!-- certificate / cert-wrap -->
 
