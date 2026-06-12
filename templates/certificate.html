@@ -77,10 +77,10 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 /* TITLE */
 .cert-title{
   font-family:'Cinzel',serif;
-  font-size:clamp(1.5rem,3vw,2.4rem);
+  font-size:clamp(1.2rem,2.3vw,1.85rem);
   font-weight:900;color:#8B0000;
   text-align:center;letter-spacing:5px;
-  line-height:1.15;margin:1px 0;
+  line-height:1.1;margin:-10px 0 0;
   text-transform:uppercase;
 }
 
@@ -109,7 +109,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 /* NAME */
 .donor-name{
   font-family:'Great Vibes',cursive;
-  font-size:clamp(2.9rem,5.4vw,4.6rem);
+  font-size:clamp(3.3rem,6vw,5.2rem);
   color:#8B0000;line-height:1;
   text-shadow:1px 2px 6px rgba(139,0,0,.2);
   margin:2px 0;
@@ -229,20 +229,6 @@ body,.cert-title,.subtitle,.recognition-text{font-family:'Times New Roman',serif
   </div>
   {% endfor %}
 
-  <!-- Blood drops top (matching reference) -->
-  <div class="drop-top-left">
-    <svg class="blood-drop-svg" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 2 C15 2 2 18 2 27 C2 35 8 40 15 40 C22 40 28 35 28 27 C28 18 15 2 15 2Z" fill="#C41E3A"/>
-      <ellipse cx="11" cy="23" rx="3" ry="5" fill="rgba(255,255,255,0.25)" transform="rotate(-20 11 23)"/>
-    </svg>
-  </div>
-  <div class="drop-top-right">
-    <svg class="blood-drop-svg" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 2 C15 2 2 18 2 27 C2 35 8 40 15 40 C22 40 28 35 28 27 C28 18 15 2 15 2Z" fill="#C41E3A"/>
-      <ellipse cx="11" cy="23" rx="3" ry="5" fill="rgba(255,255,255,0.25)" transform="rotate(-20 11 23)"/>
-    </svg>
-  </div>
-
   <!-- Background wave -->
   <div class="bg-wave">
     <svg viewBox="0 0 980 440" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -260,7 +246,7 @@ body,.cert-title,.subtitle,.recognition-text{font-family:'Times New Roman',serif
         <div class="logo-icon">
           <svg viewBox="0 0 24 24" fill="white"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
         </div>
-        <div class="logo-text">BloodBridge AI<div style='font-size:.58rem;color:#666;margin-top:6px;letter-spacing:1px;text-transform:uppercase'>Certificate Authority</div><span>Save Blood · Save Lives</span></div>
+        <div class="logo-text">BloodBridge AI<span>Save Blood · Save Lives</span></div>
       </div>
       <div class="qr-block">
         <div id="qrcode"></div>
@@ -274,7 +260,13 @@ body,.cert-title,.subtitle,.recognition-text{font-family:'Times New Roman',serif
 
     <!-- TITLE -->
     <div style="color:#B8860B;font-size:.8rem;letter-spacing:6px;margin-bottom:4px;"></div>
-    <div class="cert-title">Blood Donation<br>Certificate</div>
+    
+<div style="display:flex;align-items:center;justify-content:center;gap:14px;">
+<svg width="18" height="26" viewBox="0 0 30 42"><path d="M15 2 C15 2 2 18 2 27 C2 35 8 40 15 40 C22 40 28 35 28 27 C28 18 15 2 15 2Z" fill="#C41E3A"/></svg>
+<div class="cert-title">Blood Donation<br>Certificate</div>
+<svg width="18" height="26" viewBox="0 0 30 42"><path d="M15 2 C15 2 2 18 2 27 C2 35 8 40 15 40 C22 40 28 35 28 27 C28 18 15 2 15 2Z" fill="#C41E3A"/></svg>
+</div>
+
 
     <!-- RIBBON -->
     <div class="ribbon-outer"><div class="ribbon-body">Thank You For Donating Blood</div></div>
@@ -334,31 +326,23 @@ body,.cert-title,.subtitle,.recognition-text{font-family:'Times New Roman',serif
         BloodBridge AI
     </div>
     <div style="width:160px;height:2px;background:#B8860B;margin:6px auto;"></div>
-    <div style="font-size:.58rem;letter-spacing:1px;color:#777;text-transform:uppercase;">
-        
-    </div>
+    <div style="font-size:.58rem;letter-spacing:1px;color:#777;text-transform:uppercase;">Certificate Authority</div>
 </div>
 
 <div style="flex:1.4;text-align:center;">
 
     <div style="display:flex;justify-content:center;align-items:center;gap:10px;">
 
-        <svg width="70" height="70" viewBox="0 0 70 70">
-            <path d="M60 35 C45 20,40 12,32 8 C25 5,20 10,23 18 C26 24,35 28,44 34 C35 36,28 40,22 47 C18 52,20 60,28 60 C38 60,48 50,60 35Z" fill="#D4AF37"/>
-        </svg>
-
-        <div style="width:130px;height:130px;border-radius:50%;border:4px solid #8B0000;position:relative;background:white;">
+        <div style="width:100px;height:100px;border-radius:50%;border:4px solid #8B0000;position:relative;background:white;">
             <div style="position:absolute;inset:8px;border:2px dashed #D4AF37;border-radius:50%;"></div>
-            <div style="position:absolute;top:25px;left:0;right:0;text-align:center;">
+            <div style="position:absolute;top:18px;left:0;right:0;text-align:center;">
                 <div style="font-size:.55rem;font-weight:900;color:#8B0000;">DONATE BLOOD</div>
                 <div style="font-size:2.2rem;color:#C41E3A;">♥</div>
                 <div style="font-size:.55rem;font-weight:900;color:#8B0000;">SAVE LIVES</div>
             </div>
         </div>
 
-        <svg width="70" height="70" viewBox="0 0 70 70" style="transform:scaleX(-1)">
-            <path d="M60 35 C45 20,40 12,32 8 C25 5,20 10,23 18 C26 24,35 28,44 34 C35 36,28 40,22 47 C18 52,20 60,28 60 C38 60,48 50,60 35Z" fill="#D4AF37"/>
-        </svg>
+        
 
     </div>
 
@@ -373,9 +357,7 @@ body,.cert-title,.subtitle,.recognition-text{font-family:'Times New Roman',serif
         {{ donation.hospital }}
     </div>
     <div style="width:160px;height:2px;background:#B8860B;margin:6px auto;"></div>
-    <div style="font-size:.58rem;letter-spacing:1px;color:#777;text-transform:uppercase;">
-        
-    </div>
+    <div style="font-size:.58rem;letter-spacing:1px;color:#777;text-transform:uppercase;">Verified Donation Center</div>
 </div>
 
 </div>
