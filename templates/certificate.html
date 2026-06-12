@@ -58,8 +58,8 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 .logo-text{font-family:'Cinzel',serif;font-size:.58rem;font-weight:700;color:#8B0000;line-height:1.4;letter-spacing:.5px;text-transform:uppercase}
 .logo-text span{font-size:.5rem;font-weight:400;color:#C41E3A;display:block;letter-spacing:1px}
 .qr-block{text-align:right}
-#qrcode{width:48px!important;height:48px!important;margin-left:auto}
-#qrcode canvas,#qrcode img{width:48px!important;height:48px!important}
+#qrcode{width:52px!important;height:52px!important;margin-left:auto}
+#qrcode canvas,#qrcode img{width:52px!important;height:52px!important}
 .cert-id-label{font-size:.45rem;font-weight:700;color:#999;letter-spacing:1.5px;text-transform:uppercase;text-align:right;margin-top:3px}
 .cert-id-val{font-size:.54rem;font-weight:900;color:#8B0000;text-align:right;letter-spacing:.5px}
 
@@ -109,7 +109,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 /* NAME */
 .donor-name{
   font-family:'Great Vibes',cursive;
-  font-size:clamp(2.2rem,7vw,4.8rem);
+  font-size:clamp(2.8rem,8vw,5.8rem);
   color:#8B0000;line-height:1;
   text-shadow:1px 2px 6px rgba(139,0,0,.2);
   margin:2px 0;
@@ -295,7 +295,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
     <div class="gold-line"></div>
 
     <!-- NOBLE TEXT -->
-    <div class="noble-text">In recognition of your generous blood donation and valuable contribution toward saving lives and strengthening our community.</div>
+    <div class="noble-text">In recognition of your generous blood donation and contribution toward saving precious lives.</div>
 
     <!-- INFO ROW -->
     <div class="info-row">
@@ -314,29 +314,52 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
     </div>
 
     
-    <!-- RECOGNITION SECTION -->
-    <div style="margin-top:28px;text-align:center;width:100%;">
-      <div style="display:flex;justify-content:center;align-items:center;gap:24px;">
-        <div style="font-size:2rem;color:#B8860B;">❦</div>
+    <!-- REFERENCE STYLE RECOGNITION SECTION -->
+    <div style="width:100%;margin-top:18px;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;padding:0 25px;">
 
-        <div>
-          <div style="width:95px;height:95px;border:3px solid #8B0000;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;background:white;box-shadow:0 6px 18px rgba(139,0,0,.15);">
-            <div>
-              <div style="font-size:1.8rem;color:#C41E3A;">♥</div>
-              <div style="font-size:.55rem;font-weight:900;color:#8B0000;letter-spacing:1px;">LIFE SAVER</div>
-            </div>
+        <div style="flex:1;text-align:center;">
+          <div style="font-family:'Great Vibes',cursive;font-size:1.6rem;color:#444;">
+            BloodBridge AI
           </div>
-
-          <div style="margin-top:10px;font-size:.72rem;font-weight:700;color:#8B0000;letter-spacing:1px;text-transform:uppercase;">
-            Recognized For Voluntary Blood Donation
-          </div>
-
-          <div style="margin-top:6px;font-size:.62rem;color:#666;">
-            Donate Blood • Save Lives • BloodBridge AI
+          <div style="height:2px;width:140px;background:#B8860B;margin:4px auto;"></div>
+          <div style="font-size:.55rem;font-weight:700;color:#555;text-transform:uppercase;">
+            Certified Donation Recognition
           </div>
         </div>
 
-        <div style="font-size:2rem;color:#B8860B;">❦</div>
+        <div style="flex:1.2;text-align:center;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
+            <div style="font-size:3rem;color:#D4AF37;">❦</div>
+
+            <div style="width:110px;height:110px;border:3px solid #8B0000;border-radius:50%;
+                        display:flex;align-items:center;justify-content:center;background:white;
+                        box-shadow:0 6px 18px rgba(139,0,0,.15);">
+              <div>
+                <div style="font-size:.55rem;font-weight:900;color:#8B0000;">DONATE BLOOD</div>
+                <div style="font-size:2rem;color:#C41E3A;">♥</div>
+                <div style="font-size:.55rem;font-weight:900;color:#8B0000;">SAVE LIVES</div>
+              </div>
+            </div>
+
+            <div style="font-size:3rem;color:#D4AF37;">❦</div>
+          </div>
+
+          <div style="margin-top:8px;color:#8B0000;font-weight:700;">
+            ♥ Donate Blood, Save Lives ♥
+          </div>
+        </div>
+
+        <div style="flex:1;text-align:center;">
+          <div style="font-family:'Great Vibes',cursive;font-size:1.6rem;color:#444;">
+            {{ donation.hospital }}
+          </div>
+          <div style="height:2px;width:140px;background:#B8860B;margin:4px auto;"></div>
+          <div style="font-size:.55rem;font-weight:700;color:#555;text-transform:uppercase;">
+            Verified Donation Center
+          </div>
+        </div>
+
       </div>
     </div>
 </div>
