@@ -29,15 +29,15 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 .b-gold {position:absolute;inset:14px;border:1px solid rgba(184,134,11,.5);pointer-events:none;z-index:5}
 
 /* ── CORNER ORNAMENTS (matching reference exactly) ── */
-.corner{position:absolute;width:100px;height:100px;z-index:6;pointer-events:none}
+.corner{position:absolute;width:130px;height:130px;border-radius:50%;;z-index:6;pointer-events:none}
 .tl{top:4px;left:4px}
 .tr{top:4px;right:4px;transform:scaleX(-1)}
 .bl{bottom:4px;left:4px;transform:scaleY(-1)}
 .br{bottom:4px;right:4px;transform:scale(-1)}
 
 /* ── BLOOD DROPS (top decoration like reference) ── */
-.drop-top-left{position:absolute;top:18px;left:170px;z-index:7}
-.drop-top-right{position:absolute;top:18px;right:170px;z-index:7}
+.drop-top-left{position:absolute;top:24px;left:170px;z-index:7}
+.drop-top-right{position:absolute;top:24px;right:170px;z-index:7}
 .blood-drop-svg{width:clamp(18px,2.8vw,32px);height:auto}
 
 /* ── WAVE BACKGROUND ── */
@@ -55,7 +55,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 .logo-block{display:flex;align-items:center;gap:8px}
 .logo-icon{width:52px;height:52px;background:linear-gradient(135deg,#8B0000,#C41E3A);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(139,0,0,.4)}
 .logo-icon svg{width:24px;height:24px}
-.logo-text{font-family:'Cinzel',serif;font-size:.58rem;font-weight:700;color:#8B0000;line-height:1.4;letter-spacing:.5px;text-transform:uppercase}
+.logo-text{font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:2px;color:#666;text-transform:uppercase;font-weight:700;color:#8B0000;line-height:1.4;letter-spacing:.5px;text-transform:uppercase}
 .logo-text span{font-size:.5rem;font-weight:400;color:#C41E3A;display:block;letter-spacing:1px}
 .qr-block{text-align:right}
 #qrcode{width:52px!important;height:52px!important;margin-left:auto}
@@ -77,7 +77,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 /* TITLE */
 .cert-title{
   font-family:'Cinzel',serif;
-  font-size:clamp(1.35rem,2.7vw,2.1rem);
+  font-size:clamp(1.1rem,2vw,1.7rem);
   font-weight:900;color:#8B0000;
   text-align:center;letter-spacing:5px;
   line-height:1.15;margin:1px 0;
@@ -132,7 +132,7 @@ body{background:#e8ddd0;min-height:100vh;display:flex;flex-direction:column;alig
 .info-row{
   display:flex;align-items:stretch;
   border:1.5px solid #e0c8c8;border-radius:10px;
-  overflow:hidden;width:84%;background:rgba(255,255,255,.9);
+  overflow:hidden;width:90%;background:rgba(255,255,255,.9);
   box-shadow:0 3px 12px rgba(139,0,0,.08);margin-bottom:10px;
 }
 .info-cell{flex:1;display:flex;align-items:center;gap:10px;padding:12px 18px}
@@ -279,14 +279,6 @@ body,.cert-title,.subtitle,.recognition-text{font-family:'Times New Roman',serif
     <!-- RIBBON -->
     <div class="ribbon-outer"><div class="ribbon-body">Thank You For Donating Blood</div></div>
 
-    <!-- SCROLL SIDE DECORATORS -->
-    <div class="side-deco">
-      <span class="side-scroll">༻</span>
-      <div class="side-line"></div>
-      &nbsp;&nbsp;
-      <div class="side-line-r"></div>
-      <span class="side-scroll">༺</span>
-    </div>
 
     <!-- PRESENTED TO -->
     <div class="presented">This Certificate Is Proudly Presented To</div>
@@ -319,7 +311,7 @@ body,.cert-title,.subtitle,.recognition-text{font-family:'Times New Roman',serif
     
     
 <!-- REFERENCE STYLE RECOGNITION SECTION -->
-<div style="width:100%;margin-top:2px;">
+<div style="width:100%;margin-top:4px;">
 
 <div style="display:flex;justify-content:center;align-items:center;margin-bottom:10px;">
     <div style="height:1px;width:120px;background:#D4AF37;"></div>
@@ -331,8 +323,8 @@ body,.cert-title,.subtitle,.recognition-text{font-family:'Times New Roman',serif
 
 <div style="flex:1;text-align:center;">
     <div style="font-family:'Great Vibes',cursive;font-size:2.3rem;color:#555;">
-        BloodBridge AI
-    </div>
+    BloodBridge AI
+</div>
     <div style="width:160px;height:2px;background:#B8860B;margin:6px auto;"></div>
     <div style="font-size:.72rem;font-weight:700;letter-spacing:2px;color:#666;text-transform:uppercase;">
         
@@ -369,9 +361,19 @@ body,.cert-title,.subtitle,.recognition-text{font-family:'Times New Roman',serif
 </div>
 
 <div style="flex:1;text-align:center;">
+  <div style="
+margin-top:10px;
+font-size:.8rem;
+font-weight:700;
+color:#8B0000;
+font-family:'Cinzel',serif;
+text-align:center;
+">
+♥ Donate Blood, Save Lives ♥
+</div>
     <div style="font-family:'Great Vibes',cursive;font-size:2.3rem;color:#555;">
-        {{ donation.hospital }}
-    </div>
+    {{ donation.hospital }}
+</div>
     <div style="width:160px;height:2px;background:#B8860B;margin:6px auto;"></div>
     <div style="font-size:.72rem;font-weight:700;letter-spacing:2px;color:#666;text-transform:uppercase;">
         
