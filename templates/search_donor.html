@@ -1,113 +1,112 @@
 {% extends "base.html" %}
-{% block title %}Search Donors - BloodBridge AI{% endblock %}
+{% block title %}Search Donors — BloodBridge AI{% endblock %}
 
 {% block extra_css %}
 <style>
     .search-hero {
-        background: linear-gradient(135deg, #1D3557 0%, #2A9D8F 100%);
-        padding: 50px 0 90px; position: relative; overflow: hidden;
+        padding: 140px 0 60px; position: relative; overflow: hidden;
     }
-    .search-hero::after {
-        content: '';
-        position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
-        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-        clip-path: ellipse(60% 100% at 50% 100%);
+    .search-hero-glow {
+        position: absolute;
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(15,145,131,0.12) 0%, transparent 70%);
+        top: -50px; left: -100px;
+        pointer-events: none;
     }
     .search-card {
-        background: rgba(255,255,255,0.95);
-        backdrop-filter: blur(20px); border-radius: 24px;
-        padding: 2.5rem; box-shadow: 0 30px 80px rgba(0,0,0,0.15);
-        margin-top: -50px; position: relative; z-index: 10;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        backdrop-filter: blur(20px); border-radius: var(--radius-xl);
+        padding: 2.25rem;
+        position: relative; z-index: 10;
     }
     .donor-card {
-        background: rgba(255,255,255,0.9); border-radius: 20px;
-        padding: 1.5rem; border: 1px solid rgba(0,0,0,0.06);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        transition: all 0.3s ease;
+        background: var(--bg-card); border-radius: var(--radius-lg);
+        padding: 1.5rem; border: 1px solid var(--border);
+        transition: all var(--dur-slow) var(--ease-out);
+        height: 100%;
     }
     .donor-card:hover {
-        box-shadow: 0 12px 40px rgba(230,57,70,0.15);
+        background: var(--bg-card-hover);
+        border-color: var(--border-hover);
+        box-shadow: var(--shadow-lg);
         transform: translateY(-6px);
     }
     .blood-type-badge {
-        width: 60px; height: 60px;
-        background: linear-gradient(135deg, #E63946, #d62828);
-        color: white; font-weight: 800; font-size: 1rem;
-        border-radius: 16px;
+        width: 56px; height: 56px;
+        background: var(--red-subtle);
+        border: 1px solid var(--border-red);
+        color: var(--red-bright); font-weight: 800; font-size: 0.95rem;
+        border-radius: var(--radius-md);
         display: flex; align-items: center; justify-content: center;
         flex-shrink: 0;
-        box-shadow: 0 6px 20px rgba(230,57,70,0.3);
     }
-    .match-score {
-        display: flex; align-items: center; gap: 8px;
-    }
+    .match-score { display: flex; align-items: center; gap: 8px; }
     .match-bar {
-        flex: 1; height: 8px; background: #f0f0f0;
-        border-radius: 4px; overflow: hidden;
+        flex: 1; height: 6px; background: rgba(255,255,255,0.06);
+        border-radius: 3px; overflow: hidden;
     }
     .match-bar-fill {
-        height: 100%; border-radius: 4px;
-        background: linear-gradient(90deg, #E63946, #FFB703);
-        transition: width 1s ease;
+        height: 100%; border-radius: 3px;
+        background: linear-gradient(90deg, var(--red), var(--gold));
+        transition: width 1s var(--ease-out);
     }
-    .score-text {
-        font-weight: 800; font-size: 1rem; color: #E63946; min-width: 45px;
-    }
+    .score-text { font-weight: 800; font-size: 0.9rem; color: var(--red-bright); min-width: 42px; }
     .donor-status {
-        display: inline-block; padding: 4px 14px; border-radius: 50px;
-        font-size: 0.8rem; font-weight: 700;
+        display: inline-block; padding: 4px 12px; border-radius: var(--radius-pill);
+        font-size: 0.75rem; font-weight: 700;
     }
-    .status-available { background: rgba(42,157,143,0.1); color: #2A9D8F; }
-    .status-unavailable { background: rgba(230,57,70,0.1); color: #E63946; }
+    .status-available   { background: var(--teal-subtle); color: #2DD4BF; border: 1px solid rgba(15,145,131,0.3); }
+    .status-unavailable { background: var(--red-subtle); color: #FF6B7A; border: 1px solid var(--border-red); }
     .compatible-tag {
-        display: inline-block; padding: 3px 10px; border-radius: 50px;
-        font-size: 0.78rem; font-weight: 700;
-        background: rgba(255,183,3,0.15); color: #b38200;
-        border: 1px solid rgba(255,183,3,0.3);
+        display: inline-block; padding: 3px 10px; border-radius: var(--radius-pill);
+        font-size: 0.72rem; font-weight: 700;
+        background: rgba(184,134,11,0.12); color: var(--gold-light);
+        border: 1px solid rgba(184,134,11,0.3);
     }
     .results-header {
         display: flex; align-items: center; justify-content: space-between;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px;
     }
     .filter-chip {
-        display: inline-block; padding: 6px 14px; border-radius: 50px;
-        background: rgba(29,53,87,0.08); color: #1D3557;
-        font-size: 0.85rem; font-weight: 600; margin: 4px;
+        display: inline-block; padding: 5px 13px; border-radius: var(--radius-pill);
+        background: rgba(255,255,255,0.05); color: var(--text-secondary);
+        border: 1px solid var(--border);
+        font-size: 0.8rem; font-weight: 600; margin: 3px;
     }
-    .no-results {
-        text-align: center; padding: 4rem 2rem;
-    }
-    .no-results i {
-        font-size: 4rem; color: #ccc; margin-bottom: 1.5rem; display: block;
-    }
+    .no-results { text-align: center; padding: 4rem 2rem; }
+    .no-results i { font-size: 3.5rem; color: var(--text-muted); margin-bottom: 1.5rem; display: block; }
     .compatibility-info {
-        background: rgba(29,53,87,0.04); border-radius: 16px;
-        padding: 1.5rem; border-left: 4px solid #1D3557;
+        background: rgba(255,255,255,0.03); border-radius: var(--radius-md);
+        padding: 1.5rem; border-left: 3px solid var(--red);
     }
     .compat-tag {
-        display: inline-block; padding: 4px 12px; border-radius: 50px;
-        background: white; border: 2px solid #1D3557;
-        font-weight: 700; font-size: 0.85rem; margin: 3px;
+        display: inline-block; padding: 4px 12px; border-radius: var(--radius-pill);
+        background: transparent; border: 1px solid var(--border-red);
+        color: var(--red-bright);
+        font-weight: 700; font-size: 0.8rem; margin: 3px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="search-hero">
-    <div class="container text-white text-center">
-        <div class="d-inline-block px-4 py-2 rounded-pill mb-3" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3)">
-            <i class="fas fa-search me-2" style="color:#FFB703"></i> Smart Donor Search
+    <div class="search-hero-glow"></div>
+    <div class="container text-center">
+        <div class="section-label mx-auto" style="width:fit-content">
+            <i class="fas fa-search"></i> Smart Donor Search
         </div>
-        <h1 style="font-size:2.8rem;font-weight:900">Find Compatible Blood Donors</h1>
-        <p style="opacity:0.85;font-size:1.1rem;margin-top:0.5rem">AI-powered matching finds the most compatible donors for your needs</p>
+        <h1 class="section-title">Find Compatible Blood Donors</h1>
+        <p class="section-subtitle mx-auto">AI-powered matching finds the most compatible donors for your needs</p>
     </div>
 </section>
 
-<section style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); padding-bottom: 60px;">
+<section style="padding-bottom: 80px;">
     <div class="container">
-        <!-- Search Form -->
         <div class="search-card mb-5">
-            <h5 style="color:#1D3557;font-weight:700;margin-bottom:1.5rem"><i class="fas fa-sliders-h me-2" style="color:#E63946"></i> Search Filters</h5>
+            <h5 style="color:var(--text-primary);font-weight:700;margin-bottom:1.5rem;font-size:0.95rem">
+                <i class="fas fa-sliders-h me-2" style="color:var(--red-bright)"></i> Search Filters
+            </h5>
             <form method="GET" action="/search-donor" id="searchForm">
                 <div class="row gy-3 align-items-end">
                     <div class="col-md-3">
@@ -118,7 +117,7 @@
                             <option value="{{ bg }}" {% if request.args.get('patient_blood') == bg %}selected{% endif %}>{{ bg }}</option>
                             {% endfor %}
                         </select>
-                        <small class="text-muted">AI will find compatible types</small>
+                        <small style="color:var(--text-muted);font-size:0.78rem">AI will find compatible types</small>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Donor Blood Group</label>
@@ -144,28 +143,29 @@
                         </select>
                     </div>
                     <div class="col-md-1">
-                        <button type="submit" class="btn btn-primary w-100" style="height:46px">
+                        <button type="submit" class="btn btn-primary w-100" style="height:46px;justify-content:center">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
                 </div>
             </form>
 
-            <!-- Compatibility Info (appears when patient blood selected) -->
             {% if request.args.get('patient_blood') %}
             <div class="compatibility-info mt-4" id="compatInfo">
-                <h6 style="color:#1D3557;font-weight:700"><i class="fas fa-dna me-2"></i> Blood Compatibility for {{ request.args.get('patient_blood') }} Patient</h6>
-                <p class="text-muted small mb-2">Compatible donor blood types (shown with AI match score):</p>
+                <h6 style="color:var(--text-primary);font-weight:700;font-size:0.875rem">
+                    <i class="fas fa-dna me-2" style="color:var(--red-bright)"></i>
+                    Blood Compatibility for {{ request.args.get('patient_blood') }} Patient
+                </h6>
+                <p style="color:var(--text-muted);font-size:0.82rem" class="mb-2">Compatible donor blood types (shown with AI match score):</p>
                 <div id="compatTags"></div>
             </div>
             {% endif %}
         </div>
 
-        <!-- Results -->
         {% if results is defined %}
         <div class="results-header">
             <div>
-                <h4 style="color:#1D3557;font-weight:800;margin-bottom:0.3rem">
+                <h4 style="color:var(--text-primary);font-weight:800;margin-bottom:0.3rem;font-family:'Playfair Display',serif">
                     {% if results %}{{ results|length }} Donor(s) Found{% else %}No Results{% endif %}
                 </h4>
                 <div>
@@ -175,19 +175,19 @@
                 </div>
             </div>
             {% if results %}
-            <div class="text-muted small">Sorted by AI match score ↓</div>
+            <div style="color:var(--text-muted);font-size:0.82rem">Sorted by AI match score ↓</div>
             {% endif %}
         </div>
 
         {% if results %}
         <div class="row gy-4">
             {% for donor in results %}
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-4 reveal">
                 <div class="donor-card">
                     <div class="d-flex gap-3 mb-3">
                         <div class="blood-type-badge">{{ donor.blood_group }}</div>
                         <div class="flex-grow-1">
-                            <h5 style="color:#1D3557;font-weight:700;margin-bottom:4px">{{ donor.name }}</h5>
+                            <h5 style="color:var(--text-primary);font-weight:700;margin-bottom:4px;font-size:1rem">{{ donor.name }}</h5>
                             <div>
                                 <span class="donor-status {{ 'status-available' if donor.available else 'status-unavailable' }}">
                                     <i class="fas fa-{{ 'check' if donor.available else 'times' }} me-1"></i>
@@ -203,7 +203,7 @@
                     {% if donor.match_score is defined %}
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <small style="color:#555;font-weight:600">AI Match Score</small>
+                            <small style="color:var(--text-muted);font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em">AI Match Score</small>
                             <span class="score-text">{{ donor.match_score }}%</span>
                         </div>
                         <div class="match-bar">
@@ -214,31 +214,31 @@
 
                     <div class="row gy-2 mb-3">
                         <div class="col-6">
-                            <small class="text-muted d-block"><i class="fas fa-map-marker-alt me-1"></i> City</small>
-                            <span style="font-weight:600;color:#1D3557">{{ donor.city }}</span>
+                            <small style="color:var(--text-muted);font-size:0.72rem" class="d-block"><i class="fas fa-map-marker-alt me-1"></i> City</small>
+                            <span style="font-weight:600;color:var(--text-primary);font-size:0.875rem">{{ donor.city }}</span>
                         </div>
                         <div class="col-6">
-                            <small class="text-muted d-block"><i class="fas fa-birthday-cake me-1"></i> Age</small>
-                            <span style="font-weight:600;color:#1D3557">{{ donor.age }} yrs</span>
+                            <small style="color:var(--text-muted);font-size:0.72rem" class="d-block"><i class="fas fa-birthday-cake me-1"></i> Age</small>
+                            <span style="font-weight:600;color:var(--text-primary);font-size:0.875rem">{{ donor.age }} yrs</span>
                         </div>
                         <div class="col-6">
-                            <small class="text-muted d-block"><i class="fas fa-calendar me-1"></i> Last Donated</small>
-                            <span style="font-weight:600;color:#1D3557;font-size:0.9rem">
+                            <small style="color:var(--text-muted);font-size:0.72rem" class="d-block"><i class="fas fa-calendar me-1"></i> Last Donated</small>
+                            <span style="font-weight:600;color:var(--text-primary);font-size:0.82rem">
                                 {{ donor.last_donation|dateformat('%d %b %Y') if donor.last_donation else 'First Donor' }}
                             </span>
                         </div>
                         <div class="col-6">
-                            <small class="text-muted d-block"><i class="fas fa-venus-mars me-1"></i> Gender</small>
-                            <span style="font-weight:600;color:#1D3557">{{ donor.gender }}</span>
+                            <small style="color:var(--text-muted);font-size:0.72rem" class="d-block"><i class="fas fa-venus-mars me-1"></i> Gender</small>
+                            <span style="font-weight:600;color:var(--text-primary);font-size:0.875rem">{{ donor.gender }}</span>
                         </div>
                     </div>
 
                     <div class="d-flex gap-2">
-                        <a href="tel:{{ donor.phone }}" class="btn btn-primary flex-fill btn-sm">
-                            <i class="fas fa-phone me-1"></i> Contact
+                        <a href="tel:{{ donor.phone }}" class="btn btn-primary flex-fill btn-sm" style="justify-content:center">
+                            <i class="fas fa-phone"></i> Contact
                         </a>
-                        <a href="/donor-detail/{{ donor.id }}" class="btn btn-outline-secondary flex-fill btn-sm">
-                            <i class="fas fa-user me-1"></i> Profile
+                        <a href="/donor-detail/{{ donor.id }}" class="btn btn-outline-secondary flex-fill btn-sm" style="justify-content:center">
+                            <i class="fas fa-user"></i> Profile
                         </a>
                     </div>
                 </div>
@@ -248,10 +248,10 @@
         {% else %}
         <div class="glass-card no-results">
             <i class="fas fa-search-minus"></i>
-            <h4 style="color:#1D3557;font-weight:700">No Donors Found</h4>
-            <p class="text-muted">Try adjusting your search filters or register more donors.</p>
+            <h4 style="color:var(--text-primary);font-weight:700">No Donors Found</h4>
+            <p style="color:var(--text-secondary)">Try adjusting your search filters or register more donors.</p>
             <a href="/register-donor" class="btn btn-primary mt-2">
-                <i class="fas fa-user-plus me-2"></i> Register New Donor
+                <i class="fas fa-user-plus"></i> Register New Donor
             </a>
         </div>
         {% endif %}
@@ -276,12 +276,10 @@
 
     if (patientBlood) {
         patientBlood.addEventListener('change', () => loadCompatibility(patientBlood.value));
-        // Auto-load on page
         const currentBg = "{{ request.args.get('patient_blood', '') }}";
         if (currentBg) loadCompatibility(currentBg);
     }
 
-    // Animate match bars
     document.querySelectorAll('.match-bar-fill').forEach(bar => {
         const width = bar.style.width;
         bar.style.width = '0%';

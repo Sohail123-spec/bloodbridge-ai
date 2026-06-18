@@ -1,17 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Hospital Login - BloodBridge AI{% endblock %}
+{% block title %}Hospital Login — BloodBridge AI{% endblock %}
+{% block extra_css %}
+<style>
+    .auth-wrap { min-height:88vh; display:flex; align-items:center; padding:140px 0 60px; position:relative; overflow:hidden; }
+    .auth-glow { position:absolute; width:500px; height:500px; background:radial-gradient(circle, rgba(15,145,131,0.15) 0%, transparent 70%); top:-100px; left:50%; transform:translateX(-50%); pointer-events:none; }
+    .auth-card { background:var(--bg-card); border:1px solid var(--border); backdrop-filter:blur(20px); border-radius:var(--radius-xl); padding:2.75rem; position:relative; z-index:5; }
+    .auth-icon { width:60px; height:60px; background:linear-gradient(135deg,#1D3557,#0F9183); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem; }
+</style>
+{% endblock %}
 {% block content %}
-<section style="min-height:80vh;display:flex;align-items:center;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:60px 0">
+<section class="auth-wrap">
+    <div class="auth-glow"></div>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5">
-                <div style="background:rgba(255,255,255,0.95);border-radius:28px;padding:3rem;box-shadow:0 30px 80px rgba(0,0,0,0.12)">
+                <div class="auth-card">
                     <div class="text-center mb-4">
-                        <div style="width:70px;height:70px;background:linear-gradient(135deg,#1D3557,#2A9D8F);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
-                            <i class="fas fa-hospital" style="font-size:1.8rem;color:white"></i>
-                        </div>
-                        <h3 style="color:#1D3557;font-weight:800">Hospital Login</h3>
-                        <p class="text-muted">Access your hospital portal</p>
+                        <div class="auth-icon"><i class="fas fa-hospital" style="font-size:1.5rem;color:white"></i></div>
+                        <h3 style="color:var(--text-primary);font-weight:800;font-family:'Playfair Display',serif">Hospital Login</h3>
+                        <p style="color:var(--text-muted);font-size:0.9rem">Access your hospital portal</p>
                     </div>
                     <div id="alert-box"></div>
                     <form id="loginForm">
@@ -28,14 +35,14 @@
                                 </button>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 btn-lg" id="submitBtn">
-                            <i class="fas fa-sign-in-alt me-2"></i> Login
+                        <button type="submit" class="btn btn-primary w-100 btn-lg" id="submitBtn" style="justify-content:center">
+                            <i class="fas fa-sign-in-alt"></i> Login
                         </button>
                     </form>
-                    <hr class="my-4">
+                    <hr style="border-color:var(--border);margin:1.75rem 0">
                     <div class="text-center">
-                        <p class="text-muted mb-0">Not registered? <a href="/hospital-register" style="color:#E63946;font-weight:600">Register Hospital</a></p>
-                        <p class="text-muted mt-2 mb-0"><a href="/admin-login" style="color:#1D3557;font-weight:600"><i class="fas fa-shield-alt me-1"></i>Admin Login</a></p>
+                        <p style="color:var(--text-muted);font-size:0.875rem" class="mb-0">Not registered? <a href="/hospital-register" style="color:var(--red-bright);font-weight:600">Register Hospital</a></p>
+                        <p style="color:var(--text-muted);font-size:0.875rem" class="mt-2 mb-0"><a href="/admin-login" style="color:var(--text-secondary);font-weight:600"><i class="fas fa-shield-alt me-1"></i>Admin Login</a></p>
                     </div>
                 </div>
             </div>

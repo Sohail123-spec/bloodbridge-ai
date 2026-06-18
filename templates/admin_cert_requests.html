@@ -1,85 +1,85 @@
 {% extends "base.html" %}
-{% block title %}Certificate Requests - Admin{% endblock %}
+{% block title %}Certificate Requests — Admin{% endblock %}
 {% block extra_css %}
 <style>
     .tab-pill {
-        padding: 8px 20px; border-radius: 50px; font-weight: 700; font-size: 0.9rem;
-        cursor: pointer; border: 2px solid transparent; text-decoration: none;
+        padding: 7px 18px; border-radius: var(--radius-pill); font-weight: 700; font-size: 0.85rem;
+        cursor: pointer; border: 1px solid; text-decoration: none;
         transition: all 0.25s ease; display: inline-block;
     }
-    .tab-pill.pending { border-color: #FFB703; color: #FFB703; }
-    .tab-pill.pending.active { background: #FFB703; color: white; }
-    .tab-pill.approved { border-color: #2A9D8F; color: #2A9D8F; }
-    .tab-pill.approved.active { background: #2A9D8F; color: white; }
-    .tab-pill.rejected { border-color: #E63946; color: #E63946; }
-    .tab-pill.rejected.active { background: #E63946; color: white; }
+    .tab-pill.pending   { border-color: rgba(184,134,11,0.4); color: var(--gold-light); }
+    .tab-pill.pending.active   { background: var(--gold); color: white; border-color: var(--gold); }
+    .tab-pill.approved  { border-color: rgba(15,145,131,0.4); color: #2DD4BF; }
+    .tab-pill.approved.active  { background: #0F9183; color: white; border-color: #0F9183; }
+    .tab-pill.rejected  { border-color: var(--border-red); color: var(--red-bright); }
+    .tab-pill.rejected.active  { background: var(--red); color: white; border-color: var(--red); }
     .req-card {
-        background: rgba(255,255,255,0.95); border-radius: 20px;
-        padding: 1.5rem; box-shadow: 0 6px 25px rgba(0,0,0,0.07);
-        transition: all 0.3s ease;
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+        padding: 1.5rem; transition: all var(--dur-slow) var(--ease-out);
     }
-    .req-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.12); transform: translateY(-3px); }
+    .req-card:hover { border-color: var(--border-hover); transform: translateY(-3px); box-shadow: var(--shadow-md); }
     .proof-img {
         width: 100%; max-height: 220px; object-fit: cover;
-        border-radius: 14px; cursor: pointer;
-        border: 3px solid rgba(0,0,0,0.08);
+        border-radius: var(--radius-md); cursor: pointer;
+        border: 1px solid var(--border);
         transition: all 0.3s ease;
     }
-    .proof-img:hover { border-color: #E63946; transform: scale(1.02); }
+    .proof-img:hover { border-color: var(--border-red); transform: scale(1.01); }
     .blood-badge-sm {
-        width: 44px; height: 44px; border-radius: 12px;
-        background: linear-gradient(135deg,#E63946,#d62828);
-        color: white; font-weight: 800; font-size: 0.85rem;
+        width: 44px; height: 44px; border-radius: var(--radius-md);
+        background: var(--red-subtle); border: 1px solid var(--border-red);
+        color: var(--red-bright); font-weight: 800; font-size: 0.85rem;
         display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .lightbox {
         display: none; position: fixed; inset: 0;
-        background: rgba(0,0,0,0.9); z-index: 9999;
+        background: rgba(0,0,0,0.92); z-index: 9999;
         align-items: center; justify-content: center;
         cursor: pointer;
     }
     .lightbox.show { display: flex; }
-    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 12px; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: var(--radius-md); }
     .note-input {
-        border: 2px solid #e0e0e0; border-radius: 10px;
-        padding: 8px 12px; width: 100%; font-size: 0.9rem;
-        transition: border-color 0.25s;
-        resize: none;
+        border: 1px solid var(--border); border-radius: var(--radius-sm);
+        padding: 8px 12px; width: 100%; font-size: 0.875rem;
+        background: rgba(255,255,255,0.04); color: var(--text-primary);
+        transition: border-color 0.25s; resize: none;
     }
-    .note-input:focus { border-color: #E63946; outline: none; }
+    .note-input:focus { border-color: var(--red); outline: none; }
+    .note-input::placeholder { color: var(--text-muted); }
 </style>
 {% endblock %}
 
 {% block content %}
-<section style="background:linear-gradient(135deg,#1D3557,#0a0a1a);padding:45px 0 90px;position:relative">
-    <div class="container text-white">
-        <a href="/admin-dashboard" style="color:rgba(255,255,255,0.6);text-decoration:none;font-weight:600">
+<section style="padding:140px 0 60px;position:relative;overflow:hidden">
+    <div style="position:absolute;width:600px;height:600px;background:radial-gradient(circle, rgba(184,134,11,0.12) 0%, transparent 70%);top:-150px;right:-100px;pointer-events:none"></div>
+    <div class="container">
+        <a href="/admin-dashboard" style="color:var(--text-secondary);text-decoration:none;font-weight:600;font-size:0.875rem">
             <i class="fas fa-arrow-left me-2"></i>Admin Dashboard
         </a>
-        <h2 style="font-size:2.2rem;font-weight:900;margin-top:1rem">
-            <i class="fas fa-certificate me-2" style="color:#FFB703"></i>Certificate Requests
+        <h2 class="section-title mt-3 mb-1">
+            <i class="fas fa-certificate me-2" style="color:var(--gold-light)"></i>Certificate Requests
         </h2>
-        <p style="opacity:0.75">Review donor proof photos and approve or reject certificate requests</p>
+        <p style="color:var(--text-secondary)">Review donor proof photos and approve or reject certificate requests</p>
     </div>
-    <div style="position:absolute;bottom:0;left:0;right:0;height:55px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);clip-path:ellipse(60% 100% at 50% 100%)"></div>
 </section>
 
-<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:40px 0 60px">
+<section style="padding-bottom:60px">
     <div class="container">
 
         <!-- Status Tabs -->
         <div class="d-flex gap-3 flex-wrap mb-4">
             <a href="?status=Pending" class="tab-pill pending {{ 'active' if status_filter=='Pending' else '' }}">
                 <i class="fas fa-clock me-1"></i> Pending
-                <span style="background:rgba(255,183,3,0.2);padding:2px 8px;border-radius:10px;margin-left:6px">{{ counts.Pending }}</span>
+                <span style="background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:10px;margin-left:6px">{{ counts.Pending }}</span>
             </a>
             <a href="?status=Approved" class="tab-pill approved {{ 'active' if status_filter=='Approved' else '' }}">
                 <i class="fas fa-check-circle me-1"></i> Approved
-                <span style="background:rgba(42,157,143,0.2);padding:2px 8px;border-radius:10px;margin-left:6px">{{ counts.Approved }}</span>
+                <span style="background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:10px;margin-left:6px">{{ counts.Approved }}</span>
             </a>
             <a href="?status=Rejected" class="tab-pill rejected {{ 'active' if status_filter=='Rejected' else '' }}">
                 <i class="fas fa-times-circle me-1"></i> Rejected
-                <span style="background:rgba(230,57,70,0.2);padding:2px 8px;border-radius:10px;margin-left:6px">{{ counts.Rejected }}</span>
+                <span style="background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:10px;margin-left:6px">{{ counts.Rejected }}</span>
             </a>
         </div>
 
@@ -91,29 +91,27 @@
                     <div class="d-flex gap-3 align-items-start mb-3">
                         <div class="blood-badge-sm">{{ req.blood_group }}</div>
                         <div class="flex-grow-1">
-                            <h5 style="color:#1D3557;font-weight:800;margin-bottom:3px">{{ req.donor_name }}</h5>
-                            <div class="text-muted small">
+                            <h5 style="color:var(--text-primary);font-weight:800;margin-bottom:3px;font-size:1rem">{{ req.donor_name }}</h5>
+                            <div style="color:var(--text-muted);font-size:0.82rem">
                                 <i class="fas fa-hospital me-1"></i>{{ req.hospital }} &nbsp;|&nbsp;
                                 <i class="fas fa-calendar me-1"></i>{{ req.donation_date|dateformat('%Y-%m-%d') if req.donation_date else '-' }}
                             </div>
                         </div>
-                        <span style="padding:4px 12px;border-radius:50px;font-size:0.78rem;font-weight:700;
-                            background:{{ 'rgba(255,183,3,0.15)' if req.status=='Pending' else 'rgba(42,157,143,0.15)' if req.status=='Approved' else 'rgba(230,57,70,0.15)' }};
-                            color:{{ '#b38200' if req.status=='Pending' else '#2A9D8F' if req.status=='Approved' else '#E63946' }}">
+                        <span class="badge {{ 'urgency-urgent' if req.status=='Pending' else 'badge-teal' if req.status=='Approved' else 'badge-red' }}">
                             {{ req.status }}
                         </span>
                     </div>
 
                     <!-- Proof Photo -->
                     <div class="mb-3">
-                        <small class="text-muted d-block mb-2 fw-bold"><i class="fas fa-camera me-1"></i>Proof Photo — click to enlarge</small>
+                        <small style="color:var(--text-muted)" class="d-block mb-2 fw-bold"><i class="fas fa-camera me-1"></i>Proof Photo — click to enlarge</small>
                         <img src="data:{{ req.photo_mime }};base64,{{ req.photo_base64 }}"
                              class="proof-img"
                              alt="Donation proof"
                              onclick="openLightbox(this.src)">
                     </div>
 
-                    <div class="text-muted small mb-3">
+                    <div style="color:var(--text-muted);font-size:0.8rem" class="mb-3">
                         <i class="fas fa-clock me-1"></i>Requested:
 {{ req.requested_at.strftime('%Y-%m-%d %H:%M') if req.requested_at else '-' }}
                         {% if req.approved_at %}
@@ -123,28 +121,27 @@
                     </div>
 
                     {% if req.admin_note %}
-                    <div style="background:rgba(0,0,0,0.04);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1rem;font-size:0.88rem">
-                        <strong>Admin Note:</strong> {{ req.admin_note }}
+                    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.8rem 1rem;margin-bottom:1rem;font-size:0.85rem;color:var(--text-secondary)">
+                        <strong style="color:var(--text-primary)">Admin Note:</strong> {{ req.admin_note }}
                     </div>
                     {% endif %}
 
                     {% if req.status == 'Pending' %}
-                    <!-- Action Buttons -->
                     <div>
                         <textarea class="note-input mb-3" rows="2" id="note-{{ req.id }}"
                             placeholder="Optional note (reason for rejection, or approval message)..."></textarea>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-success flex-fill" onclick="approve({{ req.id }})">
-                                <i class="fas fa-check me-1"></i> Approve & Issue Certificate
+                            <button class="btn btn-success flex-fill" onclick="approve({{ req.id }})" style="justify-content:center">
+                                <i class="fas fa-check"></i> Approve & Issue
                             </button>
-                            <button class="btn btn-danger flex-fill" onclick="reject({{ req.id }})">
-                                <i class="fas fa-times me-1"></i> Reject
+                            <button class="btn btn-danger flex-fill" onclick="reject({{ req.id }})" style="justify-content:center">
+                                <i class="fas fa-times"></i> Reject
                             </button>
                         </div>
                     </div>
                     {% elif req.status == 'Approved' %}
-                    <a href="/certificate/req/{{ req.id }}" target="_blank" class="btn btn-outline-success w-100">
-                        <i class="fas fa-external-link-alt me-1"></i> View Certificate
+                    <a href="/certificate/req/{{ req.id }}" target="_blank" class="btn btn-outline-primary w-100" style="justify-content:center">
+                        <i class="fas fa-external-link-alt"></i> View Certificate
                     </a>
                     {% endif %}
                 </div>
@@ -152,16 +149,15 @@
             {% endfor %}
         </div>
         {% else %}
-        <div style="text-align:center;padding:4rem 2rem;background:rgba(255,255,255,0.9);border-radius:24px">
-            <i class="fas fa-certificate" style="font-size:4rem;color:#ccc;display:block;margin-bottom:1.5rem"></i>
-            <h4 style="color:#1D3557;font-weight:700">No {{ status_filter }} Requests</h4>
-            <p class="text-muted">No certificate requests with status "{{ status_filter }}" found.</p>
+        <div class="card" style="text-align:center;padding:4rem 2rem">
+            <i class="fas fa-certificate" style="font-size:3.5rem;color:var(--text-muted);display:block;margin-bottom:1.5rem"></i>
+            <h4 style="color:var(--text-primary);font-weight:700">No {{ status_filter }} Requests</h4>
+            <p style="color:var(--text-muted)">No certificate requests with status "{{ status_filter }}" found.</p>
         </div>
         {% endif %}
     </div>
 </section>
 
-<!-- Lightbox -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <img id="lightboxImg" src="" alt="Proof photo">
 </div>
@@ -189,8 +185,8 @@
         if (data.success) {
             const card = document.getElementById(`card-${id}`);
             card.innerHTML = `<div class="req-card" style="text-align:center;padding:2rem">
-                <i class="fas fa-check-circle" style="font-size:3rem;color:#2A9D8F;display:block;margin-bottom:1rem"></i>
-                <h5 style="color:#1D3557;font-weight:700">Certificate Approved!</h5>
+                <i class="fas fa-check-circle" style="font-size:2.5rem;color:#2DD4BF;display:block;margin-bottom:1rem"></i>
+                <h5 style="color:var(--text-primary);font-weight:700">Certificate Approved!</h5>
                 <a href="${data.certificate_url}" target="_blank" class="btn btn-success mt-2">View Certificate</a>
             </div>`;
         }
@@ -209,9 +205,9 @@
         if (data.success) {
             const card = document.getElementById(`card-${id}`);
             card.innerHTML = `<div class="req-card" style="text-align:center;padding:2rem">
-                <i class="fas fa-times-circle" style="font-size:3rem;color:#E63946;display:block;margin-bottom:1rem"></i>
-                <h5 style="color:#1D3557;font-weight:700">Request Rejected</h5>
-                <p class="text-muted">${note}</p>
+                <i class="fas fa-times-circle" style="font-size:2.5rem;color:#FF6B7A;display:block;margin-bottom:1rem"></i>
+                <h5 style="color:var(--text-primary);font-weight:700">Request Rejected</h5>
+                <p style="color:var(--text-muted)">${note}</p>
             </div>`;
         }
     }

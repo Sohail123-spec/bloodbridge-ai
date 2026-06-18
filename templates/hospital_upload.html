@@ -1,44 +1,42 @@
 {% extends "base.html" %}
-{% block title %}Upload Donors - {{ hospital.name }}{% endblock %}
+{% block title %}Upload Donors — {{ hospital.name }}{% endblock %}
 {% block extra_css %}
 <style>
     .drop-zone {
-        border: 3px dashed #ccc; border-radius: 20px; padding: 4rem 2rem;
+        border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 3.5rem 2rem;
         text-align: center; cursor: pointer; transition: all 0.3s ease;
-        background: rgba(255,255,255,0.5);
+        background: rgba(255,255,255,0.02);
     }
-    .drop-zone.dragover { border-color: #2A9D8F; background: rgba(42,157,143,0.05); }
-    .drop-zone i { font-size: 4rem; color: #ccc; margin-bottom: 1rem; display: block; }
-    .drop-zone.has-file i { color: #2A9D8F; }
+    .drop-zone.dragover { border-color: #0F9183; background: var(--teal-subtle); }
+    .drop-zone i { font-size: 3.2rem; color: var(--text-muted); margin-bottom: 1rem; display: block; }
+    .drop-zone.has-file i { color: #2DD4BF; }
     .progress-section { display: none; }
-    .result-card { display: none; border-radius: 16px; padding: 1.5rem; margin-top: 1.5rem; }
-    .result-card.success { background: rgba(42,157,143,0.1); border: 2px solid #2A9D8F; }
-    .result-card.error { background: rgba(230,57,70,0.1); border: 2px solid #E63946; }
-    .col-spec { background: rgba(29,53,87,0.05); border-radius: 12px; padding: 0.5rem 1rem; display: inline-block; margin: 4px; font-family: monospace; font-size: 0.9rem; font-weight: 600; color: #1D3557; }
+    .result-card { display: none; border-radius: var(--radius-md); padding: 1.5rem; margin-top: 1.5rem; border: 1px solid; }
+    .result-card.success { background: var(--teal-subtle); border-color: rgba(15,145,131,0.3); }
+    .result-card.error { background: var(--red-subtle); border-color: var(--border-red); }
+    .col-spec { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.4rem 0.9rem; display: inline-block; margin: 4px; font-family: monospace; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
 </style>
 {% endblock %}
 {% block content %}
-<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);min-height:80vh;padding:50px 0">
+<section style="min-height:88vh;padding:140px 0 60px">
     <div class="container">
         <div class="mb-4">
-            <a href="/hospital-dashboard" style="color:#1D3557;text-decoration:none;font-weight:600"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
+            <a href="/hospital-dashboard" style="color:var(--text-secondary);text-decoration:none;font-weight:600;font-size:0.875rem"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div style="background:rgba(255,255,255,0.95);border-radius:28px;padding:3rem;box-shadow:0 20px 60px rgba(0,0,0,0.1)">
+                <div class="card" style="padding:2.5rem">
                     <div class="d-flex align-items-center mb-4 gap-3">
-                        <div style="width:55px;height:55px;background:linear-gradient(135deg,#2A9D8F,#1d7a74);border-radius:16px;display:flex;align-items:center;justify-content:center">
-                            <i class="fas fa-file-excel" style="font-size:1.5rem;color:white"></i>
-                        </div>
+                        <div class="kpi-icon teal" style="margin-bottom:0"><i class="fas fa-file-excel"></i></div>
                         <div>
-                            <h4 style="color:#1D3557;font-weight:800;margin:0">Upload Donor Database</h4>
-                            <small class="text-muted">{{ hospital.name }} — Import Excel file</small>
+                            <h4 style="color:var(--text-primary);font-weight:800;margin:0;font-size:1.1rem">Upload Donor Database</h4>
+                            <small style="color:var(--text-muted)">{{ hospital.name }} — Import Excel file</small>
                         </div>
                     </div>
 
                     <!-- Column Requirements -->
-                    <div style="background:rgba(29,53,87,0.04);border-radius:16px;padding:1.5rem;margin-bottom:2rem;border-left:4px solid #1D3557">
-                        <h6 style="color:#1D3557;font-weight:700;margin-bottom:0.8rem"><i class="fas fa-table me-2"></i>Required Excel Columns</h6>
+                    <div style="background:rgba(255,255,255,0.03);border-radius:var(--radius-md);padding:1.5rem;margin-bottom:2rem;border-left:3px solid var(--red)">
+                        <h6 style="color:var(--text-primary);font-weight:700;margin-bottom:0.8rem;font-size:0.9rem"><i class="fas fa-table me-2"></i>Required Excel Columns</h6>
                         <div>
                             <span class="col-spec">name</span>
                             <span class="col-spec">blood_group</span>
@@ -47,28 +45,28 @@
                             <span class="col-spec">last_donation</span>
                             <span class="col-spec">available</span>
                         </div>
-                        <small class="text-muted mt-2 d-block">Optional: <code>age</code>, <code>gender</code>, <code>email</code>, <code>weight</code></small>
+                        <small style="color:var(--text-muted)" class="mt-2 d-block">Optional: <code style="color:var(--gold-light)">age</code>, <code style="color:var(--gold-light)">gender</code>, <code style="color:var(--gold-light)">email</code>, <code style="color:var(--gold-light)">weight</code></small>
                     </div>
 
                     <!-- Drop Zone -->
                     <form id="uploadForm">
                         <div class="drop-zone" id="dropZone">
                             <i class="fas fa-cloud-upload-alt" id="dropIcon"></i>
-                            <h5 style="color:#1D3557;font-weight:700" id="dropText">Drag & Drop your Excel file here</h5>
-                            <p class="text-muted mb-3" id="dropSubtext">or click to browse files</p>
+                            <h5 style="color:var(--text-primary);font-weight:700;font-size:1rem" id="dropText">Drag & Drop your Excel file here</h5>
+                            <p style="color:var(--text-muted)" class="mb-3" id="dropSubtext">or click to browse files</p>
                             <input type="file" id="fileInput" name="file" accept=".xlsx" style="display:none">
-                            <button type="button" class="btn btn-outline-primary px-4" onclick="document.getElementById('fileInput').click()">
-                                <i class="fas fa-folder-open me-2"></i> Browse Files
+                            <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-folder-open"></i> Browse Files
                             </button>
                         </div>
 
                         <div class="progress-section mt-4" id="progressSection">
                             <div class="d-flex justify-content-between mb-2">
-                                <small style="font-weight:600;color:#1D3557">Processing file...</small>
-                                <small id="progressText">0%</small>
+                                <small style="font-weight:600;color:var(--text-primary)">Processing file...</small>
+                                <small style="color:var(--text-muted)" id="progressText">0%</small>
                             </div>
-                            <div class="progress" style="height:10px;border-radius:5px">
-                                <div class="progress-bar" id="progressBar" style="background:linear-gradient(90deg,#2A9D8F,#1d7a74);width:0%;border-radius:5px;transition:width 0.3s"></div>
+                            <div style="height:8px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden">
+                                <div id="progressBar" style="height:100%;background:linear-gradient(90deg,#0F9183,#2DD4BF);width:0%;border-radius:4px;transition:width 0.3s"></div>
                             </div>
                         </div>
 
@@ -77,10 +75,10 @@
                         </div>
 
                         <div class="mt-4 d-flex gap-3">
-                            <button type="button" class="btn btn-success flex-fill btn-lg" id="uploadBtn" onclick="uploadFile()" disabled>
-                                <i class="fas fa-upload me-2"></i> Upload Donors
+                            <button type="button" class="btn btn-success flex-fill btn-lg" id="uploadBtn" onclick="uploadFile()" disabled style="justify-content:center">
+                                <i class="fas fa-upload"></i> Upload Donors
                             </button>
-                            <a href="/hospital-dashboard" class="btn btn-outline-secondary flex-fill btn-lg">Cancel</a>
+                            <a href="/hospital-dashboard" class="btn btn-outline-secondary flex-fill btn-lg" style="justify-content:center">Cancel</a>
                         </div>
                     </form>
                 </div>
@@ -108,12 +106,12 @@
     function setFile(file) {
         if (!file.name.endsWith('.xlsx')) { alert('Only .xlsx files are allowed.'); return; }
         selectedFile = file;
+        dropZone.classList.add('has-file');
         document.getElementById('dropIcon').className = 'fas fa-file-excel';
-        document.getElementById('dropIcon').style.color = '#2A9D8F';
         document.getElementById('dropText').textContent = file.name;
         document.getElementById('dropSubtext').textContent = `${(file.size/1024).toFixed(1)} KB — Ready to upload`;
         uploadBtn.disabled = false;
-        uploadBtn.innerHTML = '<i class="fas fa-upload me-2"></i> Upload ' + file.name;
+        uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload ' + file.name;
     }
 
     async function uploadFile() {
@@ -126,7 +124,6 @@
         const progressText = document.getElementById('progressText');
         progressSection.style.display = 'block';
 
-        // Animate progress bar
         let progress = 0;
         const progressInterval = setInterval(() => {
             progress = Math.min(progress + Math.random() * 15, 90);
@@ -149,23 +146,23 @@
             if (data.success) {
                 resultCard.className = 'result-card success';
                 resultCard.innerHTML = `
-                    <h5 style="color:#2A9D8F;font-weight:700"><i class="fas fa-check-circle me-2"></i>Upload Successful!</h5>
+                    <h5 style="color:#2DD4BF;font-weight:700;font-size:0.95rem"><i class="fas fa-check-circle me-2"></i>Upload Successful!</h5>
                     <div class="row mt-3">
-                        <div class="col-6"><strong style="font-size:1.5rem;color:#2A9D8F">${data.uploaded}</strong><br><small>Donors Added</small></div>
-                        <div class="col-6"><strong style="font-size:1.5rem;color:#FFB703">${data.duplicates}</strong><br><small>Duplicates Skipped</small></div>
+                        <div class="col-6"><strong style="font-size:1.4rem;color:#2DD4BF">${data.uploaded}</strong><br><small style="color:var(--text-muted)">Donors Added</small></div>
+                        <div class="col-6"><strong style="font-size:1.4rem;color:var(--gold-light)">${data.duplicates}</strong><br><small style="color:var(--text-muted)">Duplicates Skipped</small></div>
                     </div>
                     <div class="mt-3"><a href="/hospital-dashboard" class="btn btn-success btn-sm">Back to Dashboard</a></div>
                 `;
             } else {
                 resultCard.className = 'result-card error';
-                resultCard.innerHTML = `<h6 style="color:#E63946;font-weight:700"><i class="fas fa-times-circle me-2"></i>${data.message}</h6>`;
+                resultCard.innerHTML = `<h6 style="color:#FF6B7A;font-weight:700;font-size:0.9rem"><i class="fas fa-times-circle me-2"></i>${data.message}</h6>`;
             }
         } catch (err) {
             clearInterval(progressInterval);
             alert('Upload failed. Please try again.');
         }
         uploadBtn.disabled = false;
-        uploadBtn.innerHTML = '<i class="fas fa-upload me-2"></i> Upload Donors';
+        uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Donors';
     }
 </script>
 {% endblock %}

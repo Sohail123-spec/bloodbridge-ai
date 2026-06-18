@@ -1,62 +1,59 @@
 {% extends "base.html" %}
-{% block title %}Emergency Blood Request - BloodBridge AI{% endblock %}
+{% block title %}Emergency Blood Request — BloodBridge AI{% endblock %}
 
 {% block extra_css %}
 <style>
     .emergency-hero {
-        background: linear-gradient(135deg, #d62828 0%, #E63946 50%, #1D3557 100%);
-        padding: 60px 0 100px; position: relative; overflow: hidden;
+        padding: 140px 0 60px; position: relative; overflow: hidden;
     }
-    .emergency-hero::before {
-        content: '';
-        position: absolute; inset: 0;
-        background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,255,255,0.03) 30px, rgba(255,255,255,0.03) 60px);
-    }
-    .emergency-hero::after {
-        content: '';
-        position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
-        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-        clip-path: ellipse(60% 100% at 50% 100%);
+    .emergency-hero-glow {
+        position: absolute;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(196,30,58,0.18) 0%, transparent 70%);
+        top: -150px; right: -100px;
+        pointer-events: none;
     }
     .emergency-form-card {
-        background: rgba(255,255,255,0.95);
-        backdrop-filter: blur(20px); border-radius: 28px;
-        padding: 3rem; box-shadow: 0 30px 80px rgba(230,57,70,0.15);
-        margin-top: -60px; position: relative; z-index: 10;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        backdrop-filter: blur(20px); border-radius: var(--radius-xl);
+        padding: 2.5rem;
+        position: relative; z-index: 10;
     }
     .urgency-selector { display: flex; gap: 12px; }
     .urgency-radio { display: none; }
     .urgency-label {
-        flex: 1; padding: 16px; border-radius: 16px; border: 2px solid #e0e0e0;
+        flex: 1; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border);
         text-align: center; cursor: pointer; transition: all 0.25s ease;
-        font-weight: 700;
+        font-weight: 700; color: var(--text-secondary); background: rgba(255,255,255,0.02);
     }
-    .urgency-label i { display: block; font-size: 1.5rem; margin-bottom: 6px; }
-    .urgency-radio#normal:checked + .urgency-label { border-color: #2A9D8F; background: rgba(42,157,143,0.1); color: #2A9D8F; }
-    .urgency-radio#urgent:checked + .urgency-label { border-color: #FFB703; background: rgba(255,183,3,0.1); color: #FFB703; }
-    .urgency-radio#critical:checked + .urgency-label { border-color: #E63946; background: rgba(230,57,70,0.1); color: #E63946; box-shadow: 0 0 0 4px rgba(230,57,70,0.1); }
-    .urgency-label:hover { border-color: #E63946; }
+    .urgency-label i { display: block; font-size: 1.4rem; margin-bottom: 6px; }
+    .urgency-radio#normal:checked + .urgency-label   { border-color: rgba(15,145,131,0.4); background: var(--teal-subtle); color: #2DD4BF; }
+    .urgency-radio#urgent:checked + .urgency-label   { border-color: rgba(184,134,11,0.4); background: rgba(184,134,11,0.1); color: var(--gold-light); }
+    .urgency-radio#critical:checked + .urgency-label { border-color: var(--border-red); background: var(--red-subtle); color: var(--red-bright); box-shadow: 0 0 0 3px rgba(196,30,58,0.12); }
+    .urgency-label:hover { border-color: var(--border-hover); }
     .blood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .bg-opt { display: none; }
     .bg-lbl {
-        height: 54px; display: flex; align-items: center; justify-content: center;
-        border: 2px solid #e0e0e0; border-radius: 12px;
-        font-weight: 700; cursor: pointer; transition: all 0.25s;
+        height: 52px; display: flex; align-items: center; justify-content: center;
+        border: 1px solid var(--border); border-radius: var(--radius-md);
+        font-weight: 700; cursor: pointer; transition: all 0.2s;
+        color: var(--text-secondary); background: rgba(255,255,255,0.02);
     }
     .bg-opt:checked + .bg-lbl {
-        background: linear-gradient(135deg, #E63946, #d62828);
-        border-color: #E63946; color: white;
-        box-shadow: 0 4px 15px rgba(230,57,70,0.3);
+        background: var(--red);
+        border-color: var(--red); color: white;
+        box-shadow: var(--shadow-red);
     }
     .pulse-ring {
-        display: inline-block; width: 14px; height: 14px;
-        background: #E63946; border-radius: 50%;
+        display: inline-block; width: 8px; height: 8px;
+        background: var(--red-bright); border-radius: 50%;
         position: relative;
     }
     .pulse-ring::before {
         content: '';
         position: absolute; inset: -4px;
-        border: 3px solid #E63946; border-radius: 50%;
+        border: 2px solid var(--red-bright); border-radius: 50%;
         animation: pulseRing 1.5s infinite;
         opacity: 0;
     }
@@ -66,46 +63,47 @@
     }
     .success-overlay {
         display: none; position: fixed; inset: 0;
-        background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+        background: rgba(8,13,20,0.85); backdrop-filter: blur(8px);
         z-index: 9999; align-items: center; justify-content: center;
     }
     .success-overlay.show { display: flex; }
     .success-modal {
-        background: white; border-radius: 28px; padding: 3rem;
+        background: var(--bg-elevated); border: 1px solid var(--border);
+        border-radius: var(--radius-xl); padding: 3rem;
         text-align: center; max-width: 420px; width: 90%;
-        animation: fadeInUp 0.5s ease-out;
+        animation: fadeInUp 0.4s var(--ease-out);
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="emergency-hero">
-    <div class="container text-white text-center">
+    <div class="emergency-hero-glow"></div>
+    <div class="container text-center">
         <div class="mb-3">
-            <span class="pulse-ring me-2"></span>
-            <span style="font-size:0.85rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:rgba(255,255,255,0.1);padding:6px 18px;border-radius:50px;border:1px solid rgba(255,255,255,0.3)">
-                Live Emergency System
+            <span class="section-label">
+                <span class="pulse-ring"></span> Live Emergency System
             </span>
         </div>
-        <h1 style="font-size:3rem;font-weight:900">Emergency Blood Request</h1>
-        <p style="opacity:0.9;font-size:1.15rem;margin-top:0.5rem">
+        <h1 class="section-title">Emergency Blood Request</h1>
+        <p class="section-subtitle mx-auto">
             Post an emergency and alert compatible donors instantly — every second counts
         </p>
     </div>
 </section>
 
-<section style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); padding-bottom: 60px;">
+<section style="padding-bottom: 80px;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="emergency-form-card">
                     <div class="d-flex align-items-center mb-4">
-                        <div style="width:50px;height:50px;background:linear-gradient(135deg,#E63946,#d62828);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-right:1rem">
-                            <i class="fas fa-ambulance" style="color:white;font-size:1.3rem"></i>
+                        <div style="width:48px;height:48px;background:var(--red);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-right:1rem;flex-shrink:0;box-shadow:var(--shadow-red)">
+                            <i class="fas fa-ambulance" style="color:white;font-size:1.2rem"></i>
                         </div>
                         <div>
-                            <h4 style="color:#1D3557;font-weight:800;margin:0">Post Emergency Request</h4>
-                            <small class="text-muted">Compatible donors in your city will be notified immediately</small>
+                            <h4 style="color:var(--text-primary);font-weight:800;margin:0;font-size:1.1rem">Post Emergency Request</h4>
+                            <small style="color:var(--text-muted)">Compatible donors in your city will be notified immediately</small>
                         </div>
                     </div>
 
@@ -151,17 +149,17 @@
                                     <input type="radio" name="urgency" id="normal" value="Normal" class="urgency-radio" required>
                                     <label for="normal" class="urgency-label">
                                         <i class="fas fa-info-circle"></i> Normal
-                                        <small style="font-weight:400;display:block;font-size:0.75rem">Within 24 hours</small>
+                                        <small style="font-weight:400;display:block;font-size:0.72rem;opacity:0.7">Within 24 hours</small>
                                     </label>
                                     <input type="radio" name="urgency" id="urgent" value="Urgent" class="urgency-radio">
                                     <label for="urgent" class="urgency-label">
                                         <i class="fas fa-exclamation"></i> Urgent
-                                        <small style="font-weight:400;display:block;font-size:0.75rem">Within 6 hours</small>
+                                        <small style="font-weight:400;display:block;font-size:0.72rem;opacity:0.7">Within 6 hours</small>
                                     </label>
                                     <input type="radio" name="urgency" id="critical" value="Critical" class="urgency-radio">
                                     <label for="critical" class="urgency-label">
                                         <i class="fas fa-exclamation-triangle"></i> Critical
-                                        <small style="font-weight:400;display:block;font-size:0.75rem">Immediate need</small>
+                                        <small style="font-weight:400;display:block;font-size:0.72rem;opacity:0.7">Immediate need</small>
                                     </label>
                                 </div>
                             </div>
@@ -171,34 +169,33 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg w-100" id="submitBtn" style="font-size:1.1rem;padding:14px">
-                                <i class="fas fa-broadcast-tower me-2"></i> Post Emergency & Alert Donors
+                            <button type="submit" class="btn btn-primary btn-lg w-100" id="submitBtn" style="justify-content:center;font-size:1rem">
+                                <i class="fas fa-broadcast-tower"></i> Post Emergency & Alert Donors
                             </button>
                         </div>
                     </form>
                 </div>
 
-                <!-- Info Cards -->
                 <div class="row gy-3 mt-4">
                     <div class="col-md-4">
                         <div class="glass-card text-center" style="padding:1.5rem">
-                            <i class="fas fa-bolt mb-3" style="font-size:2rem;color:#FFB703"></i>
-                            <h6 style="font-weight:700;color:#1D3557">Instant Alerts</h6>
-                            <small class="text-muted">Donors are notified within seconds</small>
+                            <i class="fas fa-bolt mb-3" style="font-size:1.6rem;color:var(--gold-light)"></i>
+                            <h6 style="font-weight:700;color:var(--text-primary);font-size:0.9rem">Instant Alerts</h6>
+                            <small style="color:var(--text-muted)">Donors are notified within seconds</small>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card text-center" style="padding:1.5rem">
-                            <i class="fas fa-dna mb-3" style="font-size:2rem;color:#2A9D8F"></i>
-                            <h6 style="font-weight:700;color:#1D3557">AI Matching</h6>
-                            <small class="text-muted">Compatible types matched automatically</small>
+                            <i class="fas fa-dna mb-3" style="font-size:1.6rem;color:#2DD4BF"></i>
+                            <h6 style="font-weight:700;color:var(--text-primary);font-size:0.9rem">AI Matching</h6>
+                            <small style="color:var(--text-muted)">Compatible types matched automatically</small>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card text-center" style="padding:1.5rem">
-                            <i class="fas fa-map-marker-alt mb-3" style="font-size:2rem;color:#E63946"></i>
-                            <h6 style="font-weight:700;color:#1D3557">Location-Based</h6>
-                            <small class="text-muted">Alerts sent to donors in your city</small>
+                            <i class="fas fa-map-marker-alt mb-3" style="font-size:1.6rem;color:var(--red-bright)"></i>
+                            <h6 style="font-weight:700;color:var(--text-primary);font-size:0.9rem">Location-Based</h6>
+                            <small style="color:var(--text-muted)">Alerts sent to donors in your city</small>
                         </div>
                     </div>
                 </div>
@@ -209,11 +206,11 @@
 
 <div class="success-overlay" id="successOverlay">
     <div class="success-modal">
-        <div style="width:90px;height:90px;background:linear-gradient(135deg,#E63946,#d62828);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:0 10px 30px rgba(230,57,70,0.4)">
-            <i class="fas fa-broadcast-tower" style="font-size:2.5rem;color:white"></i>
+        <div style="width:80px;height:80px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:var(--shadow-red)">
+            <i class="fas fa-broadcast-tower" style="font-size:2.2rem;color:white"></i>
         </div>
-        <h3 style="color:#1D3557;font-weight:800">Request Posted!</h3>
-        <p class="text-muted mt-2">Your emergency request is live. Compatible donors in <strong id="req-city"></strong> have been alerted.</p>
+        <h3 style="color:var(--text-primary);font-weight:800">Request Posted!</h3>
+        <p style="color:var(--text-secondary)" class="mt-2">Your emergency request is live. Compatible donors in <strong style="color:var(--text-primary)" id="req-city"></strong> have been alerted.</p>
         <div class="mt-4 d-flex gap-3 justify-content-center">
             <a href="/emergency-board" class="btn btn-primary">View Emergency Board</a>
             <a href="/" class="btn btn-outline-secondary">Go Home</a>

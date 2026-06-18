@@ -1,17 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Register Hospital - BloodBridge AI{% endblock %}
+{% block title %}Register Hospital — BloodBridge AI{% endblock %}
+{% block extra_css %}
+<style>
+    .auth-wrap2 { padding:140px 0 80px; position:relative; overflow:hidden; }
+    .auth-glow2 { position:absolute; width:500px; height:500px; background:radial-gradient(circle, rgba(15,145,131,0.15) 0%, transparent 70%); top:-100px; left:50%; transform:translateX(-50%); pointer-events:none; }
+    .auth-card2 { background:var(--bg-card); border:1px solid var(--border); backdrop-filter:blur(20px); border-radius:var(--radius-xl); padding:2.75rem; position:relative; z-index:5; }
+    .auth-icon2 { width:60px; height:60px; background:linear-gradient(135deg,#1D3557,#0F9183); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem; }
+</style>
+{% endblock %}
 {% block content %}
-<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:60px 0">
+<section class="auth-wrap2">
+    <div class="auth-glow2"></div>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-7">
-                <div style="background:rgba(255,255,255,0.95);border-radius:28px;padding:3rem;box-shadow:0 30px 80px rgba(0,0,0,0.12)">
+                <div class="auth-card2">
                     <div class="text-center mb-4">
-                        <div style="width:70px;height:70px;background:linear-gradient(135deg,#1D3557,#2A9D8F);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
-                            <i class="fas fa-hospital-alt" style="font-size:1.8rem;color:white"></i>
-                        </div>
-                        <h3 style="color:#1D3557;font-weight:800">Register Your Hospital</h3>
-                        <p class="text-muted">Join BloodBridge to manage your donor database</p>
+                        <div class="auth-icon2"><i class="fas fa-hospital-alt" style="font-size:1.5rem;color:white"></i></div>
+                        <h3 style="color:var(--text-primary);font-weight:800;font-family:'Playfair Display',serif">Register Your Hospital</h3>
+                        <p style="color:var(--text-muted);font-size:0.9rem">Join BloodBridge to manage your donor database</p>
                     </div>
                     <div id="alert-box"></div>
                     <form id="registerForm">
@@ -41,11 +48,11 @@
                                 <textarea class="form-control" id="address" required rows="2" placeholder="Complete address"></textarea>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 btn-lg mt-4" id="submitBtn">
-                            <i class="fas fa-hospital me-2"></i> Register Hospital
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mt-4" id="submitBtn" style="justify-content:center">
+                            <i class="fas fa-hospital"></i> Register Hospital
                         </button>
                         <div class="text-center mt-3">
-                            <a href="/hospital-login" style="color:#E63946;font-weight:600">Already registered? Login</a>
+                            <a href="/hospital-login" style="color:var(--red-bright);font-weight:600;font-size:0.875rem">Already registered? Login</a>
                         </div>
                     </form>
                 </div>

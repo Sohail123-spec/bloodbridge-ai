@@ -1,128 +1,76 @@
 {% extends "base.html" %}
-{% block title %}Analytics Dashboard - BloodBridge AI{% endblock %}
+{% block title %}Analytics Dashboard — BloodBridge AI{% endblock %}
 {% block extra_css %}
 <style>
     .analytics-hero {
-        background: linear-gradient(135deg, #1D3557, #2A9D8F);
-        padding: 50px 0 90px; position: relative; overflow: hidden;
+        padding: 140px 0 60px; position: relative; overflow: hidden;
     }
-    .analytics-hero::after {
-        content: '';
-        position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
-        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-        clip-path: ellipse(60% 100% at 50% 100%);
+    .analytics-hero-glow {
+        position: absolute;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(15,145,131,0.15) 0%, transparent 70%);
+        top: -150px; right: -100px;
+        pointer-events: none;
     }
-    .kpi-card {
-        background: rgba(255,255,255,0.95); border-radius: 20px; padding: 2rem;
-        box-shadow: 0 6px 25px rgba(0,0,0,0.08);
-        display: flex; align-items: center; gap: 1.5rem;
-        transition: all 0.3s ease;
-    }
-    .kpi-card:hover { transform: translateY(-6px); box-shadow: 0 15px 40px rgba(0,0,0,0.12); }
-    .kpi-icon {
-        width: 70px; height: 70px; border-radius: 20px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.8rem; flex-shrink: 0;
-    }
-    .kpi-number {
-        font-size: 2.4rem; font-weight: 900;
-        background: linear-gradient(135deg, #E63946, #FFB703);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        line-height: 1;
-    }
-    .kpi-label { color: #555; font-weight: 600; font-size: 0.95rem; margin-top: 4px; }
     .chart-card {
-        background: rgba(255,255,255,0.95); border-radius: 24px; padding: 2rem;
-        box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+        background: var(--bg-card); border: 1px solid var(--border);
+        border-radius: var(--radius-lg); padding: 1.75rem;
+        transition: all var(--dur-slow) var(--ease-out);
     }
+    .chart-card:hover { border-color: var(--border-hover); }
     .chart-title {
-        font-size: 1.1rem; font-weight: 700; color: #1D3557; margin-bottom: 1.5rem;
+        font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem;
         display: flex; align-items: center; gap: 10px;
     }
-    .chart-title i { color: #E63946; }
+    .chart-title i { color: var(--red-bright); }
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="analytics-hero">
-    <div class="container text-white text-center">
-        <div class="d-inline-block px-4 py-2 rounded-pill mb-3" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3)">
-            <i class="fas fa-chart-pie me-2" style="color:#FFB703"></i> Platform Analytics
+    <div class="analytics-hero-glow"></div>
+    <div class="container text-center">
+        <div class="section-label mx-auto" style="width:fit-content">
+            <i class="fas fa-chart-pie"></i> Platform Analytics
         </div>
-        <h1 style="font-size:2.8rem;font-weight:900">Analytics Dashboard</h1>
-        <p style="opacity:0.85;font-size:1.1rem">Real-time insights into the BloodBridge AI platform</p>
+        <h1 class="section-title">Analytics Dashboard</h1>
+        <p class="section-subtitle mx-auto">Real-time insights into the BloodBridge AI platform</p>
     </div>
 </section>
 
-<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:40px 0 60px;margin-top:-50px">
+<section style="padding-bottom: 80px;">
     <div class="container">
         <!-- KPI Cards -->
-        <div class="row gy-4 mb-5" style="margin-top:10px">
-            <div class="col-md-4 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background:rgba(230,57,70,0.1);color:#E63946"><i class="fas fa-users"></i></div>
+        <div class="row gy-4 mb-5">
+            {% for icon, color_cls, value, label in [
+                ('fas fa-users', 'red', total_donors, 'Total Donors'),
+                ('fas fa-heart', 'teal', active_donors, 'Active Donors'),
+                ('fas fa-hospital', 'blue', total_hospitals, 'Partner Hospitals'),
+                ('fas fa-hand-holding-heart', 'gold', total_donations, 'Total Donations'),
+                ('fas fa-ambulance', 'red', active_requests, 'Active Emergencies'),
+                ('fas fa-percentage', 'teal', ((active_donors / total_donors * 100)|round(0)|int if total_donors else 0), 'Availability Rate')
+            ] %}
+            <div class="col-md-4 col-sm-6 reveal">
+                <div class="kpi-card" style="display:flex;align-items:center;gap:1.25rem">
+                    <div class="kpi-icon {{ color_cls }}" style="margin-bottom:0"><i class="{{ icon }}"></i></div>
                     <div>
-                        <div class="kpi-number">{{ total_donors }}</div>
-                        <div class="kpi-label">Total Donors</div>
+                        <div class="kpi-number" style="font-size:1.9rem">{{ value }}{{ '%' if label == 'Availability Rate' else '' }}</div>
+                        <div class="kpi-label" style="font-size:0.78rem;margin-top:2px">{{ label }}</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background:rgba(42,157,143,0.1);color:#2A9D8F"><i class="fas fa-heart"></i></div>
-                    <div>
-                        <div class="kpi-number">{{ active_donors }}</div>
-                        <div class="kpi-label">Active Donors</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background:rgba(29,53,87,0.1);color:#1D3557"><i class="fas fa-hospital"></i></div>
-                    <div>
-                        <div class="kpi-number">{{ total_hospitals }}</div>
-                        <div class="kpi-label">Partner Hospitals</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background:rgba(255,183,3,0.1);color:#FFB703"><i class="fas fa-hand-holding-heart"></i></div>
-                    <div>
-                        <div class="kpi-number">{{ total_donations }}</div>
-                        <div class="kpi-label">Total Donations</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background:rgba(230,57,70,0.1);color:#E63946"><i class="fas fa-ambulance"></i></div>
-                    <div>
-                        <div class="kpi-number">{{ active_requests }}</div>
-                        <div class="kpi-label">Active Emergencies</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background:rgba(42,157,143,0.1);color:#2A9D8F"><i class="fas fa-percentage"></i></div>
-                    <div>
-                        <div class="kpi-number">{{ ((active_donors / total_donors * 100)|round(0)|int if total_donors else 0) }}%</div>
-                        <div class="kpi-label">Availability Rate</div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
 
         <!-- Charts Row 1 -->
         <div class="row gy-4 mb-4">
-            <div class="col-lg-6">
+            <div class="col-lg-6 reveal">
                 <div class="chart-card">
                     <div class="chart-title"><i class="fas fa-tint"></i> Blood Group Distribution</div>
                     <canvas id="bloodChart" height="280"></canvas>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 reveal">
                 <div class="chart-card">
                     <div class="chart-title"><i class="fas fa-map-marked-alt"></i> Top Cities by Donors</div>
                     <canvas id="cityChart" height="280"></canvas>
@@ -132,13 +80,13 @@
 
         <!-- Charts Row 2 -->
         <div class="row gy-4">
-            <div class="col-lg-8">
+            <div class="col-lg-8 reveal">
                 <div class="chart-card">
                     <div class="chart-title"><i class="fas fa-calendar-alt"></i> Monthly Donation Trends</div>
                     <canvas id="monthlyChart" height="200"></canvas>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-4 reveal">
                 <div class="chart-card">
                     <div class="chart-title"><i class="fas fa-exclamation-triangle"></i> Request Urgency</div>
                     <canvas id="urgencyChart" height="200"></canvas>
@@ -156,25 +104,29 @@
     const monthlyData = {{ monthly_data|safe }};
     const urgencyData = {{ urgency_chart_data|safe }};
 
-    const colors = ['#E63946','#2A9D8F','#FFB703','#1D3557','#e76f51','#457b9d','#a8dadc','#f1faee'];
+    const colors = ['#C41E3A','#0F9183','#B8860B','#A5B4FC','#FF8966','#5EA8C9','#D4A017','#8B6FCB'];
+    const textMuted = '#94A3B8';
+    const gridColor = 'rgba(255,255,255,0.06)';
+    const cardBg = '#111D2C';
 
-    // Blood Group Doughnut
+    Chart.defaults.color = textMuted;
+    Chart.defaults.font.family = "'DM Sans', sans-serif";
+
     new Chart(document.getElementById('bloodChart'), {
         type: 'doughnut',
         data: {
             labels: Object.keys(bloodData),
-            datasets: [{ data: Object.values(bloodData), backgroundColor: colors, borderWidth: 3, borderColor: '#fff' }]
+            datasets: [{ data: Object.values(bloodData), backgroundColor: colors, borderWidth: 3, borderColor: cardBg }]
         },
         options: {
             responsive: true,
             plugins: {
-                legend: { position: 'bottom', labels: { padding: 15, font: { weight: '600' } } }
+                legend: { position: 'bottom', labels: { padding: 15, font: { weight: '600' }, color: textMuted } }
             },
             cutout: '65%'
         }
     });
 
-    // City Bar Chart
     new Chart(document.getElementById('cityChart'), {
         type: 'bar',
         data: {
@@ -190,13 +142,12 @@
             responsive: true,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                x: { grid: { display: false } }
+                y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textMuted } },
+                x: { grid: { display: false }, ticks: { color: textMuted } }
             }
         }
     });
 
-    // Monthly Line Chart
     new Chart(document.getElementById('monthlyChart'), {
         type: 'line',
         data: {
@@ -204,37 +155,36 @@
             datasets: [{
                 label: 'Donations',
                 data: Object.values(monthlyData).length ? Object.values(monthlyData) : [0],
-                borderColor: '#E63946',
-                backgroundColor: 'rgba(230,57,70,0.1)',
+                borderColor: '#C41E3A',
+                backgroundColor: 'rgba(196,30,58,0.12)',
                 borderWidth: 3, fill: true, tension: 0.4,
-                pointBackgroundColor: '#E63946', pointRadius: 6,
-                pointHoverRadius: 8
+                pointBackgroundColor: '#C41E3A', pointRadius: 5,
+                pointHoverRadius: 7
             }]
         },
         options: {
             responsive: true,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                x: { grid: { display: false } }
+                y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textMuted } },
+                x: { grid: { display: false }, ticks: { color: textMuted } }
             }
         }
     });
 
-    // Urgency Pie
     new Chart(document.getElementById('urgencyChart'), {
         type: 'pie',
         data: {
             labels: Object.keys(urgencyData).length ? Object.keys(urgencyData) : ['No Requests'],
             datasets: [{
                 data: Object.values(urgencyData).length ? Object.values(urgencyData) : [1],
-                backgroundColor: ['#2A9D8F', '#FFB703', '#E63946'],
-                borderWidth: 3, borderColor: '#fff'
+                backgroundColor: ['#0F9183', '#B8860B', '#C41E3A'],
+                borderWidth: 3, borderColor: cardBg
             }]
         },
         options: {
             responsive: true,
-            plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { weight: '600' } } } }
+            plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { weight: '600' }, color: textMuted } } }
         }
     });
 </script>

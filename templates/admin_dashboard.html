@@ -1,68 +1,63 @@
 {% extends "base.html" %}
-{% block title %}Admin Dashboard - BloodBridge AI{% endblock %}
+{% block title %}Admin Dashboard — BloodBridge AI{% endblock %}
 {% block content %}
-<section style="background:linear-gradient(135deg,#1D3557,#0a0a1a);padding:50px 0 90px;position:relative;overflow:hidden">
-    <div class="container text-white">
-        <div class="d-flex align-items-center justify-content-between">
+<section style="padding:140px 0 60px;position:relative;overflow:hidden">
+    <div style="position:absolute;width:600px;height:600px;background:radial-gradient(circle, rgba(196,30,58,0.15) 0%, transparent 70%);top:-150px;right:-100px;pointer-events:none"></div>
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div>
-                <div style="font-size:0.8rem;font-weight:700;letter-spacing:2px;color:rgba(255,183,3,0.9);text-transform:uppercase;margin-bottom:0.5rem">
-                    <i class="fas fa-shield-alt me-2"></i>Admin Control Panel
-                </div>
-                <h1 style="font-size:2.4rem;font-weight:900;margin:0">BloodBridge Admin</h1>
-                <p style="opacity:0.75;margin:0">Platform management & oversight</p>
+                <div class="section-label" style="margin-bottom:0.75rem"><i class="fas fa-shield-alt"></i> Admin Control Panel</div>
+                <h1 style="font-size:2rem;font-weight:800;margin:0;color:var(--text-primary);font-family:'Playfair Display',serif">BloodBridge Admin</h1>
+                <p style="color:var(--text-muted);margin:0;font-size:0.9rem">Platform management & oversight</p>
             </div>
-            <a href="/admin-logout" class="btn btn-outline-light"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
+            <a href="/admin-logout" class="btn btn-outline-secondary"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </div>
-    <div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);clip-path:ellipse(60% 100% at 50% 100%)"></div>
 </section>
 
-<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding:40px 0 60px">
+<section style="padding-bottom:60px">
     <div class="container">
         <!-- Pending Cert Alert -->
-        {% if pending_certs > 0 %}
-        <div style="background:rgba(255,183,3,0.12);border:2px solid #FFB703;border-radius:16px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-            <div><i class="fas fa-certificate me-2" style="color:#FFB703"></i><strong style="color:#1D3557">{{ pending_certs }} Certificate Request(s) Awaiting Review</strong><span class="text-muted ms-2 small">Donors are waiting for their certificates</span></div>
-            <a href="/admin-certificate-requests" class="btn btn-warning btn-sm px-4">Review Now</a>
+        {% if pending_certs and pending_certs > 0 %}
+        <div style="background:rgba(184,134,11,0.1);border:1px solid rgba(184,134,11,0.3);border-radius:var(--radius-md);padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+            <div><i class="fas fa-certificate me-2" style="color:var(--gold-light)"></i><strong style="color:var(--text-primary)">{{ pending_certs }} Certificate Request(s) Awaiting Review</strong><span style="color:var(--text-muted)" class="ms-2 small">Donors are waiting for their certificates</span></div>
+            <a href="/admin-certificate-requests" class="btn btn-warning btn-sm">Review Now</a>
         </div>
         {% endif %}
+
         <!-- KPI Cards -->
-        <div class="row gy-4 mb-5">
-            {% for icon, color, count, label, link in [
-                ('fas fa-users','#E63946', total_donors, 'Total Donors', '/admin-manage-donors'),
-                ('fas fa-hospital','#1D3557', total_hospitals, 'Hospitals', '/admin-manage-donors'),
-                ('fas fa-ambulance','#FFB703', total_requests, 'Emergency Requests', '/admin-manage-requests'),
-                ('fas fa-user-check','#2A9D8F', verified_donors, 'Verified Donors', '/admin-manage-donors')
+        <div class="row gy-4 mb-4">
+            {% for icon, color_cls, count, label, link in [
+                ('fas fa-users','red', total_donors, 'Total Donors', '/admin-manage-donors'),
+                ('fas fa-hospital','blue', total_hospitals, 'Hospitals', '/admin-manage-donors'),
+                ('fas fa-ambulance','gold', total_requests, 'Emergency Requests', '/admin-manage-requests'),
+                ('fas fa-user-check','teal', verified_donors, 'Verified Donors', '/admin-manage-donors')
             ] %}
-            <div class="col-md-3 col-6">
-                <a href="{{ link }}" style="display:block;text-decoration:none">
-                    <div style="background:rgba(255,255,255,0.95);border-radius:20px;padding:1.8rem;box-shadow:0 6px 25px rgba(0,0,0,0.08);transition:all 0.3s ease" onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform=''">
-                        <div style="width:55px;height:55px;background:{{ color }}20;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:{{ color }};margin-bottom:1rem"><i class="{{ icon }}"></i></div>
-                        <div style="font-size:2rem;font-weight:900;background:linear-gradient(135deg,#E63946,#FFB703);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">{{ count }}</div>
-                        <div style="color:#555;font-weight:600;font-size:0.9rem;margin-top:6px">{{ label }}</div>
-                    </div>
+            <div class="col-md-3 col-6 reveal">
+                <a href="{{ link }}" class="kpi-card d-block" style="text-decoration:none">
+                    <div class="kpi-icon {{ color_cls }}"><i class="{{ icon }}"></i></div>
+                    <div class="kpi-number" style="font-size:1.8rem">{{ count }}</div>
+                    <div class="kpi-label">{{ label }}</div>
                 </a>
             </div>
             {% endfor %}
         </div>
 
         <!-- Admin Navigation -->
-        <div class="row gy-4 mb-5">
-            {% for icon, color, title, desc, link in [
-                ('fas fa-users-cog','#E63946','Manage Donors','View, verify and delete donor records','/admin-manage-donors'),
-                ('fas fa-clipboard-list','#FFB703','Manage Requests','Monitor and moderate emergency requests','/admin-manage-requests'),
-                ('fas fa-chart-pie','#2A9D8F','View Analytics','Full platform analytics and insights','/analytics'),
-                ('fas fa-certificate','#FFB703','Certificate Requests','Review and approve donor certificate requests','/admin-certificate-requests'),
-                ('fas fa-key','#E63946','Change Password','Update your admin login password','/admin-change-password'),
-                ('fas fa-search','#1D3557','Search Donors','Use the donor search tool','/search-donor')
+        <div class="row gy-4 mb-4">
+            {% for icon, color_cls, title, desc, link in [
+                ('fas fa-users-cog','red','Manage Donors','View, verify and delete donor records','/admin-manage-donors'),
+                ('fas fa-clipboard-list','gold','Manage Requests','Monitor and moderate emergency requests','/admin-manage-requests'),
+                ('fas fa-chart-pie','teal','View Analytics','Full platform analytics and insights','/analytics'),
+                ('fas fa-certificate','gold','Certificate Requests','Review and approve donor certificate requests','/admin-certificate-requests'),
+                ('fas fa-key','red','Change Password','Update your admin login password','/admin-change-password'),
+                ('fas fa-search','blue','Search Donors','Use the donor search tool','/search-donor')
             ] %}
-            <div class="col-md-3 col-6">
-                <a href="{{ link }}" style="display:block;background:rgba(255,255,255,0.95);border-radius:20px;padding:2rem;text-align:center;text-decoration:none;box-shadow:0 6px 25px rgba(0,0,0,0.08);transition:all 0.3s ease;height:100%" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform=''">
-                    <div style="width:65px;height:65px;background:{{ color }}15;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:{{ color }};margin:0 auto 1rem">
-                        <i class="{{ icon }}"></i>
-                    </div>
-                    <h6 style="color:#1D3557;font-weight:700;margin-bottom:0.5rem">{{ title }}</h6>
-                    <small class="text-muted">{{ desc }}</small>
+            <div class="col-md-4 col-6">
+                <a href="{{ link }}" class="card d-block" style="padding:2rem;text-align:center;text-decoration:none;height:100%">
+                    <div class="kpi-icon {{ color_cls }}" style="margin:0 auto 1rem"><i class="{{ icon }}"></i></div>
+                    <h6 style="color:var(--text-primary);font-weight:700;margin-bottom:0.4rem;font-size:0.9rem">{{ title }}</h6>
+                    <small style="color:var(--text-muted)">{{ desc }}</small>
                 </a>
             </div>
             {% endfor %}
@@ -70,41 +65,39 @@
 
         <!-- Recent Data -->
         <div class="row gy-4">
-            <!-- Recent Donors -->
             <div class="col-lg-6">
-                <div style="background:rgba(255,255,255,0.95);border-radius:24px;padding:2rem;box-shadow:0 6px 25px rgba(0,0,0,0.08)">
+                <div class="card" style="padding:2rem">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 style="color:#1D3557;font-weight:800;margin:0"><i class="fas fa-users me-2" style="color:#E63946"></i>Recent Donors</h5>
-                        <a href="/admin-manage-donors" style="color:#E63946;font-weight:600;font-size:0.9rem">View All</a>
+                        <h5 style="color:var(--text-primary);font-weight:800;margin:0;font-size:0.95rem"><i class="fas fa-users me-2" style="color:var(--red-bright)"></i>Recent Donors</h5>
+                        <a href="/admin-manage-donors" style="color:var(--red-bright);font-weight:600;font-size:0.85rem">View All</a>
                     </div>
                     {% for donor in recent_donors %}
-                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.04)">
-                        <div style="width:40px;height:40px;background:linear-gradient(135deg,#E63946,#d62828);color:white;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0">{{ donor.blood_group }}</div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+                        <div class="blood-dot-sm" style="width:38px;height:38px;background:var(--red-subtle);border:1px solid var(--border-red);color:var(--red-bright);font-weight:800;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.75rem;flex-shrink:0">{{ donor.blood_group }}</div>
                         <div class="flex-grow-1">
-                            <div style="font-weight:600;color:#1D3557;font-size:0.95rem">{{ donor.name }}</div>
-                            <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ donor.city }}</small>
+                            <div style="font-weight:600;color:var(--text-primary);font-size:0.9rem">{{ donor.name }}</div>
+                            <small style="color:var(--text-muted)"><i class="fas fa-map-marker-alt me-1"></i>{{ donor.city }}</small>
                         </div>
-                        <small class="text-muted">{{ donor.created_at|dateformat('%d %b') }}</small>
+                        <small style="color:var(--text-muted)">{{ donor.created_at|dateformat('%d %b') }}</small>
                     </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- Recent Requests -->
             <div class="col-lg-6">
-                <div style="background:rgba(255,255,255,0.95);border-radius:24px;padding:2rem;box-shadow:0 6px 25px rgba(0,0,0,0.08)">
+                <div class="card" style="padding:2rem">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 style="color:#1D3557;font-weight:800;margin:0"><i class="fas fa-ambulance me-2" style="color:#FFB703"></i>Recent Requests</h5>
-                        <a href="/admin-manage-requests" style="color:#E63946;font-weight:600;font-size:0.9rem">View All</a>
+                        <h5 style="color:var(--text-primary);font-weight:800;margin:0;font-size:0.95rem"><i class="fas fa-ambulance me-2" style="color:var(--gold-light)"></i>Recent Requests</h5>
+                        <a href="/admin-manage-requests" style="color:var(--red-bright);font-weight:600;font-size:0.85rem">View All</a>
                     </div>
                     {% for req in recent_requests %}
-                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.04)">
-                        <div style="width:40px;height:40px;background:linear-gradient(135deg,#E63946,#d62828);color:white;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0">{{ req.blood_group }}</div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+                        <div style="width:38px;height:38px;background:var(--red-subtle);border:1px solid var(--border-red);color:var(--red-bright);font-weight:800;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.75rem;flex-shrink:0">{{ req.blood_group }}</div>
                         <div class="flex-grow-1">
-                            <div style="font-weight:600;color:#1D3557;font-size:0.95rem">{{ req.patient_name }}</div>
-                            <small class="text-muted"><i class="fas fa-hospital me-1"></i>{{ req.hospital }}</small>
+                            <div style="font-weight:600;color:var(--text-primary);font-size:0.9rem">{{ req.patient_name }}</div>
+                            <small style="color:var(--text-muted)"><i class="fas fa-hospital me-1"></i>{{ req.hospital }}</small>
                         </div>
-                        <span style="padding:3px 10px;border-radius:50px;font-size:0.75rem;font-weight:700;background:{{ 'rgba(230,57,70,0.1)' if req.urgency=='Critical' else 'rgba(255,183,3,0.1)' }};color:{{ '#E63946' if req.urgency=='Critical' else '#b38200' }}">{{ req.urgency }}</span>
+                        <span class="badge urgency-{{ req.urgency|lower }}">{{ req.urgency }}</span>
                     </div>
                     {% endfor %}
                 </div>

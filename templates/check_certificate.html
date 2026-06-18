@@ -1,98 +1,97 @@
 {% extends "base.html" %}
-{% block title %}Check My Certificate - BloodBridge AI{% endblock %}
+{% block title %}Check My Certificate — BloodBridge AI{% endblock %}
 {% block extra_css %}
 <style>
     .check-hero {
-        background: linear-gradient(135deg, #8B0000 0%, #C41E3A 50%, #1D3557 100%);
-        padding: 60px 0 100px; position: relative; overflow: hidden;
+        padding: 140px 0 60px; position: relative; overflow: hidden;
     }
-    .check-hero::after {
-        content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 55px;
-        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-        clip-path: ellipse(60% 100% at 50% 100%);
+    .check-hero-glow {
+        position: absolute; width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(196,30,58,0.18) 0%, transparent 70%);
+        top: -150px; right: -100px; pointer-events: none;
     }
     .check-card {
-        background: rgba(255,255,255,0.97); border-radius: 28px;
-        padding: 3rem; box-shadow: 0 30px 80px rgba(139,0,0,0.12);
-        margin-top: -60px; position: relative; z-index: 10;
+        background: var(--bg-card); border: 1px solid var(--border);
+        backdrop-filter: blur(20px); border-radius: var(--radius-xl);
+        padding: 2.5rem; position: relative; z-index: 10;
     }
     .cert-result-card {
-        background: rgba(255,255,255,0.9); border-radius: 20px;
-        padding: 1.5rem; border: 2px solid;
+        background: rgba(255,255,255,0.03); border-radius: var(--radius-lg);
+        padding: 1.5rem; border: 1px solid;
         transition: all 0.3s ease; margin-bottom: 1rem;
     }
-    .cert-result-card.approved { border-color: #2A9D8F; background: rgba(42,157,143,0.04); }
-    .cert-result-card.pending  { border-color: #FFB703; background: rgba(255,183,3,0.04); }
-    .cert-result-card.rejected { border-color: #E63946; background: rgba(230,57,70,0.04); }
+    .cert-result-card.approved { border-color: rgba(15,145,131,0.4); background: var(--teal-subtle); }
+    .cert-result-card.pending  { border-color: rgba(184,134,11,0.4); background: rgba(184,134,11,0.06); }
+    .cert-result-card.rejected { border-color: var(--border-red); background: var(--red-subtle); }
     .status-dot {
-        width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px;
+        width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 6px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="check-hero">
-    <div class="container text-white text-center">
-        <div class="d-inline-block px-4 py-2 rounded-pill mb-3" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3)">
-            <i class="fas fa-certificate me-2" style="color:#FFB703"></i> Certificate Lookup
+    <div class="check-hero-glow"></div>
+    <div class="container text-center">
+        <div class="section-label mx-auto" style="width:fit-content">
+            <i class="fas fa-certificate"></i> Certificate Lookup
         </div>
-        <h1 style="font-size:2.8rem;font-weight:900">Check Your Certificate</h1>
-        <p style="opacity:0.9;font-size:1.1rem;margin-top:0.5rem">
+        <h1 class="section-title">Check Your Certificate</h1>
+        <p class="section-subtitle mx-auto">
             Enter your registered phone number to view and download your donation certificate
         </p>
     </div>
 </section>
 
-<section style="background:linear-gradient(135deg,#f5f7fa,#c3cfe2);padding-bottom:60px">
+<section style="padding-bottom: 60px;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-7">
                 <div class="check-card">
-                    <h5 style="color:#1D3557;font-weight:800;margin-bottom:1.5rem">
-                        <i class="fas fa-search me-2" style="color:#C41E3A"></i> Look Up Your Certificate
+                    <h5 style="color:var(--text-primary);font-weight:800;margin-bottom:1.5rem;font-size:0.95rem">
+                        <i class="fas fa-search me-2" style="color:var(--red-bright)"></i> Look Up Your Certificate
                     </h5>
 
                     <div class="input-group mb-4">
-                        <span class="input-group-text" style="background:rgba(196,30,58,0.08);border:2px solid rgba(0,0,0,0.1);border-right:none">
-                            <i class="fas fa-phone" style="color:#C41E3A"></i>
+                        <span class="input-group-text">
+                            <i class="fas fa-phone" style="color:var(--red-bright)"></i>
                         </span>
                         <input type="tel" class="form-control" id="phoneInput"
                             placeholder="Enter your registered phone number"
-                            style="border-left:none;font-size:1rem;padding:14px"
+                            style="font-size:0.95rem;padding:13px 16px"
                             onkeydown="if(event.key==='Enter') checkCert()">
-                        <button class="btn btn-primary px-4" onclick="checkCert()" id="checkBtn"
-                            style="background:linear-gradient(135deg,#8B0000,#C41E3A);border:none">
-                            <i class="fas fa-search me-1"></i> Search
+                        <button class="btn btn-primary" onclick="checkCert()" id="checkBtn">
+                            <i class="fas fa-search"></i> Search
                         </button>
                     </div>
 
                     <div id="results-area"></div>
 
                     <!-- How it works -->
-                    <div style="background:rgba(29,53,87,0.04);border-radius:16px;padding:1.5rem;margin-top:1.5rem">
-                        <h6 style="color:#1D3557;font-weight:700;margin-bottom:1rem">
+                    <div style="background:rgba(255,255,255,0.03);border-radius:var(--radius-md);padding:1.5rem;margin-top:1.5rem;border:1px solid var(--border)">
+                        <h6 style="color:var(--text-primary);font-weight:700;margin-bottom:1rem;font-size:0.875rem">
                             <i class="fas fa-info-circle me-2"></i> How Certificate Status Works
                         </h6>
                         <div class="d-flex flex-column gap-2">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="status-dot" style="background:#FFB703"></span>
-                                <small><strong style="color:#1D3557">Pending</strong> — Admin is reviewing your donation photo</small>
+                                <span class="status-dot" style="background:var(--gold-light)"></span>
+                                <small style="color:var(--text-secondary)"><strong style="color:var(--text-primary)">Pending</strong> — Admin is reviewing your donation photo</small>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="status-dot" style="background:#2A9D8F"></span>
-                                <small><strong style="color:#1D3557">Approved</strong> — Certificate ready! Click to view & download</small>
+                                <span class="status-dot" style="background:#2DD4BF"></span>
+                                <small style="color:var(--text-secondary)"><strong style="color:var(--text-primary)">Approved</strong> — Certificate ready! Click to view & download</small>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="status-dot" style="background:#E63946"></span>
-                                <small><strong style="color:#1D3557">Rejected</strong> — Photo unclear or invalid. Re-submit with a better photo</small>
+                                <span class="status-dot" style="background:var(--red-bright)"></span>
+                                <small style="color:var(--text-secondary)"><strong style="color:var(--text-primary)">Rejected</strong> — Photo unclear or invalid. Re-submit with a better photo</small>
                             </div>
                         </div>
                     </div>
 
                     <div class="text-center mt-4">
-                        <p class="text-muted small">Haven't requested a certificate yet?</p>
-                        <a href="/request-certificate" class="btn btn-outline-primary btn-sm px-4">
-                            <i class="fas fa-paper-plane me-1"></i> Request Certificate
+                        <p style="color:var(--text-muted)" class="small">Haven't requested a certificate yet?</p>
+                        <a href="/request-certificate" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-paper-plane"></i> Request Certificate
                         </a>
                     </div>
                 </div>
@@ -118,36 +117,36 @@ async function checkCert() {
 
     if (!data.found) {
         area.innerHTML = `
-            <div style="text-align:center;padding:2rem;background:rgba(230,57,70,0.05);border-radius:16px;border:2px dashed rgba(230,57,70,0.2)">
-                <i class="fas fa-search" style="font-size:2.5rem;color:#ccc;display:block;margin-bottom:1rem"></i>
-                <h5 style="color:#1D3557;font-weight:700">No Requests Found</h5>
-                <p class="text-muted">No certificate requests found for <strong>${phone}</strong>.</p>
+            <div style="text-align:center;padding:2rem;background:rgba(196,30,58,0.05);border-radius:16px;border:1px dashed rgba(196,30,58,0.25)">
+                <i class="fas fa-search" style="font-size:2.2rem;color:#475569;display:block;margin-bottom:1rem"></i>
+                <h5 style="color:#F1F5F9;font-weight:700">No Requests Found</h5>
+                <p style="color:#94A3B8">No certificate requests found for <strong>${phone}</strong>.</p>
                 <a href="/request-certificate" class="btn btn-primary btn-sm mt-2">Submit a Request</a>
             </div>`;
     } else {
-        let html = `<h6 style="color:#1D3557;font-weight:700;margin-bottom:1rem">
-            <i class="fas fa-list me-2" style="color:#C41E3A"></i>Found ${data.requests.length} request(s) for ${phone}</h6>`;
+        let html = `<h6 style="color:#F1F5F9;font-weight:700;margin-bottom:1rem">
+            <i class="fas fa-list me-2" style="color:#E8243F"></i>Found ${data.requests.length} request(s) for ${phone}</h6>`;
         data.requests.forEach(r => {
-            const statusColor = r.status === 'Approved' ? '#2A9D8F' : r.status === 'Pending' ? '#FFB703' : '#E63946';
+            const statusColor = r.status === 'Approved' ? '#2DD4BF' : r.status === 'Pending' ? '#D4A017' : '#E8243F';
             const statusClass = r.status.toLowerCase();
             const statusIcon  = r.status === 'Approved' ? 'check-circle' : r.status === 'Pending' ? 'clock' : 'times-circle';
             html += `
             <div class="cert-result-card ${statusClass}">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div>
-                        <h5 style="color:#1D3557;font-weight:800;margin-bottom:4px">${r.donor_name}</h5>
-                        <div class="text-muted small">
-                            <i class="fas fa-tint me-1" style="color:#C41E3A"></i>${r.blood_group} &nbsp;|&nbsp;
+                        <h5 style="color:#F1F5F9;font-weight:800;margin-bottom:4px">${r.donor_name}</h5>
+                        <div style="color:#94A3B8" class="small">
+                            <i class="fas fa-tint me-1" style="color:#E8243F"></i>${r.blood_group} &nbsp;|&nbsp;
                             <i class="fas fa-hospital me-1"></i>${r.hospital} &nbsp;|&nbsp;
                             <i class="fas fa-calendar me-1"></i>${r.donation_date}
                         </div>
                     </div>
-                    <span style="padding:5px 14px;border-radius:50px;font-size:0.82rem;font-weight:700;
+                    <span style="padding:5px 14px;border-radius:50px;font-size:0.8rem;font-weight:700;
                         background:${statusColor}20;color:${statusColor};border:1px solid ${statusColor}40">
                         <i class="fas fa-${statusIcon} me-1"></i>${r.status}
                     </span>
                 </div>
-                ${r.admin_note ? `<div style="background:rgba(0,0,0,0.04);border-radius:8px;padding:8px 12px;font-size:0.85rem;margin-top:8px"><strong>Note:</strong> ${r.admin_note}</div>` : ''}
+                ${r.admin_note ? `<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 12px;font-size:0.85rem;margin-top:8px;color:#94A3B8"><strong style="color:#F1F5F9">Note:</strong> ${r.admin_note}</div>` : ''}
                 ${r.status === 'Approved' ? `
                 <div class="mt-3 d-flex gap-2">
                     <a href="/certificate/req/${r.id}" target="_blank" class="btn btn-success flex-fill btn-sm">
@@ -164,10 +163,10 @@ async function checkCert() {
                     </a>
                 </div>` : ''}
                 ${r.status === 'Pending' ? `
-                <div class="mt-2" style="font-size:0.82rem;color:#b38200">
+                <div class="mt-2" style="font-size:0.8rem;color:#D4A017">
                     <i class="fas fa-hourglass-half me-1"></i> Under review — usually approved within 24 hours
                 </div>` : ''}
-                <div class="mt-2" style="font-size:0.78rem;color:#aaa">
+                <div class="mt-2" style="font-size:0.75rem;color:#475569">
                     Submitted: ${r.requested_at}
                 </div>
             </div>`;

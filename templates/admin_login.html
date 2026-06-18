@@ -1,34 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Admin Login - BloodBridge AI{% endblock %}
+{% block title %}Admin Login — BloodBridge AI{% endblock %}
 {% block content %}
-<section style="min-height:80vh;display:flex;align-items:center;background:linear-gradient(135deg,#1D3557,#0a0a1a);padding:60px 0">
+<section style="min-height:88vh;display:flex;align-items:center;padding:140px 0 60px;position:relative;overflow:hidden">
+    <div style="position:absolute;width:500px;height:500px;background:radial-gradient(circle, rgba(196,30,58,0.15) 0%, transparent 70%);top:-100px;left:50%;transform:translateX(-50%);pointer-events:none"></div>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5">
-                <div style="background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:3rem">
+                <div class="card" style="padding:2.75rem;position:relative;z-index:5">
                     <div class="text-center mb-4">
-                        <div style="width:70px;height:70px;background:linear-gradient(135deg,#E63946,#d62828);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:0 10px 30px rgba(230,57,70,0.4)">
-                            <i class="fas fa-shield-alt" style="font-size:1.8rem;color:white"></i>
+                        <div style="width:60px;height:60px;background:var(--red);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;box-shadow:var(--shadow-red)">
+                            <i class="fas fa-shield-alt" style="font-size:1.5rem;color:white"></i>
                         </div>
-                        <h3 style="color:white;font-weight:800">Admin Panel</h3>
-                        <p style="color:rgba(255,255,255,0.6)">Restricted access — authorized only</p>
+                        <h3 style="color:var(--text-primary);font-weight:800;font-family:'Playfair Display',serif">Admin Panel</h3>
+                        <p style="color:var(--text-muted);font-size:0.9rem">Restricted access — authorized only</p>
                     </div>
                     <div id="alert-box"></div>
                     <form id="adminLoginForm">
                         <div class="mb-3">
-                            <label class="form-label" style="color:rgba(255,255,255,0.8)">Admin Email</label>
-                            <input type="email" class="form-control" id="email" required placeholder="admin@bloodbridge.ai" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white">
+                            <label class="form-label">Admin Email</label>
+                            <input type="email" class="form-control" id="email" required placeholder="admin@bloodbridge.ai">
                         </div>
                         <div class="mb-4">
-                            <label class="form-label" style="color:rgba(255,255,255,0.8)">Password</label>
-                            <input type="password" class="form-control" id="password" required placeholder="Admin password" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" required placeholder="Admin password">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 btn-lg" id="submitBtn">
-                            <i class="fas fa-lock me-2"></i> Access Admin Panel
+                        <button type="submit" class="btn btn-primary w-100 btn-lg" id="submitBtn" style="justify-content:center">
+                            <i class="fas fa-lock"></i> Access Admin Panel
                         </button>
                     </form>
-                    <div class="text-center mt-4" style="color:rgba(255,255,255,0.4);font-size:0.85rem">
-                    </div>
                 </div>
             </div>
         </div>

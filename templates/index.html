@@ -1,553 +1,574 @@
 {% extends "base.html" %}
-
-{% block title %}BloodBridge AI - Smart Blood Donation & Emergency Response Platform{% endblock %}
+{% block title %}BloodBridge AI — Smart Blood Donation & Emergency Response{% endblock %}
 
 {% block extra_css %}
 <style>
-    .container, .container-fluid {
-        padding-top: 0;
-        padding-bottom: 0;
-    }
+/* ── HERO ── */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 120px 0 80px;
+}
 
-    .hero-section {
-        min-height: 92vh;
-        display: flex;
-        align-items: center;
-        background: linear-gradient(135deg, rgba(29,53,87,0.97) 0%, rgba(230,57,70,0.92) 100%),
-                    url('https://images.unsplash.com/photo-1615461065929-4f8ffed6ca40?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-        position: relative;
-    }
+/* Radial red glow — the only decorative element */
+.hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(196,30,58,0.18) 0%, transparent 70%);
+    top: -100px; right: -150px;
+    pointer-events: none;
+    border-radius: 50%;
+}
 
-    .hero-section::before {
-        content: '';
-        position: absolute; inset: 0;
-        background: radial-gradient(ellipse at 70% 50%, rgba(255,183,3,0.15) 0%, transparent 60%);
-        pointer-events: none;
-    }
+.hero-glow-2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(184,134,11,0.08) 0%, transparent 70%);
+    bottom: 50px; left: -100px;
+    pointer-events: none;
+    border-radius: 50%;
+}
 
-    .hero-badge {
-        display: inline-block;
-        background: rgba(255,183,3,0.2);
-        border: 1px solid rgba(255,183,3,0.5);
-        color: #FFB703;
-        padding: 6px 18px;
-        border-radius: 50px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 1.5px;
-        margin-bottom: 1.2rem;
-        text-transform: uppercase;
-        animation: fadeInUp 0.6s ease-out;
-    }
+/* Heartbeat SVG line — signature element */
+.heartbeat-wrap {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.25;
+}
 
-    .hero-title {
-        font-size: 4rem;
-        font-weight: 900;
-        color: white;
-        line-height: 1.1;
-        margin-bottom: 1.2rem;
-        animation: fadeInUp 0.7s ease-out;
-    }
+.heartbeat-line {
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: drawLine 3s ease-out 0.5s forwards, pulseOpacity 2s ease-in-out 3.5s infinite;
+}
 
-    .hero-title span { color: #FFB703; }
+@keyframes drawLine {
+    to { stroke-dashoffset: 0; }
+}
+@keyframes pulseOpacity {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
 
-    .hero-subtitle {
-        font-size: 1.25rem;
-        color: rgba(255,255,255,0.85);
-        margin-bottom: 2.5rem;
-        max-width: 560px;
-        animation: fadeInUp 0.8s ease-out;
-    }
+/* Hero content */
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red-bright);
+    background: var(--red-subtle);
+    border: 1px solid var(--border-red);
+    border-radius: var(--radius-pill);
+    padding: 6px 16px;
+    margin-bottom: 28px;
+    animation: fadeInUp 0.6s var(--ease-out) both;
+}
 
-    .hero-stat-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        color: white;
-        padding: 8px 18px;
-        border-radius: 50px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin: 0 6px 10px 0;
-        backdrop-filter: blur(10px);
-    }
+.hero-eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--red-bright);
+    border-radius: 50%;
+    animation: pulse-ring 1.5s infinite;
+}
 
-    .hero-stat-pill i { color: #FFB703; }
+.hero-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.5rem, 6vw, 4.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    animation: fadeInUp 0.6s var(--ease-out) 0.1s both;
+}
 
-    .hero-glass-card {
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.15);
-        backdrop-filter: blur(20px);
-        border-radius: 24px;
-        padding: 2.5rem;
-        animation: fadeInUp 0.9s ease-out;
-    }
+.hero-title .accent { color: var(--red-bright); }
 
-    .hero-glass-card h4 {
-        color: white; font-weight: 700; margin-bottom: 1.5rem;
-    }
+.hero-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 40px;
+    animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
+}
 
-    .quick-btn {
-        display: flex; align-items: center; gap: 12px;
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        color: white;
-        padding: 14px 18px;
-        border-radius: 14px;
-        text-decoration: none;
-        margin-bottom: 12px;
-        transition: all 0.3s ease;
-        font-weight: 600;
-    }
+.hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.6s var(--ease-out) 0.3s both;
+    margin-bottom: 48px;
+}
 
-    .quick-btn:hover {
-        background: rgba(255,183,3,0.25);
-        border-color: #FFB703;
-        color: #FFB703;
-        transform: translateX(8px);
-    }
+.hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    animation: fadeInUp 0.6s var(--ease-out) 0.4s both;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
 
-    .quick-btn i {
-        width: 36px; height: 36px;
-        background: rgba(255,183,3,0.2);
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-    }
+.hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
 
-    /* ===== STATS ===== */
-    .stats-section {
-        padding: 70px 0;
-        background: white;
-    }
+.hero-stat-lbl {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 3px;
+}
 
-    .stat-item {
-        text-align: center;
-        padding: 2rem;
-        border-radius: 20px;
-        position: relative;
-        transition: all 0.3s ease;
-    }
+/* Hero right panel */
+.hero-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    animation: fadeInUp 0.7s var(--ease-out) 0.2s both;
+}
 
-    .stat-item:hover { transform: translateY(-8px); }
+.hero-panel-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+}
 
-    .stat-item::before {
-        content: '';
-        position: absolute; inset: 0;
-        border-radius: 20px;
-        background: linear-gradient(135deg, rgba(230,57,70,0.05), rgba(255,183,3,0.05));
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
+.quick-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all var(--dur) var(--ease);
+    margin-bottom: 6px;
+    border: 1px solid transparent;
+}
 
-    .stat-item:hover::before { opacity: 1; }
+.quick-link:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: var(--border);
+    color: var(--text-primary);
+    transform: translateX(4px);
+}
 
-    .stat-icon {
-        width: 70px; height: 70px;
-        border-radius: 20px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.8rem;
-        margin: 0 auto 1.2rem;
-    }
+.quick-link-icon {
+    width: 38px; height: 38px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
 
-    .stat-icon.red { background: rgba(230,57,70,0.1); color: #E63946; }
-    .stat-icon.teal { background: rgba(42,157,143,0.1); color: #2A9D8F; }
-    .stat-icon.gold { background: rgba(255,183,3,0.1); color: #FFB703; }
-    .stat-icon.blue { background: rgba(29,53,87,0.1); color: #1D3557; }
+.quick-link-icon.red  { background: var(--red-subtle); color: var(--red-bright); }
+.quick-link-icon.teal { background: var(--teal-subtle); color: #2DD4BF; }
+.quick-link-icon.gold { background: rgba(184,134,11,0.1); color: var(--gold-light); }
+.quick-link-icon.blue { background: rgba(99,102,241,0.1); color: #A5B4FC; }
 
-    .stat-count {
-        font-size: 3rem; font-weight: 900;
-        background: linear-gradient(135deg, #E63946, #FFB703);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        display: block; line-height: 1;
-    }
+.quick-link-text { flex: 1; }
+.quick-link-name { font-size: 0.875rem; font-weight: 600; display: block; }
+.quick-link-desc { font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 1px; }
 
-    .stat-label {
-        color: #555; font-weight: 600; font-size: 0.95rem; margin-top: 8px;
-    }
+/* ── LIVE BOARD SECTION ── */
+.emergency-ticker {
+    background: rgba(196,30,58,0.06);
+    border-top: 1px solid rgba(196,30,58,0.15);
+    border-bottom: 1px solid rgba(196,30,58,0.15);
+    padding: 12px 0;
+    overflow: hidden;
+}
 
-    /* ===== ACTION SECTION ===== */
-    .actions-section {
-        padding: 80px 0;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
+.ticker-inner {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+}
 
-    .action-grid-card {
-        background: rgba(255,255,255,0.8);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255,255,255,0.5);
-        border-radius: 24px;
-        padding: 2.5rem 2rem;
-        text-align: center;
-        transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        cursor: pointer;
-        text-decoration: none;
-        display: block;
-        color: inherit;
-        height: 100%;
-    }
+@keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
 
-    .action-grid-card:hover {
-        transform: translateY(-12px);
-        box-shadow: 0 20px 50px rgba(230,57,70,0.2);
-        background: rgba(255,255,255,0.97);
-        color: inherit;
-    }
+.ticker-label {
+    background: var(--red);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+    margin-right: 20px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
 
-    .action-icon-wrap {
-        width: 80px; height: 80px;
-        border-radius: 24px;
-        margin: 0 auto 1.5rem;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 2rem;
-        transition: all 0.3s ease;
-    }
+.ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-right: 40px;
+}
 
-    .action-grid-card:hover .action-icon-wrap {
-        transform: scale(1.15) rotate(-5deg);
-    }
+.ticker-blood {
+    background: var(--red-subtle);
+    color: var(--red-bright);
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border-red);
+}
 
-    .icon-red { background: linear-gradient(135deg, rgba(230,57,70,0.15), rgba(230,57,70,0.05)); color: #E63946; }
-    .icon-teal { background: linear-gradient(135deg, rgba(42,157,143,0.15), rgba(42,157,143,0.05)); color: #2A9D8F; }
-    .icon-gold { background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05)); color: #FFB703; }
-    .icon-blue { background: linear-gradient(135deg, rgba(29,53,87,0.15), rgba(29,53,87,0.05)); color: #1D3557; }
+/* ── FEATURES SECTION ── */
+.features-section { padding: 100px 0; }
 
-    .action-grid-card h5 {
-        font-weight: 700; font-size: 1.1rem; color: #1D3557; margin-bottom: 0.6rem;
-    }
+.feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    height: 100%;
+    transition: all var(--dur-slow) var(--ease-out);
+    position: relative;
+    overflow: hidden;
+}
 
-    .action-grid-card p {
-        color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;
-    }
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    opacity: 0;
+    transition: opacity var(--dur);
+}
 
-    /* ===== EMERGENCY BOARD ===== */
-    .emergency-section {
-        padding: 80px 0;
-        background: rgba(29,53,87,0.04);
-    }
+.feature-card:hover { background: var(--bg-card-hover); border-color: var(--border-hover); transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.feature-card:hover::before { opacity: 1; }
 
-    .emergency-card {
-        background: rgba(255,255,255,0.85);
-        backdrop-filter: blur(15px);
-        border-radius: 20px;
-        padding: 1.5rem;
-        border-left: 5px solid;
-        transition: all 0.3s ease;
-        margin-bottom: 1rem;
-    }
+.feature-icon {
+    width: 48px; height: 48px;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+}
 
-    .emergency-card:hover { transform: translateX(8px); }
-    .emergency-card.critical { border-left-color: #E63946; background: rgba(230,57,70,0.05); }
-    .emergency-card.urgent { border-left-color: #FFB703; background: rgba(255,183,3,0.05); }
-    .emergency-card.normal { border-left-color: #2A9D8F; background: rgba(42,157,143,0.05); }
+.feature-title { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+.feature-desc  { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7; }
 
-    .urgency-tag {
-        display: inline-block;
-        padding: 3px 12px; border-radius: 50px;
-        font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 1px;
-    }
+/* ── EMERGENCY BOARD ── */
+.emergency-section { padding: 80px 0; background: var(--bg-surface); }
 
-    .tag-critical { background: rgba(230,57,70,0.15); color: #E63946; }
-    .tag-urgent { background: rgba(255,183,3,0.15); color: #FFB703; }
-    .tag-normal { background: rgba(42,157,143,0.15); color: #2A9D8F; }
+.emergency-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all var(--dur) var(--ease);
+    position: relative;
+    overflow: hidden;
+}
 
-    .blood-badge {
-        display: inline-block;
-        width: 48px; height: 48px;
-        background: linear-gradient(135deg, #E63946, #d62828);
-        color: white; font-weight: 800; font-size: 0.8rem;
-        border-radius: 12px;
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-    }
+.emergency-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+}
 
-    /* ===== HOW IT WORKS ===== */
-    .how-section {
-        padding: 80px 0;
-        background: white;
-    }
+.emergency-card.critical::before { background: var(--red); }
+.emergency-card.urgent::before   { background: var(--gold); }
+.emergency-card.normal::before   { background: var(--teal); }
 
-    .step-card {
-        text-align: center; padding: 2rem 1.5rem;
-        position: relative;
-    }
+.emergency-card:hover { background: var(--bg-card-hover); border-color: var(--border-hover); transform: translateX(4px); }
 
-    .step-num {
-        width: 60px; height: 60px;
-        background: linear-gradient(135deg, #E63946, #FFB703);
-        color: white; font-weight: 900; font-size: 1.4rem;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        margin: 0 auto 1.5rem;
-        box-shadow: 0 8px 20px rgba(230,57,70,0.3);
-    }
+.blood-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px; height: 48px;
+    background: var(--red-subtle);
+    border: 1px solid var(--border-red);
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--red-bright);
+    flex-shrink: 0;
+}
 
-    .step-card h5 { font-weight: 700; color: #1D3557; margin-bottom: 0.8rem; }
-    .step-card p { color: #666; font-size: 0.95rem; }
+/* ── CTA SECTION ── */
+.cta-section {
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+}
 
-    /* ===== CTA SECTION ===== */
-    .cta-section {
-        padding: 80px 0;
-        background: linear-gradient(135deg, #1D3557 0%, #E63946 100%);
-        text-align: center;
-        color: white;
-    }
+.cta-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(196,30,58,0.15) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
 
-    .cta-section h2 { font-size: 2.8rem; font-weight: 900; margin-bottom: 1rem; }
-    .cta-section p { font-size: 1.15rem; opacity: 0.9; margin-bottom: 2.5rem; }
+.cta-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-red);
+    border-radius: var(--radius-xl);
+    padding: 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
 
-    .btn-cta-white {
-        background: white;
-        color: #E63946;
-        font-weight: 700;
-        padding: 14px 36px;
-        border-radius: 14px;
-        border: none;
-        font-size: 1rem;
-        text-decoration: none;
-        display: inline-block;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    }
-
-    .btn-cta-white:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        color: #d62828;
-    }
-
-    .btn-cta-outline {
-        background: transparent;
-        color: white;
-        font-weight: 700;
-        padding: 13px 36px;
-        border-radius: 14px;
-        border: 2px solid rgba(255,255,255,0.5);
-        font-size: 1rem;
-        text-decoration: none;
-        display: inline-block;
-        transition: all 0.3s ease;
-        margin-left: 1rem;
-    }
-
-    .btn-cta-outline:hover {
-        border-color: white;
-        background: rgba(255,255,255,0.15);
-        color: white;
-        transform: translateY(-4px);
-    }
-
-    @media (max-width: 768px) {
-        .hero-title { font-size: 2.4rem; }
-        .hero-glass-card { margin-top: 2rem; }
-        .stat-count { font-size: 2.2rem; }
-    }
+.cta-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--red-bright), transparent);
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- ===== HERO ===== -->
-<section class="hero-section">
-    <div class="container py-5">
-        <div class="row align-items-center gy-5">
-            <div class="col-lg-6">
-                <div class="hero-content">
-                    <div class="hero-badge">
-                        <i class="fas fa-heartbeat me-1"></i> AI-Powered Blood Donation Platform
-                    </div>
-                    <h1 class="hero-title">
-                        Connecting <span>Blood Donors</span><br>with Lives in Need
-                    </h1>
-                    <p class="hero-subtitle">
-                        BloodBridge AI uses intelligent matching to connect compatible donors with patients in real-time. Every second matters. Every drop counts.
-                    </p>
-                    <div class="mb-3">
-                        <span class="hero-stat-pill"><i class="fas fa-users"></i> {{ total_donors }}+ Donors</span>
-                        <span class="hero-stat-pill"><i class="fas fa-hospital"></i> {{ total_hospitals }}+ Hospitals</span>
-                        <span class="hero-stat-pill"><i class="fas fa-bolt"></i> {{ emergency_requests }} Active Requests</span>
-                    </div>
-                    <div class="hero-buttons d-flex flex-wrap gap-3 mt-4">
-                        <a href="/register-donor" class="btn btn-warning btn-lg px-4">
-                            <i class="fas fa-user-plus me-2"></i> Become a Donor
-                        </a>
-                        <a href="/emergency-request" class="btn btn-outline-light btn-lg px-4">
-                            <i class="fas fa-ambulance me-2"></i> Emergency Request
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="hero-glass-card">
-                    <h4><i class="fas fa-th me-2" style="color:#FFB703"></i> Quick Actions</h4>
-                    <a href="/register-donor" class="quick-btn">
-                        <i class="fas fa-user-plus"></i>
-                        <div><span class="d-block">Register as Donor</span><small style="opacity:0.7;font-weight:400">Join our donor community</small></div>
-                        <i class="fas fa-chevron-right ms-auto"></i>
-                    </a>
-                    <a href="/search-donor" class="quick-btn">
-                        <i class="fas fa-search"></i>
-                        <div><span class="d-block">Search Donors</span><small style="opacity:0.7;font-weight:400">Find compatible donors nearby</small></div>
-                        <i class="fas fa-chevron-right ms-auto"></i>
-                    </a>
-                    <a href="/emergency-request" class="quick-btn">
-                        <i class="fas fa-ambulance"></i>
-                        <div><span class="d-block">Emergency Request</span><small style="opacity:0.7;font-weight:400">Broadcast urgent blood need</small></div>
-                        <i class="fas fa-chevron-right ms-auto"></i>
-                    </a>
-                    <a href="/hospital-login" class="quick-btn">
-                        <i class="fas fa-hospital"></i>
-                        <div><span class="d-block">Hospital Portal</span><small style="opacity:0.7;font-weight:400">Manage donor database</small></div>
-                        <i class="fas fa-chevron-right ms-auto"></i>
-                    </a>
-                    <a href="/analytics" class="quick-btn">
-                        <i class="fas fa-chart-bar"></i>
-                        <div><span class="d-block">Analytics Dashboard</span><small style="opacity:0.7;font-weight:400">View platform insights</small></div>
-                        <i class="fas fa-chevron-right ms-auto"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- ===== STATS ===== -->
-<section class="stats-section">
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+
     <div class="container">
-        <div class="row text-center gy-4">
-            <div class="col-6 col-md-3">
-                <div class="stat-item">
-                    <div class="stat-icon red mx-auto"><i class="fas fa-users"></i></div>
-                    <span class="stat-count counter" data-target="{{ total_donors }}">0</span>
-                    <div class="stat-label">Registered Donors</div>
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="hero-eyebrow">
+                    AI-Powered Emergency Response
+                </div>
+
+                <h1 class="hero-title">
+                    Connect Blood.<br>
+                    <span class="accent">Save Lives.</span><br>
+                    Act Fast.
+                </h1>
+
+                <p class="hero-subtitle">
+                    BloodBridge AI instantly matches compatible donors with patients in real-time — across hospitals, cities, and emergencies.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="/register-donor" class="btn btn-primary btn-lg">
+                        <i class="fas fa-heart"></i> Become a Donor
+                    </a>
+                    <a href="/emergency-request" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-ambulance"></i> Post Emergency
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div>
+                        <div class="hero-stat-num counter" data-target="{{ total_donors }}">0</div>
+                        <div class="hero-stat-lbl">Donors</div>
+                    </div>
+                    <div style="width:1px;height:36px;background:var(--border)"></div>
+                    <div>
+                        <div class="hero-stat-num counter" data-target="{{ total_hospitals }}">0</div>
+                        <div class="hero-stat-lbl">Hospitals</div>
+                    </div>
+                    <div style="width:1px;height:36px;background:var(--border)"></div>
+                    <div>
+                        <div class="hero-stat-num counter" data-target="{{ emergency_requests }}">0</div>
+                        <div class="hero-stat-lbl">Active Requests</div>
+                    </div>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-item">
-                    <div class="stat-icon teal mx-auto"><i class="fas fa-heart"></i></div>
-                    <span class="stat-count counter" data-target="{{ active_donors }}">0</span>
-                    <div class="stat-label">Active Donors</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-item">
-                    <div class="stat-icon blue mx-auto"><i class="fas fa-hospital"></i></div>
-                    <span class="stat-count counter" data-target="{{ total_hospitals }}">0</span>
-                    <div class="stat-label">Partner Hospitals</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-item">
-                    <div class="stat-icon gold mx-auto"><i class="fas fa-bolt"></i></div>
-                    <span class="stat-count counter" data-target="{{ emergency_requests }}">0</span>
-                    <div class="stat-label">Active Emergencies</div>
+
+            <div class="col-lg-6">
+                <div class="hero-panel">
+                    <div class="hero-panel-title">Quick Actions</div>
+                    <a href="/register-donor" class="quick-link">
+                        <div class="quick-link-icon red"><i class="fas fa-user-plus"></i></div>
+                        <div class="quick-link-text">
+                            <span class="quick-link-name">Register as Donor</span>
+                            <span class="quick-link-desc">Join our verified donor network</span>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:var(--text-muted);font-size:0.7rem"></i>
+                    </a>
+                    <a href="/search-donor" class="quick-link">
+                        <div class="quick-link-icon teal"><i class="fas fa-search-location"></i></div>
+                        <div class="quick-link-text">
+                            <span class="quick-link-name">Find Compatible Donor</span>
+                            <span class="quick-link-desc">AI-ranked by blood type and city</span>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:var(--text-muted);font-size:0.7rem"></i>
+                    </a>
+                    <a href="/emergency-request" class="quick-link">
+                        <div class="quick-link-icon red"><i class="fas fa-ambulance"></i></div>
+                        <div class="quick-link-text">
+                            <span class="quick-link-name">Post Emergency Request</span>
+                            <span class="quick-link-desc">Alert compatible donors instantly</span>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:var(--text-muted);font-size:0.7rem"></i>
+                    </a>
+                    <a href="/hospital-login" class="quick-link">
+                        <div class="quick-link-icon blue"><i class="fas fa-hospital"></i></div>
+                        <div class="quick-link-text">
+                            <span class="quick-link-name">Hospital Portal</span>
+                            <span class="quick-link-desc">Manage donors and requests</span>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:var(--text-muted);font-size:0.7rem"></i>
+                    </a>
+                    <a href="/analytics" class="quick-link">
+                        <div class="quick-link-icon gold"><i class="fas fa-chart-pie"></i></div>
+                        <div class="quick-link-text">
+                            <span class="quick-link-name">Analytics Dashboard</span>
+                            <span class="quick-link-desc">Real-time platform insights</span>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:var(--text-muted);font-size:0.7rem"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Heartbeat signature -->
+    <div class="heartbeat-wrap">
+        <svg width="100%" height="80" viewBox="0 0 1440 80" preserveAspectRatio="none">
+            <polyline class="heartbeat-line"
+                points="0,40 180,40 210,40 230,10 250,70 270,10 290,70 310,40 340,40 520,40 540,10 560,70 580,10 600,70 620,40 650,40 830,40 850,10 870,70 890,10 910,70 930,40 960,40 1140,40 1160,10 1180,70 1200,10 1220,70 1240,40 1270,40 1440,40"
+                fill="none" stroke="#C41E3A" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"
+            />
+        </svg>
+    </div>
 </section>
 
-<!-- ===== QUICK ACTIONS GRID ===== -->
-<section class="actions-section">
+<!-- ═══════════ LIVE TICKER ═══════════ -->
+{% if recent_requests %}
+<div class="emergency-ticker">
+    <div style="display:flex;align-items:center;overflow:hidden;position:relative">
+        <div style="background:var(--bg-surface);padding:0 20px;z-index:2;flex-shrink:0">
+            <span class="ticker-label"><i class="fas fa-circle me-1" style="font-size:0.5rem;animation:pulse-ring 1.5s infinite"></i> Live</span>
+        </div>
+        <div class="ticker-inner">
+            {% for req in recent_requests %}
+            <span class="ticker-item">
+                <span class="ticker-blood">{{ req.blood_group }}</span>
+                {{ req.patient_name }} — {{ req.hospital }}, {{ req.city }}
+                <span style="color:var(--red-bright);font-weight:700">{{ req.urgency }}</span>
+            </span>
+            {% endfor %}
+            {% for req in recent_requests %}
+            <span class="ticker-item">
+                <span class="ticker-blood">{{ req.blood_group }}</span>
+                {{ req.patient_name }} — {{ req.hospital }}, {{ req.city }}
+                <span style="color:var(--red-bright);font-weight:700">{{ req.urgency }}</span>
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ═══════════ FEATURES ═══════════ -->
+<section class="features-section">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title">Platform Features</h2>
-            <p class="text-muted mt-3">Everything you need to save lives, in one place.</p>
+            <div class="section-label"><i class="fas fa-bolt"></i> Platform Features</div>
+            <h2 class="section-title">Everything you need.<br>In one place.</h2>
+            <p class="section-subtitle mx-auto">Built for speed, trust, and scale — from individual donors to hospital networks.</p>
         </div>
-        <div class="row gy-4">
-            <div class="col-md-4 col-sm-6">
-                <a href="/register-donor" class="action-grid-card">
-                    <div class="action-icon-wrap icon-red"><i class="fas fa-user-plus"></i></div>
-                    <h5>Donor Registration</h5>
-                    <p>Register as a blood donor and get matched with patients who need your help.</p>
-                    <span class="btn btn-primary btn-sm">Register Now</span>
+
+        <div class="row g-4">
+            {% for icon, color_cls, title, desc, url in [
+                ('fas fa-dna',            'red',  'Smart Blood Matching',    'AI engine scores compatibility across 8 blood types, city, and eligibility in real time.', '/search-donor'),
+                ('fas fa-ambulance',      'red',  'Emergency Broadcasting',  'Post a critical request and alert every compatible donor in the city within seconds.', '/emergency-request'),
+                ('fas fa-hospital-alt',   'blue', 'Hospital Portal',         'Upload entire donor databases via Excel. Manage records, view stats, issue certificates.', '/hospital-login'),
+                ('fas fa-file-excel',     'teal', 'Bulk Excel Upload',       'Import hundreds of donors from .xlsx files with automatic duplicate detection.', '/hospital-upload'),
+                ('fas fa-chart-pie',      'gold', 'Analytics Dashboard',     'Blood group distribution, city coverage, monthly trends — all live, all actionable.', '/analytics'),
+                ('fas fa-certificate',    'gold', 'Verified Certificates',   'Donors upload photo proof. Admin verifies. Certificate issued with QR and unique ID.', '/request-certificate')
+            ] %}
+            <div class="col-md-6 col-lg-4 reveal">
+                <a href="{{ url }}" class="feature-card text-decoration-none d-block">
+                    <div class="feature-icon kpi-icon {{ color_cls }}"><i class="{{ icon }}"></i></div>
+                    <div class="feature-title">{{ title }}</div>
+                    <p class="feature-desc">{{ desc }}</p>
                 </a>
             </div>
-            <div class="col-md-4 col-sm-6">
-                <a href="/search-donor" class="action-grid-card">
-                    <div class="action-icon-wrap icon-teal"><i class="fas fa-search-location"></i></div>
-                    <h5>Smart Donor Search</h5>
-                    <p>Find compatible donors by blood type, city, and availability with AI-powered ranking.</p>
-                    <span class="btn btn-success btn-sm">Search Donors</span>
-                </a>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <a href="/emergency-request" class="action-grid-card">
-                    <div class="action-icon-wrap icon-red"><i class="fas fa-ambulance"></i></div>
-                    <h5>Emergency Board</h5>
-                    <p>Post urgent blood requests and alert compatible donors nearby instantly.</p>
-                    <span class="btn btn-primary btn-sm">Emergency Request</span>
-                </a>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <a href="/hospital-login" class="action-grid-card">
-                    <div class="action-icon-wrap icon-blue"><i class="fas fa-hospital-alt"></i></div>
-                    <h5>Hospital Portal</h5>
-                    <p>Hospitals can manage donor databases, upload Excel files, and post requests.</p>
-                    <span class="btn btn-secondary btn-sm" style="background:#1D3557">Hospital Login</span>
-                </a>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <a href="/analytics" class="action-grid-card">
-                    <div class="action-icon-wrap icon-teal"><i class="fas fa-chart-pie"></i></div>
-                    <h5>Analytics Dashboard</h5>
-                    <p>View real-time insights on donors, donations, and blood group distribution.</p>
-                    <span class="btn btn-success btn-sm">View Analytics</span>
-                </a>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <a href="/emergency-board" class="action-grid-card">
-                    <div class="action-icon-wrap icon-gold"><i class="fas fa-bell"></i></div>
-                    <h5>Live Emergency Board</h5>
-                    <p>View and respond to all active blood requests across cities in real-time.</p>
-                    <span class="btn btn-warning btn-sm">View Board</span>
-                </a>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
 
-<!-- ===== EMERGENCY REQUESTS PREVIEW ===== -->
+<!-- ═══════════ EMERGENCY BOARD ═══════════ -->
 {% if recent_requests %}
 <section class="emergency-section">
     <div class="container">
-        <div class="row align-items-center mb-4">
-            <div class="col">
-                <h2 class="section-title mb-0">Live Emergency Requests</h2>
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-label"><i class="fas fa-circle" style="font-size:0.5rem;animation:pulse-ring 1.5s infinite"></i> Live Board</div>
+                <h2 class="section-title mb-0">Active Blood Requests</h2>
             </div>
-            <div class="col-auto">
-                <a href="/emergency-board" class="btn btn-outline-primary">View All <i class="fas fa-arrow-right ms-1"></i></a>
-            </div>
+            <a href="/emergency-board" class="btn btn-secondary btn-sm">View All <i class="fas fa-arrow-right"></i></a>
         </div>
-        <div class="row gy-3">
+
+        <div class="row g-3">
             {% for req in recent_requests %}
-            <div class="col-md-6">
+            <div class="col-md-6 reveal">
                 <div class="emergency-card {{ req.urgency|lower }}">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="blood-badge">{{ req.blood_group }}</div>
+                    <div class="d-flex gap-3 align-items-center">
+                        <div class="blood-tag">{{ req.blood_group }}</div>
                         <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                <strong style="color:#1D3557">{{ req.patient_name }}</strong>
-                                <span class="urgency-tag tag-{{ req.urgency|lower }}">
-                                    <i class="fas fa-{{ 'exclamation-triangle' if req.urgency == 'Critical' else 'exclamation' if req.urgency == 'Urgent' else 'info' }} me-1"></i>
-                                    {{ req.urgency }}
-                                </span>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <span style="font-weight:700;font-size:0.9rem">{{ req.patient_name }}</span>
+                                <span class="badge urgency-{{ req.urgency|lower }}" style="font-size:0.65rem">{{ req.urgency }}</span>
                             </div>
-                            <div class="text-muted small">
-                                <i class="fas fa-hospital me-1"></i>{{ req.hospital }} &nbsp;|&nbsp;
-                                <i class="fas fa-map-marker-alt me-1"></i>{{ req.city }} &nbsp;|&nbsp;
-                                <i class="fas fa-tint me-1"></i>{{ req.units_needed }} unit(s)
+                            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:3px">
+                                <i class="fas fa-hospital me-1"></i>{{ req.hospital }}
+                                <span style="margin:0 6px;opacity:0.4">·</span>
+                                <i class="fas fa-map-marker-alt me-1"></i>{{ req.city }}
                             </div>
                         </div>
                     </div>
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <small class="text-muted"><i class="fas fa-clock me-1"></i>{{ req.created_at|dateformat }}</small>
-                        <a href="tel:{{ req.contact }}" class="btn btn-sm btn-primary">
-                            <i class="fas fa-phone me-1"></i> {{ req.contact }}
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top:1px solid var(--border)">
+                        <span style="font-size:0.73rem;color:var(--text-muted)">
+                            <i class="fas fa-clock me-1"></i>{{ req.created_at|dateformat }}
+                        </span>
+                        <a href="tel:{{ req.contact }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-phone"></i> {{ req.contact }}
                         </a>
                     </div>
                 </div>
@@ -558,86 +579,74 @@
 </section>
 {% endif %}
 
-<!-- ===== HOW IT WORKS ===== -->
-<section class="how-section">
+<!-- ═══════════ HOW IT WORKS ═══════════ -->
+<section style="padding:100px 0">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title">How It Works</h2>
-            <p class="text-muted mt-3">Three simple steps to save a life</p>
+            <div class="section-label">Process</div>
+            <h2 class="section-title">Four steps. One life saved.</h2>
         </div>
-        <div class="row gy-4">
-            <div class="col-md-3">
-                <div class="step-card">
-                    <div class="step-num">1</div>
-                    <h5>Register</h5>
-                    <p>Sign up as a blood donor with your blood group, city, and contact details.</p>
+        <div class="row g-4">
+            {% for num, title, desc in [
+                ('01', 'Register',     'Sign up as a donor with your blood group, city, and contact details.'),
+                ('02', 'Get Matched',  'Our AI engine matches you with compatible patients by blood type and location.'),
+                ('03', 'Get Notified', 'Receive instant alerts when someone nearby needs your exact blood type.'),
+                ('04', 'Save a Life',  'Respond, donate, and receive a verified BloodBridge certificate.')
+            ] %}
+            <div class="col-md-6 col-lg-3 reveal">
+                <div style="padding:2rem 0">
+                    <div style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;color:var(--red-subtle);-webkit-text-stroke:1px rgba(196,30,58,0.3);color:transparent;line-height:1;margin-bottom:1rem">{{ num }}</div>
+                    <div style="font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:0.5rem">{{ title }}</div>
+                    <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7">{{ desc }}</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="step-card">
-                    <div class="step-num">2</div>
-                    <h5>Get Matched</h5>
-                    <p>Our AI engine matches you with compatible patients based on blood type and location.</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="step-card">
-                    <div class="step-num">3</div>
-                    <h5>Get Notified</h5>
-                    <p>Receive instant alerts when someone near you needs your blood type.</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="step-card">
-                    <div class="step-num">4</div>
-                    <h5>Save a Life</h5>
-                    <p>Respond, donate, and be the hero someone desperately needs today.</p>
-                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════ CTA ═══════════ -->
+<section class="cta-section">
+    <div class="cta-glow"></div>
+    <div class="container">
+        <div class="cta-box">
+            <div class="section-label mx-auto mb-3" style="width:fit-content">Join Today</div>
+            <h2 class="section-title">Ready to save a life?</h2>
+            <p class="section-subtitle mx-auto mb-4" style="text-align:center">Every registered donor increases the chance that someone in your city gets the blood they need.</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="/register-donor" class="btn btn-primary btn-lg">
+                    <i class="fas fa-heart"></i> Register as Donor
+                </a>
+                <a href="/emergency-request" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-ambulance"></i> Post Emergency
+                </a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ===== CTA ===== -->
-<section class="cta-section">
-    <div class="container">
-        <h2>Ready to Save a Life?</h2>
-        <p>Join thousands of donors making a difference every day.</p>
-        <a href="/register-donor" class="btn-cta-white">
-            <i class="fas fa-heart me-2"></i> Register as Donor
-        </a>
-        <a href="/emergency-request" class="btn-cta-outline">
-            <i class="fas fa-ambulance me-2"></i> Post Emergency
-        </a>
-    </div>
-</section>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Counter animation
-    const counters = document.querySelectorAll('.counter');
-    const animateCounter = (el) => {
-        const target = parseInt(el.dataset.target);
-        const duration = 2000;
-        const step = target / (duration / 16);
+// Counter animation
+const counters = document.querySelectorAll('.counter');
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseInt(el.dataset.target) || 0;
+        const dur = 1600;
+        const step = target / (dur / 16);
         let current = 0;
         const timer = setInterval(() => {
             current = Math.min(current + step, target);
             el.textContent = Math.floor(current);
             if (current >= target) clearInterval(timer);
         }, 16);
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateCounter(entry.target);
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.3 });
-
-    counters.forEach(counter => observer.observe(counter));
+        observer.unobserve(el);
+    });
+}, { threshold: 0.3 });
+counters.forEach(c => observer.observe(c));
 </script>
 {% endblock %}

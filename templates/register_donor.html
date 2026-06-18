@@ -1,116 +1,119 @@
 {% extends "base.html" %}
-{% block title %}Register Donor - BloodBridge AI{% endblock %}
+{% block title %}Register Donor — BloodBridge AI{% endblock %}
 
 {% block extra_css %}
 <style>
     .register-hero {
-        background: linear-gradient(135deg, #1D3557 0%, #E63946 100%);
-        padding: 60px 0 120px;
-        position: relative; overflow: hidden;
+        padding: 140px 0 60px;
+        position: relative;
+        overflow: hidden;
     }
-    .register-hero::after {
-        content: '';
-        position: absolute; bottom: 0; left: 0; right: 0;
-        height: 60px;
-        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-        clip-path: ellipse(60% 100% at 50% 100%);
+    .register-hero-glow {
+        position: absolute;
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(196,30,58,0.15) 0%, transparent 70%);
+        top: -50px; right: -100px;
+        pointer-events: none;
     }
     .register-form-card {
-        background: rgba(255,255,255,0.95);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         backdrop-filter: blur(20px);
-        border-radius: 28px;
-        padding: 3rem;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.15);
-        margin-top: -60px;
+        border-radius: var(--radius-xl);
+        padding: 2.5rem;
         position: relative; z-index: 10;
     }
     .blood-group-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     .blood-group-option { display: none; }
     .blood-group-label {
         display: flex; align-items: center; justify-content: center;
-        height: 58px;
-        border: 2px solid #e0e0e0;
-        border-radius: 14px;
-        font-weight: 700; font-size: 1.1rem;
+        height: 56px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        font-weight: 700; font-size: 1rem;
         cursor: pointer;
-        transition: all 0.25s ease;
-        color: #555;
-        background: white;
+        transition: all 0.2s ease;
+        color: var(--text-secondary);
+        background: rgba(255,255,255,0.03);
     }
     .blood-group-label:hover {
-        border-color: #E63946; color: #E63946;
-        background: rgba(230,57,70,0.05);
+        border-color: var(--border-red); color: var(--red-bright);
+        background: var(--red-subtle);
     }
     .blood-group-option:checked + .blood-group-label {
-        background: linear-gradient(135deg, #E63946, #d62828);
-        border-color: #E63946; color: white;
-        box-shadow: 0 6px 20px rgba(230,57,70,0.35);
-        transform: scale(1.05);
+        background: var(--red);
+        border-color: var(--red); color: white;
+        box-shadow: var(--shadow-red);
     }
     .step-indicator {
         display: flex; gap: 0; margin-bottom: 2.5rem;
     }
     .step {
         flex: 1; text-align: center; padding: 12px;
-        border-bottom: 3px solid #e0e0e0;
-        color: #aaa; font-weight: 600; font-size: 0.9rem;
+        border-bottom: 2px solid var(--border);
+        color: var(--text-muted); font-weight: 600; font-size: 0.82rem;
         cursor: pointer; transition: all 0.3s;
+        text-transform: uppercase; letter-spacing: 0.04em;
     }
-    .step.active { border-bottom-color: #E63946; color: #E63946; }
-    .step.done { border-bottom-color: #2A9D8F; color: #2A9D8F; }
+    .step.active { border-bottom-color: var(--red); color: var(--red-bright); }
+    .step.done { border-bottom-color: var(--teal); color: #2DD4BF; }
     .form-step { display: none; animation: fadeInUp 0.4s ease-out; }
     .form-step.active { display: block; }
     .eligibility-result {
-        border-radius: 14px; padding: 1.2rem 1.5rem;
-        border: 2px solid; margin-top: 1rem; display: none;
+        border-radius: var(--radius-md); padding: 1.1rem 1.4rem;
+        border: 1px solid; margin-top: 1rem; display: none;
+        font-size: 0.875rem;
     }
-    .eligibility-result.eligible { border-color: #2A9D8F; background: rgba(42,157,143,0.08); color: #1d7a74; }
-    .eligibility-result.ineligible { border-color: #E63946; background: rgba(230,57,70,0.08); color: #d62828; }
+    .eligibility-result.eligible { border-color: rgba(15,145,131,0.3); background: var(--teal-subtle); color: #2DD4BF; }
+    .eligibility-result.ineligible { border-color: var(--border-red); background: var(--red-subtle); color: #FF6B7A; }
     .gender-btn { display: none; }
     .gender-label {
         display: flex; align-items: center; justify-content: center; gap: 8px;
-        padding: 12px 20px; border: 2px solid #e0e0e0;
-        border-radius: 12px; font-weight: 600; cursor: pointer;
-        transition: all 0.25s ease; background: white;
+        padding: 12px 20px; border: 1px solid var(--border);
+        border-radius: var(--radius-md); font-weight: 600; cursor: pointer;
+        transition: all 0.2s ease; background: rgba(255,255,255,0.03);
+        color: var(--text-secondary); font-size: 0.875rem;
     }
-    .gender-label:hover { border-color: #1D3557; color: #1D3557; }
+    .gender-label:hover { border-color: var(--border-hover); color: var(--text-primary); }
     .gender-btn:checked + .gender-label {
-        background: #1D3557; border-color: #1D3557; color: white;
+        background: rgba(255,255,255,0.08); border-color: var(--border-hover); color: var(--text-primary);
     }
     .success-overlay {
         display: none; position: fixed; inset: 0;
-        background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+        background: rgba(8,13,20,0.85); backdrop-filter: blur(8px);
         z-index: 9999; align-items: center; justify-content: center;
     }
     .success-overlay.show { display: flex; }
     .success-modal {
-        background: white; border-radius: 28px; padding: 3rem;
+        background: var(--bg-elevated); border: 1px solid var(--border);
+        border-radius: var(--radius-xl); padding: 3rem;
         text-align: center; max-width: 420px; width: 90%;
-        animation: fadeInUp 0.5s ease-out;
+        animation: fadeInUp 0.4s var(--ease-out);
     }
     .success-icon {
-        width: 90px; height: 90px;
-        background: linear-gradient(135deg, #2A9D8F, #1d7a74);
+        width: 80px; height: 80px;
+        background: var(--teal);
         border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        font-size: 2.5rem; color: white; margin: 0 auto 1.5rem;
-        box-shadow: 0 10px 30px rgba(42,157,143,0.4);
+        font-size: 2.2rem; color: white; margin: 0 auto 1.5rem;
+        box-shadow: 0 10px 30px rgba(15,145,131,0.4);
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="register-hero">
-    <div class="container text-center text-white">
-        <div class="d-inline-block bg-white bg-opacity-10 px-4 py-2 rounded-pill mb-3" style="border:1px solid rgba(255,255,255,0.3)">
-            <i class="fas fa-user-plus me-2" style="color:#FFB703"></i> Donor Registration
+    <div class="register-hero-glow"></div>
+    <div class="container text-center">
+        <div class="section-label mx-auto" style="width:fit-content">
+            <i class="fas fa-user-plus"></i> Donor Registration
         </div>
-        <h1 style="font-size:2.8rem;font-weight:900">Become a Blood Donor</h1>
-        <p class="mt-2 mb-0" style="opacity:0.85;font-size:1.1rem">Register today and be ready to save a life when it matters most</p>
+        <h1 class="section-title">Become a Blood Donor</h1>
+        <p class="section-subtitle mx-auto">Register today and be ready to save a life when it matters most</p>
     </div>
 </section>
 
-<section style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); padding-bottom: 60px;">
+<section style="padding-bottom: 80px;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -125,12 +128,12 @@
                     <form id="donorForm">
                         <!-- Step 1: Personal Info -->
                         <div class="form-step active" id="step-1">
-                            <h4 style="color:#1D3557;font-weight:700" class="mb-4">Personal Information</h4>
+                            <h4 style="color:var(--text-primary);font-weight:700" class="mb-4">Personal Information</h4>
                             <div class="row gy-4">
                                 <div class="col-12">
                                     <label class="form-label">Full Name *</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="background:rgba(230,57,70,0.1);border:2px solid rgba(0,0,0,0.1);border-right:none"><i class="fas fa-user" style="color:#E63946"></i></span>
+                                        <span class="input-group-text" style="background:var(--red-subtle);border:1px solid var(--border);border-right:none"><i class="fas fa-user" style="color:var(--red-bright)"></i></span>
                                         <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required style="border-left:none">
                                     </div>
                                 </div>
@@ -178,7 +181,7 @@
 
                         <!-- Step 2: Blood & Health -->
                         <div class="form-step" id="step-2">
-                            <h4 style="color:#1D3557;font-weight:700" class="mb-4">Blood Group & Health Info</h4>
+                            <h4 style="color:var(--text-primary);font-weight:700" class="mb-4">Blood Group & Health Info</h4>
                             <div class="mb-4">
                                 <label class="form-label">Select Blood Group *</label>
                                 <div class="blood-group-grid">
@@ -226,8 +229,8 @@
 
                         <!-- Step 3: Confirm -->
                         <div class="form-step" id="step-3">
-                            <h4 style="color:#1D3557;font-weight:700" class="mb-4">Confirm Your Details</h4>
-                            <div id="review-section" style="background:rgba(29,53,87,0.04);border-radius:16px;padding:2rem">
+                            <h4 style="color:var(--text-primary);font-weight:700" class="mb-4">Confirm Your Details</h4>
+                            <div id="review-section" style="background:rgba(255,255,255,0.03);border-radius:16px;padding:2rem">
                                 <!-- populated by JS -->
                             </div>
                             <div class="form-check mt-4">
@@ -256,7 +259,7 @@
 <div class="success-overlay" id="successOverlay">
     <div class="success-modal">
         <div class="success-icon"><i class="fas fa-check"></i></div>
-        <h3 style="color:#1D3557;font-weight:800">Registration Successful!</h3>
+        <h3 style="color:var(--text-primary);font-weight:800">Registration Successful!</h3>
         <p class="text-muted mt-2">You are now a verified BloodBridge donor. You'll be notified when someone nearby needs your blood type.</p>
         <div class="mt-4 d-flex gap-3 justify-content-center">
             <a href="/" class="btn btn-outline-secondary">Go Home</a>
@@ -323,7 +326,7 @@
         };
         let html = '<div class="row gy-3">';
         for (const [key, val] of Object.entries(data)) {
-            html += `<div class="col-6"><small class="text-muted d-block">${key}</small><strong style="color:#1D3557">${val}</strong></div>`;
+            html += `<div class="col-6"><small class="text-muted d-block">${key}</small><strong style="color:var(--text-primary)">${val}</strong></div>`;
         }
         html += '</div>';
         document.getElementById('review-section').innerHTML = html;
