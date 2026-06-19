@@ -32,28 +32,42 @@
     border-radius: 50%;
 }
 
-/* Heartbeat SVG line — signature element */
+/* Heartbeat SVG line — signature element, continuously traveling like a live monitor */
 .heartbeat-wrap {
     position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 80px;
+    bottom: 60px; left: 0; right: 0;
+    height: 90px;
     overflow: hidden;
     pointer-events: none;
-    opacity: 0.25;
+    opacity: 0.55;
+    mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
 }
 
-.heartbeat-line {
-    stroke-dasharray: 1200;
-    stroke-dashoffset: 1200;
-    animation: drawLine 3s ease-out 0.5s forwards, pulseOpacity 2s ease-in-out 3.5s infinite;
+.heartbeat-track {
+    display: flex;
+    width: 200%;
+    animation: travelLine 6s linear infinite;
 }
 
-@keyframes drawLine {
-    to { stroke-dashoffset: 0; }
+.heartbeat-track svg {
+    width: 50%;
+    flex-shrink: 0;
+    display: block;
 }
-@keyframes pulseOpacity {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+@keyframes travelLine {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+.heartbeat-dot {
+    animation: glowPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 1; filter: drop-shadow(0 0 4px var(--red-bright)); }
+    50%      { opacity: 0.4; filter: drop-shadow(0 0 1px var(--red-bright)); }
 }
 
 /* Hero content */
@@ -464,15 +478,32 @@
         </div>
     </div>
 
-    <!-- Heartbeat signature -->
+    <!-- Heartbeat signature — continuously moving like a live cardiac monitor -->
     <div class="heartbeat-wrap">
-        <svg width="100%" height="80" viewBox="0 0 1440 80" preserveAspectRatio="none">
-            <polyline class="heartbeat-line"
-                points="0,40 180,40 210,40 230,10 250,70 270,10 290,70 310,40 340,40 520,40 540,10 560,70 580,10 600,70 620,40 650,40 830,40 850,10 870,70 890,10 910,70 930,40 960,40 1140,40 1160,10 1180,70 1200,10 1220,70 1240,40 1270,40 1440,40"
-                fill="none" stroke="#C41E3A" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round"
-            />
-        </svg>
+        <div class="heartbeat-track">
+            <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline
+                    points="0,45 140,45 165,45 185,15 205,78 225,12 245,78 265,45 300,45 480,45 500,15 520,78 540,12 560,78 580,45 615,45 795,45 815,15 835,78 855,12 875,78 895,45 930,45 1110,45 1130,15 1150,78 1170,12 1190,78 1210,45 1245,45 1440,45"
+                    fill="none" stroke="#E8243F" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"
+                />
+                <circle class="heartbeat-dot" cx="185" cy="15" r="4" fill="#E8243F"/>
+                <circle class="heartbeat-dot" cx="500" cy="15" r="4" fill="#E8243F" style="animation-delay:0.4s"/>
+                <circle class="heartbeat-dot" cx="815" cy="15" r="4" fill="#E8243F" style="animation-delay:0.8s"/>
+                <circle class="heartbeat-dot" cx="1130" cy="15" r="4" fill="#E8243F" style="animation-delay:1.2s"/>
+            </svg>
+            <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline
+                    points="0,45 140,45 165,45 185,15 205,78 225,12 245,78 265,45 300,45 480,45 500,15 520,78 540,12 560,78 580,45 615,45 795,45 815,15 835,78 855,12 875,78 895,45 930,45 1110,45 1130,15 1150,78 1170,12 1190,78 1210,45 1245,45 1440,45"
+                    fill="none" stroke="#E8243F" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"
+                />
+                <circle class="heartbeat-dot" cx="185" cy="15" r="4" fill="#E8243F"/>
+                <circle class="heartbeat-dot" cx="500" cy="15" r="4" fill="#E8243F" style="animation-delay:0.4s"/>
+                <circle class="heartbeat-dot" cx="815" cy="15" r="4" fill="#E8243F" style="animation-delay:0.8s"/>
+                <circle class="heartbeat-dot" cx="1130" cy="15" r="4" fill="#E8243F" style="animation-delay:1.2s"/>
+            </svg>
+        </div>
     </div>
 </section>
 
@@ -594,8 +625,8 @@
                 ('04', 'Save a Life',  'Respond, donate, and receive a verified BloodBridge certificate.')
             ] %}
             <div class="col-md-6 col-lg-3 reveal">
-                <div style="padding:2rem 0">
-                    <div style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;color:var(--red-subtle);-webkit-text-stroke:1px rgba(196,30,58,0.3);color:transparent;line-height:1;margin-bottom:1rem">{{ num }}</div>
+                <div class="card" style="padding:2rem;height:100%">
+                    <div style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;color:transparent;-webkit-text-stroke:1.5px var(--red-bright);line-height:1;margin-bottom:1rem">{{ num }}</div>
                     <div style="font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:0.5rem">{{ title }}</div>
                     <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7">{{ desc }}</div>
                 </div>

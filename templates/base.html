@@ -825,9 +825,34 @@
     /* ═══════════════════════════════════════════
        RESPONSIVE
     ═══════════════════════════════════════════ */
-    @media (max-width: 991px) {
-        .nav-pill { display: none; }
-        .nav-desktop-actions { display: none; }
+    /* Hard breakpoint control — do not rely on Bootstrap utility classes alone,
+       they can both end up visible at in-between viewport widths */
+    .nav-pill,
+    .nav-desktop-actions {
+        display: none;
+    }
+    .navbar-toggler {
+        display: inline-flex;
+    }
+    .navbar-collapse {
+        display: none;
+    }
+    .navbar-collapse.show {
+        display: block;
+    }
+    @media (min-width: 992px) {
+        .nav-pill {
+            display: flex !important;
+        }
+        .nav-desktop-actions {
+            display: flex !important;
+        }
+        .navbar-toggler {
+            display: none !important;
+        }
+        .navbar-collapse {
+            display: none !important;
+        }
     }
 
     @media (max-width: 768px) {
@@ -855,7 +880,7 @@
     </a>
 
     <!-- Desktop pill nav -->
-    <div class="nav-pill d-none d-lg-flex">
+    <div class="nav-pill">
         <a class="nav-link" href="/">Home</a>
         <a class="nav-link" href="/search-donor">Find Donor</a>
         <a class="nav-link" href="/register-donor">Register</a>
@@ -870,7 +895,7 @@
     </div>
 
     <!-- Desktop actions -->
-    <div class="nav-actions nav-desktop-actions d-none d-lg-flex">
+    <div class="nav-actions nav-desktop-actions">
         {% if session.get('hospital_id') %}
             <a href="/hospital-logout" class="btn-ghost">Logout</a>
         {% elif session.get('admin_id') %}
@@ -882,13 +907,13 @@
     </div>
 
     <!-- Mobile toggler -->
-    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav">
         <span class="navbar-toggler-icon"></span>
     </button>
   </div>
 
   <!-- Mobile nav -->
-  <div class="collapse navbar-collapse d-lg-none" id="mobileNav">
+  <div class="collapse navbar-collapse" id="mobileNav">
     <a class="nav-link" href="/">Home</a>
     <a class="nav-link" href="/search-donor">Find Donor</a>
     <a class="nav-link" href="/register-donor">Register as Donor</a>
