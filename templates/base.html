@@ -244,31 +244,67 @@
     }
 
     /* Mobile collapse — vertical stacked card, not inline text */
-    .navbar-collapse {
-        background: rgba(8,13,20,0.98);
-        border-top: 1px solid var(--border);
-        padding: 16px 20px;
-        margin-top: 4px;
-        display: none;
-        flex-direction: column;
+    /* Mobile nav drawer — fixed overlay, completely outside the navbar's
+       flex layout so it can never stretch to match navbar height. This is
+       the fix for the bug where the mobile list rendered full-page-height
+       and right-aligned at desktop width — that was Bootstrap's flex
+       stretch behavior leaking from .navbar into the collapse element. */
+    .mobile-nav-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(2px);
+        z-index: 998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
     }
-    .navbar-collapse.is-open {
-        display: flex;
+    .mobile-nav-backdrop.is-open {
+        opacity: 1;
+        pointer-events: auto;
     }
 
-    .navbar-collapse .nav-link {
+    .mobile-nav-drawer {
+        position: fixed;
+        top: 0;
+        right: -320px;
+        width: 280px;
+        max-width: 85vw;
+        height: 100vh;
+        background: var(--bg-elevated);
+        border-left: 1px solid var(--border);
+        padding: 90px 24px 24px;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        transition: right 0.3s var(--ease-out);
+        box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+    }
+    .mobile-nav-drawer.is-open {
+        right: 0;
+    }
+
+    .mobile-nav-drawer .nav-link {
         color: var(--text-secondary) !important;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         font-weight: 500;
-        padding: 12px 4px !important;
+        padding: 14px 4px !important;
         border-bottom: 1px solid var(--border);
         transition: color var(--dur);
         display: block;
         width: 100%;
     }
 
-    .navbar-collapse .nav-link:last-child { border-bottom: none; }
-    .navbar-collapse .nav-link:hover { color: var(--text-primary) !important; }
+    .mobile-nav-drawer .nav-link:last-child { border-bottom: none; }
+    .mobile-nav-drawer .nav-link:hover { color: var(--text-primary) !important; }
+
+    @media (min-width: 992px) {
+        .mobile-nav-drawer,
+        .mobile-nav-backdrop {
+            display: none;
+        }
+    }
 
     /* ═══════════════════════════════════════════
        BUTTONS
@@ -839,9 +875,12 @@
        RESPONSIVE — fully custom nav toggle, zero dependency on
        Bootstrap's collapse plugin (it conflicted with our custom
        .navbar-inner wrapper and caused both nav states to render
-       at once). Base mobile-open/closed state is set above on
-       .navbar-collapse / .navbar-collapse.is-open — this block only
-       handles the desktop breakpoint switch-over.
+       at once, and at one point caused the mobile drawer to stretch
+       to full page height via Bootstrap's flex inheritance). The
+       mobile drawer now lives outside <nav> entirely as a fixed
+       overlay — see .mobile-nav-drawer / .mobile-nav-backdrop above,
+       which handle their own desktop hide via @media (min-width:992px).
+       This block only handles the desktop pill-nav / toggler switch-over.
     ═══════════════════════════════════════════ */
     .nav-pill,
     .nav-desktop-actions {
@@ -858,10 +897,6 @@
             display: flex;
         }
         .navbar-toggler {
-            display: none;
-        }
-        .navbar-collapse,
-        .navbar-collapse.is-open {
             display: none;
         }
     }
@@ -922,9 +957,13 @@
         <span class="navbar-toggler-icon"></span>
     </button>
   </div>
+</nav>
 
-  <!-- Mobile nav -->
-  <div class="navbar-collapse" id="mobileNav">
+<!-- Mobile nav drawer — deliberately OUTSIDE <nav> and not a flex child of
+     anything, so it can never inherit stretch/height behavior from the
+     navbar's flex layout. Fixed overlay, fully independent. -->
+<div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+<div class="mobile-nav-drawer" id="mobileNav">
     <a class="nav-link" href="/">Home</a>
     <a class="nav-link" href="/search-donor">Find Donor</a>
     <a class="nav-link" href="/register-donor">Register as Donor</a>
@@ -941,8 +980,7 @@
     {% else %}
         <a class="nav-link" href="/hospital-login">Hospital Login</a>
     {% endif %}
-  </div>
-</nav>
+</div>
 
 <!-- Flash messages -->
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -1043,20 +1081,30 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-// Mobile nav toggle — custom, does not use Bootstrap's collapse plugin
+// Mobile nav drawer toggle — custom, fully independent overlay
 const mobileToggle = document.getElementById('mobileNavToggle');
 const mobileNav = document.getElementById('mobileNav');
-if (mobileToggle && mobileNav) {
+const mobileBackdrop = document.getElementById('mobileNavBackdrop');
+if (mobileToggle && mobileNav && mobileBackdrop) {
+    function closeMobileNav() {
+        mobileNav.classList.remove('is-open');
+        mobileBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+    function openMobileNav() {
+        mobileNav.classList.add('is-open');
+        mobileBackdrop.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    }
     mobileToggle.addEventListener('click', () => {
-        mobileNav.classList.toggle('is-open');
+        mobileNav.classList.contains('is-open') ? closeMobileNav() : openMobileNav();
     });
-    // Close on link click
+    mobileBackdrop.addEventListener('click', closeMobileNav);
     mobileNav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => mobileNav.classList.remove('is-open'));
+        link.addEventListener('click', closeMobileNav);
     });
-    // Close if window is resized up to desktop width
     window.addEventListener('resize', () => {
-        if (window.innerWidth >= 992) mobileNav.classList.remove('is-open');
+        if (window.innerWidth >= 992) closeMobileNav();
     });
 }
 

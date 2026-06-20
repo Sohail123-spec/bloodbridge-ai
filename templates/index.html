@@ -32,119 +32,57 @@
     border-radius: 50%;
 }
 
-/* Heartbeat SVG line — signature element, continuously traveling like a live monitor */
-.heartbeat-wrap {
+/* ═══════════ HERO VIDEO BACKGROUND ═══════════
+   Real video replaces the hand-drawn SVG heart/EKG/drops version —
+   the user supplied an actual rendered clip matching their reference. */
+.hero-video-wrap {
     position: absolute;
-    bottom: 60px; left: 0; right: 0;
-    height: 90px;
-    overflow: hidden;
-    pointer-events: none;
-    opacity: 0.55;
-    mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
-    -webkit-mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
-}
-
-.heartbeat-track {
-    display: flex;
-    width: 200%;
-    animation: travelLine 14s linear infinite;
-}
-
-.heartbeat-track svg {
-    width: 50%;
-    flex-shrink: 0;
-    display: block;
-}
-
-@keyframes travelLine {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-}
-
-/* ═══════════ HERO HEART VISUAL ═══════════ */
-.hero-heart-stage {
-    position: absolute;
-    top: 0; right: 0;
-    width: 55%; height: 100%;
-    pointer-events: none;
+    inset: 0;
     overflow: hidden;
     z-index: 0;
 }
 
-.hero-heart-glow-bg {
+.hero-video-wrap video {
     position: absolute;
-    top: 42%; left: 50%;
-    width: 520px; height: 520px;
+    top: 50%; left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto; height: auto;
     transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(196,30,58,0.22) 0%, rgba(196,30,58,0.06) 45%, transparent 75%);
-    border-radius: 50%;
+    object-fit: cover;
 }
 
-.hero-heart-svg-wrap {
+/* Darken + fade the video toward the left so headline text stays readable
+   over it, and fade the top/bottom edges into the page background. */
+.hero-video-scrim {
     position: absolute;
-    top: 42%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 320px;
-    filter: drop-shadow(0 0 40px rgba(196,30,58,0.35));
-    animation: heartBeatPulse 1.8s ease-in-out infinite;
-}
-
-@keyframes heartBeatPulse {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    14%      { transform: translate(-50%, -50%) scale(1.045); }
-    28%      { transform: translate(-50%, -50%) scale(1); }
-    42%      { transform: translate(-50%, -50%) scale(1.02); }
-    56%      { transform: translate(-50%, -50%) scale(1); }
-}
-
-.hero-ekg-through-heart {
-    position: absolute;
-    top: 42%; left: 50%;
-    width: 360px;
-    transform: translate(-50%, -50%);
-    opacity: 0.95;
-    pointer-events: none;
-}
-
-.hero-ekg-through-heart .ekg-draw {
-    stroke-dasharray: 900;
-    stroke-dashoffset: 900;
-    animation: ekgDraw 2.4s ease-out infinite;
-}
-
-@keyframes ekgDraw {
-    0%   { stroke-dashoffset: 900; opacity: 0; }
-    8%   { opacity: 1; }
-    55%  { stroke-dashoffset: 0; opacity: 1; }
-    75%  { stroke-dashoffset: 0; opacity: 0.5; }
-    100% { stroke-dashoffset: 0; opacity: 0; }
-}
-
-/* Falling blood drops — confined to the heart-stage area only,
-   never drifting across the left text column */
-.blood-drops-field {
-    position: absolute;
-    top: 0; right: 0;
-    width: 55%; height: 100%;
-    pointer-events: none;
-    overflow: hidden;
+    inset: 0;
+    background:
+        linear-gradient(90deg, var(--bg-base) 0%, rgba(8,13,20,0.85) 20%, rgba(8,13,20,0.35) 45%, rgba(8,13,20,0.15) 70%, transparent 100%),
+        linear-gradient(180deg, var(--bg-base) 0%, transparent 14%, transparent 86%, var(--bg-base) 100%);
     z-index: 1;
 }
 
-.blood-drop {
+.hero-sound-toggle {
     position: absolute;
-    top: -40px;
-    opacity: 0;
-    animation: dropFall linear infinite;
+    bottom: 28px;
+    right: 28px;
+    z-index: 6;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(8,13,20,0.6);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all var(--dur) var(--ease);
+    font-size: 0.95rem;
 }
 
-.blood-drop svg { display: block; filter: drop-shadow(0 0 6px rgba(196,30,58,0.5)); }
-
-@keyframes dropFall {
-    0%   { transform: translateY(0) scale(0.8); opacity: 0; }
-    8%   { opacity: 0.85; }
-    85%  { opacity: 0.5; }
-    100% { transform: translateY(620px) scale(1); opacity: 0; }
+.hero-sound-toggle:hover {
+    background: rgba(8,13,20,0.85);
+    border-color: var(--border-hover);
 }
 
 /* Hero content */
@@ -456,13 +394,17 @@
     background: linear-gradient(90deg, transparent, var(--red-bright), transparent);
 }
 
-/* Heart visual is a desktop-only flourish — on narrower screens the two-column
-   layout collapses to one column and the heart has nowhere safe to sit without
-   overlapping text/buttons, so it's hidden rather than crammed in. */
-@media (max-width: 991px) {
-    .hero-heart-stage,
-    .blood-drops-field {
-        display: none;
+/* On mobile the hero text needs to win contrast-wise over the video,
+   so we darken it further rather than hiding it — full-bleed cover
+   video works fine at any width, unlike the old side-column SVG heart. */
+@media (max-width: 767px) {
+    .hero-video-scrim {
+        background:
+            linear-gradient(180deg, var(--bg-base) 0%, rgba(8,13,20,0.55) 30%, rgba(8,13,20,0.55) 70%, var(--bg-base) 100%);
+    }
+    .hero-sound-toggle {
+        bottom: 16px;
+        right: 16px;
     }
 }
 </style>
@@ -472,56 +414,17 @@
 
 <!-- ═══════════ HERO ═══════════ -->
 <section class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-glow-2"></div>
-
-    <!-- Heart visual stage -->
-    <div class="hero-heart-stage">
-        <div class="hero-heart-glow-bg"></div>
-
-        <div class="hero-heart-svg-wrap">
-            <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="heartFill" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#E8243F"/>
-                        <stop offset="100%" stop-color="#7A0F1F"/>
-                    </linearGradient>
-                </defs>
-                <path d="M100,170
-                         C40,130 10,90 10,55
-                         C10,25 32,8 58,8
-                         C76,8 92,18 100,35
-                         C108,18 124,8 142,8
-                         C168,8 190,25 190,55
-                         C190,90 160,130 100,170 Z"
-                      fill="url(#heartFill)" stroke="#FF5A6E" stroke-width="1.5" opacity="0.92"/>
-                <!-- Simple vein-like detail lines for texture -->
-                <path d="M70,40 C75,70 85,100 100,135" stroke="#5A0814" stroke-width="2" fill="none" opacity="0.4"/>
-                <path d="M130,40 C124,70 114,100 100,135" stroke="#5A0814" stroke-width="2" fill="none" opacity="0.4"/>
-                <path d="M55,55 C60,75 70,90 85,105" stroke="#5A0814" stroke-width="1.5" fill="none" opacity="0.3"/>
-            </svg>
-        </div>
-
-        <!-- EKG line drawn through the heart, looping -->
-        <svg class="hero-ekg-through-heart" viewBox="0 0 480 100" xmlns="http://www.w3.org/2000/svg">
-            <polyline class="ekg-draw"
-                points="0,50 90,50 110,50 125,18 140,85 155,12 170,85 185,50 210,50 270,50 285,18 300,85 315,12 330,85 345,50 370,50 480,50"
-                fill="none" stroke="#5EFFB0" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round"
-            />
-        </svg>
+    <!-- Real video background, supplied by user, replaces hand-drawn SVG version -->
+    <div class="hero-video-wrap">
+        <video autoplay muted loop playsinline id="heroVideo">
+            <source src="{{ url_for('static', filename='video/hero-heart.mp4') }}" type="video/mp4">
+        </video>
     </div>
+    <div class="hero-video-scrim"></div>
 
-    <!-- Falling blood drops -->
-    <div class="blood-drops-field">
-        {% for i in range(14) %}
-        <div class="blood-drop" style="left:{{ (i * 7 + 3) % 100 }}%; animation-duration:{{ 3.5 + (i % 5) * 0.6 }}s; animation-delay:{{ (i * 0.37) % 4 }}s;">
-            <svg width="{{ 10 + (i % 3) * 4 }}" height="{{ 14 + (i % 3) * 6 }}" viewBox="0 0 14 20" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7,1 C7,1 1,9 1,13.5 C1,17 3.5,19.5 7,19.5 C10.5,19.5 13,17 13,13.5 C13,9 7,1 7,1Z" fill="#E8243F"/>
-            </svg>
-        </div>
-        {% endfor %}
-    </div>
+    <button class="hero-sound-toggle" id="heroSoundToggle" title="Toggle sound" aria-label="Toggle video sound">
+        <i class="fas fa-volume-mute" id="heroSoundIcon"></i>
+    </button>
 
     <div class="container" style="position:relative;z-index:5">
         <div class="row align-items-center g-5">
@@ -612,26 +515,6 @@
                     </a>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Heartbeat signature — continuously moving like a live cardiac monitor -->
-    <div class="heartbeat-wrap">
-        <div class="heartbeat-track">
-            <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <polyline
-                    points="0,45 140,45 165,45 185,15 205,78 225,12 245,78 265,45 300,45 480,45 500,15 520,78 540,12 560,78 580,45 615,45 795,45 815,15 835,78 855,12 875,78 895,45 930,45 1110,45 1130,15 1150,78 1170,12 1190,78 1210,45 1245,45 1440,45"
-                    fill="none" stroke="#E8243F" stroke-width="2.5"
-                    stroke-linecap="round" stroke-linejoin="round"
-                />
-            </svg>
-            <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <polyline
-                    points="0,45 140,45 165,45 185,15 205,78 225,12 245,78 265,45 300,45 480,45 500,15 520,78 540,12 560,78 580,45 615,45 795,45 815,15 835,78 855,12 875,78 895,45 930,45 1110,45 1130,15 1150,78 1170,12 1190,78 1210,45 1245,45 1440,45"
-                    fill="none" stroke="#E8243F" stroke-width="2.5"
-                    stroke-linecap="round" stroke-linejoin="round"
-                />
-            </svg>
         </div>
     </div>
 </section>
@@ -789,6 +672,18 @@
 
 {% block extra_js %}
 <script>
+// Hero video sound toggle — browsers block autoplay-with-sound, so the
+// video starts muted and the person can opt in to sound with this button.
+const heroVideo = document.getElementById('heroVideo');
+const soundToggle = document.getElementById('heroSoundToggle');
+const soundIcon = document.getElementById('heroSoundIcon');
+if (heroVideo && soundToggle && soundIcon) {
+    soundToggle.addEventListener('click', () => {
+        heroVideo.muted = !heroVideo.muted;
+        soundIcon.className = heroVideo.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+    });
+}
+
 // Counter animation
 const counters = document.querySelectorAll('.counter');
 const observer = new IntersectionObserver(entries => {
