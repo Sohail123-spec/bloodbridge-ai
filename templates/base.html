@@ -234,24 +234,37 @@
 
     .navbar-toggler:focus { box-shadow: none !important; }
     .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28241,245,249,0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100%;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28241,245,249,0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
 
-    /* Mobile collapse */
+    /* Mobile collapse — vertical stacked card, not inline text */
     .navbar-collapse {
         background: rgba(8,13,20,0.98);
         border-top: 1px solid var(--border);
         padding: 16px 20px;
         margin-top: 4px;
+        display: none;
+        flex-direction: column;
+    }
+    .navbar-collapse.is-open {
+        display: flex;
     }
 
     .navbar-collapse .nav-link {
         color: var(--text-secondary) !important;
         font-size: 0.9rem;
         font-weight: 500;
-        padding: 10px 0 !important;
+        padding: 12px 4px !important;
         border-bottom: 1px solid var(--border);
         transition: color var(--dur);
+        display: block;
+        width: 100%;
     }
 
     .navbar-collapse .nav-link:last-child { border-bottom: none; }
@@ -823,10 +836,13 @@
     .container, .container-fluid { max-width: 1280px; }
 
     /* ═══════════════════════════════════════════
-       RESPONSIVE
+       RESPONSIVE — fully custom nav toggle, zero dependency on
+       Bootstrap's collapse plugin (it conflicted with our custom
+       .navbar-inner wrapper and caused both nav states to render
+       at once). Base mobile-open/closed state is set above on
+       .navbar-collapse / .navbar-collapse.is-open — this block only
+       handles the desktop breakpoint switch-over.
     ═══════════════════════════════════════════ */
-    /* Hard breakpoint control — do not rely on Bootstrap utility classes alone,
-       they can both end up visible at in-between viewport widths */
     .nav-pill,
     .nav-desktop-actions {
         display: none;
@@ -834,24 +850,19 @@
     .navbar-toggler {
         display: inline-flex;
     }
-    .navbar-collapse {
-        display: none;
-    }
-    .navbar-collapse.show {
-        display: block;
-    }
     @media (min-width: 992px) {
         .nav-pill {
-            display: flex !important;
+            display: flex;
         }
         .nav-desktop-actions {
-            display: flex !important;
+            display: flex;
         }
         .navbar-toggler {
-            display: none !important;
+            display: none;
         }
-        .navbar-collapse {
-            display: none !important;
+        .navbar-collapse,
+        .navbar-collapse.is-open {
+            display: none;
         }
     }
 
@@ -907,13 +918,13 @@
     </div>
 
     <!-- Mobile toggler -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav">
+    <button class="navbar-toggler" type="button" id="mobileNavToggle">
         <span class="navbar-toggler-icon"></span>
     </button>
   </div>
 
   <!-- Mobile nav -->
-  <div class="collapse navbar-collapse" id="mobileNav">
+  <div class="navbar-collapse" id="mobileNav">
     <a class="nav-link" href="/">Home</a>
     <a class="nav-link" href="/search-donor">Find Donor</a>
     <a class="nav-link" href="/register-donor">Register as Donor</a>
@@ -1031,6 +1042,23 @@ const revealObserver = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Mobile nav toggle — custom, does not use Bootstrap's collapse plugin
+const mobileToggle = document.getElementById('mobileNavToggle');
+const mobileNav = document.getElementById('mobileNav');
+if (mobileToggle && mobileNav) {
+    mobileToggle.addEventListener('click', () => {
+        mobileNav.classList.toggle('is-open');
+    });
+    // Close on link click
+    mobileNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => mobileNav.classList.remove('is-open'));
+    });
+    // Close if window is resized up to desktop width
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 992) mobileNav.classList.remove('is-open');
+    });
+}
 
 // Active nav link
 const path = window.location.pathname;
