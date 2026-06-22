@@ -96,6 +96,37 @@
     a { color: inherit; text-decoration: none; }
 
     /* ═══════════════════════════════════════════
+       AMBIENT VIDEO BACKGROUND (all pages except homepage,
+       which has its own full-clarity hero video instead)
+    ═══════════════════════════════════════════ */
+    .ambient-video-bg {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .ambient-video-bg video {
+        position: absolute;
+        top: 50%; left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto; height: auto;
+        object-fit: cover;
+        filter: blur(45px) saturate(115%);
+        /* Slightly oversized so the blur doesn't reveal soft edges at the frame */
+        transform: translate(-50%, -50%) scale(1.15);
+        opacity: 0.55;
+    }
+
+    .ambient-video-scrim {
+        position: absolute;
+        inset: 0;
+        background: rgba(8,13,20,0.72);
+    }
+
+    /* ═══════════════════════════════════════════
        NAVBAR
     ═══════════════════════════════════════════ */
     .navbar {
@@ -914,6 +945,18 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+
+{% if not hide_ambient_video %}
+<!-- Site-wide ambient video background — same clip as the homepage hero,
+     heavily blurred and dimmed so it reads as mood lighting behind content
+     rather than competing with it. Fixed so it never scrolls away. -->
+<div class="ambient-video-bg">
+    <video autoplay muted loop playsinline>
+        <source src="{{ url_for('static', filename='video/hero-heart.mp4') }}" type="video/mp4">
+    </video>
+    <div class="ambient-video-scrim"></div>
+</div>
+{% endif %}
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <nav class="navbar navbar-expand-lg">

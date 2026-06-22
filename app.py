@@ -286,7 +286,8 @@ def index():
     recent_reqs = fetchall(cur)
     conn.close()
     return render_template('index.html', total_donors=total_donors, active_donors=active_donors,
-        total_hospitals=total_hospitals, emergency_requests=emergency_count, recent_requests=recent_reqs)
+        total_hospitals=total_hospitals, emergency_requests=emergency_count, recent_requests=recent_reqs,
+        hide_ambient_video=True)
 
 # ---- DONOR ----
 @app.route('/register-donor', methods=['GET','POST'])
