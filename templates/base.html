@@ -330,7 +330,7 @@
     .mobile-nav-drawer .nav-link:last-child { border-bottom: none; }
     .mobile-nav-drawer .nav-link:hover { color: var(--text-primary) !important; }
 
-    @media (min-width: 992px) {
+    @media (min-width: 1200px) {
         .mobile-nav-drawer,
         .mobile-nav-backdrop {
             display: none;
@@ -912,6 +912,9 @@
        overlay — see .mobile-nav-drawer / .mobile-nav-backdrop above,
        which handle their own desktop hide via @media (min-width:992px).
        This block only handles the desktop pill-nav / toggler switch-over.
+       Breakpoint raised from 992px to 1200px after adding the 8th nav item
+       (My Certificate) — at 992-1150px the pill nav was overflowing and
+       pushing the Emergency button off-screen.
     ═══════════════════════════════════════════ */
     .nav-pill,
     .nav-desktop-actions {
@@ -920,7 +923,7 @@
     .navbar-toggler {
         display: inline-flex;
     }
-    @media (min-width: 992px) {
+    @media (min-width: 1200px) {
         .nav-pill {
             display: flex;
         }
@@ -975,7 +978,8 @@
         <a class="nav-link" href="/register-donor">Register</a>
         <a class="nav-link" href="/emergency-request">Emergency</a>
         <a class="nav-link" href="/analytics">Analytics</a>
-        <a class="nav-link" href="/request-certificate">Certificate</a>
+        <a class="nav-link" href="/request-certificate">Get Certificate</a>
+        <a class="nav-link" href="/check-certificate">My Certificate</a>
         {% if session.get('hospital_id') %}
         <a class="nav-link" href="/hospital-dashboard">Hospital</a>
         {% elif session.get('admin_id') %}
